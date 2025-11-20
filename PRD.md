@@ -89,11 +89,13 @@ This creates a gap where health-conscious users track religiously but still expe
 
 #### 1. Food Logging
 - **Manual text entry:** "2 cups lentils", "6oz chicken breast", "1 tbsp olive oil"
+- **Unit detection:** Properly distinguishes weight oz vs fluid oz for accurate calculations
 - **Quick presets:** "usual breakfast", "usual lunch", "copy yesterday"
 - **Simple meal buttons:** "add a fruit", "add fermented food", "add greens"
 - **Brand detection:** Search for specific brands (e.g., "Fage yogurt", "Lifeway kefir")
 - **Portion options:** Common portion sizes (container, cup, half-serving, etc.)
 - **Meal templates:** Quick log complete meals with all ingredients
+- **Supplements tracking:** Add supplements with proper doses to any meal
 - **Timestamp tracking:** For meal timing analysis (future)
 
 #### 1.5 Meal Planning & Templates (ENHANCED)
@@ -106,24 +108,23 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Custom meal templates with AI autofill:** Create your own meal templates with intelligent assistance
   - Type a meal description (e.g., "grilled chicken with broccoli and sweet potato")
   - AI automatically suggests appropriate ingredients from food database
+  - Handles unit conversions properly (100g chicken → oz calculation, distinguishes fluid oz from weight oz)
   - Manual search and add still available for full control
   - Name your common meals (e.g., "My Usual Breakfast")
+- **Supplements at each meal:** (NEW)
+  - Add supplements to meal plans with proper dosing
+  - Track supplement timing (with food, before bed, morning, etc.)
+  - Amazon integration for auto-detection (future)
 - **Portion tracking in ounces:** All ingredients measured in 1oz portions
   - Integer-only quantities (no decimals) for simplicity
   - Clear "oz" labels on all ingredient amounts
   - Easy mental math for portion sizing
-- **Wellness supplements & practices at each meal:** (NEW)
+- **Wellness supplements & practices at each meal:**
   - Each meal slot includes wellness supplement recommendations
   - AI suggests context-appropriate additions: herbal teas, water reminders, walks, stretching, meditation
   - Categories: beverages (herbal teas, water, bone broth), activities (walks, stretching), practices (breathing, gratitude), supplements (probiotics, vitamins)
   - When meal slot is empty, shows 2-3 wellness suggestions automatically
   - When meal is planned, shows "Add Supplement" button with AI suggestions below
-  - Curated list includes:
-    - Beverages: Chamomile tea, ginger tea, lemon water, bone broth
-    - Activities: 10-15 minute walks, sunlight exposure, light stretching
-    - Practices: Deep breathing, meditation, posture checks, gratitude moments
-    - Supplements: Probiotics, omega-3, vitamin D, magnesium (with timing guidance)
-  - Each suggestion contextually appropriate to meal time (e.g., magnesium at dinner, morning sunlight at breakfast)
 - **One-click logging:** Log entire meals with all ingredients in one action
 - **Meal planning:** Assign templates to specific days and meal times
 - **Template management:** Edit, delete, and organize custom meal templates
@@ -203,7 +204,7 @@ This creates a gap where health-conscious users track religiously but still expe
   - Input system for recurring activities: work, walking dog, cooking, exercise, hygiene tasks, etc.
   - Category-based organization (work, exercise, hygiene, cooking, pet-care, meal, custom)
   - Day-of-week selection for each activity (M-Su)
-  - Time and duration inputs for each activity
+  - Time and duration inputs for each activity with minutes/hours toggle
   - Visual icons and color-coding by category
 - **Schedule generation:**
   - Auto-generates timeblocked schedules for next 3-7 days
@@ -396,9 +397,20 @@ This creates a gap where health-conscious users track religiously but still expe
 ### Key Modules
 - **/lib/nutritionEngine.ts** — Core analysis logic
 - **/lib/dailyValues.ts** — Reference DV constants
-- **/lib/synergies.ts** — Nutrient pairing rules
+- **/lib/synergies.ts** — Nutrient pairing rules (future)
 - **/lib/affiliate.ts** — Product matching logic
-- **/data/foods.ts** — Mock food database with nutrients
+- **/data/foods.ts** — Comprehensive food database with 100+ items including:
+  - Proteins: meats, fish, eggs, plant proteins
+  - Vegetables: leafy greens, cruciferous, starchy
+  - Fruits: berries, tropical, citrus
+  - Grains: whole grains, bread, pasta
+  - Dairy: yogurt, kefir, cheese, milk (branded and generic)
+  - Oils & Fats: olive oil, coconut oil, butter, avocado oil
+  - Spices & Seasonings: turmeric, garlic, ginger, cinnamon, salt, pepper, herbs
+  - Condiments: hot sauce, mustard, vinegar, soy sauce
+  - Processed foods: protein bars, granola, chips, crackers
+  - Beverages: coffee, tea, water, juices
+  - Supplements: vitamins, minerals, probiotics, omega-3
 
 ### Data Model
 ```typescript

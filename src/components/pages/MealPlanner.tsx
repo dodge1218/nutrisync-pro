@@ -228,12 +228,23 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
 Meal Description: "${newTemplateDescription}"
 Meal Type: ${newTemplateMealType}
 
+IMPORTANT UNIT CONVERSION RULES:
+- All quantities MUST be in WEIGHT ounces (oz), not fluid ounces
+- If user mentions grams: 100g = 3.5oz, 200g = 7oz
+- If user mentions "20oz water" or drinks, this is FLUID oz (20 fl oz = 2.5 servings of 8 fl oz)
+- For liquids (water, juice, coffee): use fluid oz conversions (8 fl oz = 1 serving)
+- For solids (chicken, vegetables, grains): use weight oz conversions (1oz = 28g)
+- Examples:
+  * "100g chicken" → quantity: 4 (rounded from 3.5oz)
+  * "20oz water" → quantity: 3 (20 fl oz ÷ 8 fl oz per serving = 2.5, round to 3)
+  * "6oz chicken breast" → quantity: 6 (already in weight oz)
+
 Available Foods (use only IDs from this list):
 ${foodsList}
 
 Return ONLY a valid JSON object with a single property "ingredients" containing an array of objects with:
 - foodId: exact ID from the list above
-- quantity: integer amount in ounces (1-16, no decimals)
+- quantity: integer amount in ounces (1-16, no decimals) - use weight oz for solids, convert fl oz properly for liquids
 
 Example format:
 {

@@ -118,6 +118,8 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
     duration: 60,
     days: ['mon', 'tue', 'wed', 'thu', 'fri']
   })
+  
+  const [durationUnit, setDurationUnit] = useState<'minutes' | 'hours'>('minutes')
 
   const [newGoal, setNewGoal] = useState<Partial<Goal>>({
     title: '',
@@ -536,15 +538,33 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="activity-duration">Duration (minutes)</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="activity-duration">Duration</Label>
+                    <Tabs value={durationUnit} onValueChange={(v) => setDurationUnit(v as any)} className="w-auto">
+                      <TabsList className="h-8">
+                        <TabsTrigger value="minutes" className="text-xs px-3 h-7">Minutes</TabsTrigger>
+                        <TabsTrigger value="hours" className="text-xs px-3 h-7">Hours</TabsTrigger>
+                      </TabsList>
+                    </Tabs>
+                  </div>
                   <Input
                     id="activity-duration"
                     type="number"
-                    min="5"
-                    step="5"
-                    value={newActivity.duration}
-                    onChange={(e) => setNewActivity({ ...newActivity, duration: parseInt(e.target.value) })}
+                    min={durationUnit === 'minutes' ? "5" : "0.25"}
+                    step={durationUnit === 'minutes' ? "5" : "0.25"}
+                    value={durationUnit === 'minutes' ? newActivity.duration : (newActivity.duration || 60) / 60}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value)
+                      const minutes = durationUnit === 'minutes' ? val : val * 60
+                      setNewActivity({ ...newActivity, duration: minutes })
+                    }}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    {durationUnit === 'minutes' 
+                      ? `${newActivity.duration || 60} minutes (${((newActivity.duration || 60) / 60).toFixed(2)} hours)`
+                      : `${((newActivity.duration || 60) / 60).toFixed(2)} hours (${newActivity.duration || 60} minutes)`
+                    }
+                  </p>
                 </div>
 
                 <div className="space-y-2">
