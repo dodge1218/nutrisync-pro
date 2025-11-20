@@ -1,13 +1,16 @@
 import { useState } from 'react'
+import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Badge } from '../ui/badge'
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group'
-import { Plus, Trash, Check, Storefront } from '@phosphor-icons/react'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
+import { Plus, Trash, Check, Storefront, ForkKnife } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { FOODS_DATABASE, type Food } from '../../data/foods'
+import { MEAL_TEMPLATES, type MealTemplate } from '../../data/mealTemplates'
 import type { FoodLog } from '../../lib/nutritionEngine'
 import type { Page } from '../../App'
 
@@ -22,6 +25,7 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
   const [selectedFood, setSelectedFood] = useState<Food | null>(null)
   const [quantity, setQuantity] = useState('1')
   const [selectedPortion, setSelectedPortion] = useState<number>(1)
+  const [customTemplates] = useKV<MealTemplate[]>('custom-meal-templates', [])
 
   const searchResults = searchQuery.length > 0
     ? FOODS_DATABASE.filter(food =>
@@ -83,6 +87,24 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
     toast.success('Meal removed')
   }
 
+  const handleLogMealTemplate = (template: MealTemplate) => {
+    const newLogs: FoodLog[] = template.ingredients.map(ingredient => {
+      const food = FOODS_DATABASE.find(f => f.id === ingredient.foodId)
+      if (!food) return null
+
+      return {
+        id: `${Date.now()}-${Math.random()}`,
+        foodId: food.id,
+        food,
+        quantity: ingredient.quantity,
+        timestamp: new Date().toISOString(),
+      }
+    }).filter(Boolean) as FoodLog[]
+
+    setFoodLogs((current) => [...current, ...newLogs])
+    toast.success(`Logged ${template.name}`)
+  }
+
   const today = new Date().toISOString().split('T')[0]
   const todaysLogs = foodLogs.filter(log => log.timestamp.startsWith(today))
 
@@ -96,6 +118,8 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
     { id: 'sweet-potato', label: 'Sweet Potato' },
     { id: 'blueberries', label: 'Blueberries' },
   ]
+
+  const allTemplates = [...MEAL_TEMPLATES, ...(customTemplates || [])]
 
   return (
     <div className="space-y-6">
@@ -122,6 +146,75 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
                   {food.label}
                 </Button>
               ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Quick Log Complete Meals</Label>
+            <div className="flex flex-wrap gap-2">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="secondary" size="sm" className="gap-2">
+                    <ForkKnife />
+                    Log Full Meal
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Log Complete Meal</DialogTitle>
+                    <DialogDescription>
+                      Choose a preset or custom meal to log all ingredients at once
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="space-y-3 mt-4">
+                    {allTemplates.map((template) => (
+                      <Card key={template.id} className="hover:border-primary transition-colors cursor-pointer">
+                        <CardHeader onClick={() => handleLogMealTemplate(template)}>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <CardTitle className="text-lg">{template.name}</CardTitle>
+                                <Badge variant="outline" className="text-xs capitalize">
+                                  {template.mealType}
+                                </Badge>
+                              </div>
+                              <CardDescription className="mt-1">{template.description}</CardDescription>
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {template.tags.map((tag) => (
+                                  <Badge key={tag} variant="secondary" className="text-xs">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                              <div className="mt-3 space-y-1">
+                                {template.ingredients.map((ing) => {
+                                  const food = FOODS_DATABASE.find(f => f.id === ing.foodId)
+                                  if (!food) return null
+                                  return (
+                                    <div key={ing.foodId} className="text-sm text-muted-foreground">
+                                      • {ing.quantity}× {food.name}
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                            <Plus className="text-primary" />
+                          </div>
+                        </CardHeader>
+                      </Card>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onNavigate('meal-planner')}
+                className="gap-2"
+              >
+                Manage Meals →
+              </Button>
             </div>
           </div>
 

@@ -7,11 +7,12 @@ import Recommendations from './components/pages/Recommendations'
 import Education from './components/pages/Education'
 import Settings from './components/pages/Settings'
 import Achievements from './components/pages/Achievements'
+import MealPlanner from './components/pages/MealPlanner'
 import DisclaimerBanner from './components/DisclaimerBanner'
 import Navigation from './components/Navigation'
 import type { FoodLog } from './lib/nutritionEngine'
 
-export type Page = 'dashboard' | 'log-food' | 'recommendations' | 'education' | 'achievements' | 'settings'
+export type Page = 'dashboard' | 'log-food' | 'meal-planner' | 'recommendations' | 'education' | 'achievements' | 'settings'
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard')
@@ -41,6 +42,13 @@ function App() {
           )}
           {currentPage === 'log-food' && (
             <LogFood 
+              foodLogs={logs} 
+              setFoodLogs={setFoodLogs}
+              onNavigate={setCurrentPage}
+            />
+          )}
+          {currentPage === 'meal-planner' && (
+            <MealPlanner 
               foodLogs={logs} 
               setFoodLogs={setFoodLogs}
               onNavigate={setCurrentPage}

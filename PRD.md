@@ -91,7 +91,26 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Manual text entry:** "2 cups lentils", "6oz chicken breast", "1 tbsp olive oil"
 - **Quick presets:** "usual breakfast", "usual lunch", "copy yesterday"
 - **Simple meal buttons:** "add a fruit", "add fermented food", "add greens"
+- **Brand detection:** Search for specific brands (e.g., "Fage yogurt", "Lifeway kefir")
+- **Portion options:** Common portion sizes (container, cup, half-serving, etc.)
+- **Meal templates:** Quick log complete meals with all ingredients
 - **Timestamp tracking:** For meal timing analysis (future)
+
+#### 1.5 Meal Planning & Templates (NEW)
+- **Weekly meal planner:** Plan meals across all days of the week
+- **Preset meal templates:** Pre-built healthy meal combinations organized by meal type
+  - Breakfast: Protein oats, Greek yogurt parfait, scrambled eggs with spinach
+  - Lunch: Chicken & rice bowls, lentil bowls, salads
+  - Dinner: Salmon with quinoa, liver & onions, chickpea curry
+  - Snacks: Apple with almond butter, kefir smoothie, sauerkraut with seeds
+- **Custom meal templates:** Create your own meal templates with multiple ingredients
+  - Name your common meals (e.g., "My Usual Breakfast")
+  - Add multiple ingredients with quantities
+  - Save for repeated use
+- **One-click logging:** Log entire meals with all ingredients in one action
+- **Meal planning:** Assign templates to specific days and meal times
+- **Template management:** Edit, delete, and organize custom meal templates
+- **Quick access:** Log meal templates directly from the Log Food page
 
 #### 2. Gamification System (NEW)
 - **GBDI Score Display:** Large, animated score card with trend indicators (↑↓) comparing to previous day
