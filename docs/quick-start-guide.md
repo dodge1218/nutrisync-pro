@@ -39,7 +39,7 @@ NutriWell is a nutrition intelligence platform that helps you:
 2. See your:
    - **Calories** and **Macros** (protein, carbs, fat)
    - **Gut Support Score (0-100)** — higher is better
-   - **GBDI (Gut-Brain-Digestive Index)** — overall gut health
+   - **GBDI (Gut Biome Destruction Index)** — measures destructive factors affecting gut-brain-digestive health (lower is better)
    - **Adrenal Load** — stress markers (lower is better)
    - **Top 3 Fixes** — highest-impact improvements
 
@@ -131,19 +131,23 @@ If you see a coffee-iron conflict alert, adjust your timing. Space coffee 2+ hou
 
 ---
 
-#### GBDI (Gut-Brain-Digestive Index) (0-100)
+#### GBDI (Gut Biome Destruction Index) (0-100)
 **What it measures:**
 - Overall gut health (fiber, fermented foods, plant diversity)
+- Gut-brain axis health (omega-3s, tryptophan, neurotransmitter precursors)
 - Digestive wellness (warm food ratio, gut stressors)
-- Nutrient support for gut lining (magnesium)
+- Nutrient support for gut lining and vagus nerve (magnesium, zinc)
+- **Lower scores indicate less destruction = better gut health**
 
-**Good score:** 65+  
-**Great score:** 80+  
+**Good score:** <35 (less destruction)
+**Great score:** <20 (minimal destructive factors)
 
 **How to improve:**
-- All the above (Gut Support Score)
+- All the above (Gut Support Score improvements)
 - Prioritize warm, cooked foods (easier to digest)
-- Ensure adequate magnesium (pumpkin seeds, spinach)
+- Ensure adequate magnesium and zinc (pumpkin seeds, spinach, oysters)
+- Include omega-3 rich foods (salmon, sardines, walnuts, flaxseeds)
+- Support gut-brain axis with fermented foods and tryptophan sources
 
 ---
 

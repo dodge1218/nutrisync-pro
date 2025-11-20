@@ -24,9 +24,10 @@
 - [ ] **Phase 7f**: Stress-aware personalized recommendations (basic version complete, advanced patterns pending)
 
 ### 📋 Next Up
-- [ ] **Phase 8**: Education content expansion
-- [ ] **Phase 9**: Advanced synergy detection
-- [ ] **Phase 10**: Polish and optimization
+- [ ] **Phase 8**: User Authentication & Multi-User Support
+- [ ] **Phase 9**: Education content expansion
+- [ ] **Phase 10**: Advanced synergy detection
+- [ ] **Phase 11**: Polish and optimization
 
 ---
 
@@ -372,7 +373,19 @@ This creates a gap where health-conscious users track religiously but still expe
   - 🔴 Red: <50% DV
 - **Gut Support Score:** 0-100 based on fiber, fermented foods, diversity, ultra-processed burden
 
-#### 4.5 Adrenal Load Score & Stress Tracking (✅ COMPLETE)
+#### 4.5 GBDI Score (Gut Biome Destruction Index)
+- **Comprehensive gut-brain-digestive health metric (0-100):**
+  - Gut microbiome health: fiber intake, fermented foods, plant diversity, polyphenol-rich foods
+  - Gut-brain axis: supportive nutrients for neurotransmitter production, stress-reducing compounds
+  - Digestive wellness: warm/cooked food ratio, ultra-processed burden, gut stressors (NSAIDs, alcohol)
+- **Lower GBDI is better** — measures destructive factors while accounting for protective ones
+- **Can include gut-brain axis elements:**
+  - Nutrients supporting vagus nerve function (omega-3s, zinc, magnesium)
+  - Foods promoting GABA, serotonin precursors (fermented foods, tryptophan sources)
+  - Anti-inflammatory compounds (polyphenols, omega-3s)
+  - Stress-gut connection markers (high cortisol foods vs. gut-calming foods)
+
+#### 4.6 Adrenal Load Score & Stress Tracking (✅ COMPLETE)
 **Status**: Fully implemented with all features
 
 - **Two-Part Calculation System:**
@@ -432,7 +445,11 @@ This creates a gap where health-conscious users track religiously but still expe
   - ✅ 3+ consecutive day high stress alerts
 
 #### 5. Wellness Audit Lenses
-- **GBDI (Gut-Brain-Digestive Index):** Composite score
+- **GBDI (Gut Biome Destruction Index):** Composite score measuring gut-brain-digestive health
+  - Tracks destructive factors: ultra-processed foods, gut stressors, low fiber, lack of diversity
+  - Protective factors: fermented foods, plant diversity, polyphenols, supportive nutrients
+  - Gut-brain axis components: omega-3s, tryptophan, GABA precursors, vagus nerve support
+  - Lower scores indicate better gut health (destruction index)
 - **Adrenal Load:** Caffeine + refined sugar + stress markers
 - **Warm vs. Cold:** Preference for cooked/room-temp foods (digestibility)
 - **Fermented/Probiotic Frequency:** Track 2x/week target
@@ -481,6 +498,171 @@ This creates a gap where health-conscious users track religiously but still expe
   - Staple commitments (liver 2-3x/week, cultured dairy 2x/week, pumpkin seeds daily)
 - **Toggle:** "Show supplement suggestions" (default: off)
 - **Future:** Connect wearables (stubbed)
+
+#### 10. User Authentication & Data Privacy (🔄 PLANNED - Phase 8)
+**Goal:** Enable secure multi-user access while protecting privacy
+
+**⚠️ IMPORTANT: Developer Data Isolation**
+- System MUST NOT store or expose developer's personal health data
+- Development/testing data stored separately from production user data
+- Clear separation between test accounts and real user accounts
+- Developer food logs, stress data, and health metrics kept private
+
+**Authentication Requirements:**
+- **Login system:** Users must authenticate to access the application
+- **Account types:**
+  - Regular users (standard nutrition tracking)
+  - Developer/admin accounts (testing, support, analytics access)
+  - Guest/demo mode (optional, limited features, no data persistence)
+
+**Database & Backend Needs:**
+> **USER ACTION REQUIRED:** To implement this feature, you will need to provide:
+> - Supabase project URL and anon key (recommended)
+> - OR alternative database credentials (PostgreSQL, Firebase, etc.)
+> - Authentication provider configuration (email/password, OAuth, magic link)
+> - S3 or cloud storage credentials (if storing food images in future)
+
+**Recommended Tech Stack:**
+- **Supabase** (Preferred):
+  - Built-in authentication (email/password, OAuth providers, magic links)
+  - PostgreSQL database with Row Level Security (RLS)
+  - Real-time subscriptions for multi-device sync
+  - Edge functions for serverless backend logic
+  - Free tier: 500MB database, 2GB file storage, 50k monthly active users
+  
+- **Alternative Options:**
+  - Firebase Auth + Firestore
+  - Auth0 + your own PostgreSQL
+  - AWS Cognito + DynamoDB
+  - Clerk + Neon PostgreSQL
+
+**Data Architecture with Authentication:**
+```typescript
+// User table (authentication)
+User {
+  id: uuid (primary key),
+  email: string,
+  created_at: timestamp,
+  last_login: timestamp,
+  account_type: "user" | "developer" | "admin",
+  is_developer: boolean // Flag to exclude from user analytics
+}
+
+// User profile (nutrition preferences)
+UserProfile {
+  user_id: uuid (foreign key → User.id),
+  age?: number,
+  sex?: string,
+  activity_level?: string,
+  dietary_pattern?: string,
+  staples?: json,
+  preferences?: json,
+  created_at: timestamp,
+  updated_at: timestamp
+}
+
+// Food logs (user-specific)
+FoodLog {
+  id: uuid,
+  user_id: uuid (foreign key → User.id),
+  timestamp: timestamp,
+  food_id: string,
+  quantity: number,
+  meal_type: string,
+  meal_time?: string,
+  notes?: string,
+  RLS: WHERE user_id = auth.uid() // Row Level Security
+}
+
+// Meal templates (user-specific)
+MealTemplate {
+  id: uuid,
+  user_id: uuid (foreign key → User.id),
+  name: string,
+  meal_type: string,
+  ingredients: json,
+  supplements: json,
+  is_public: boolean, // For future community sharing
+  created_at: timestamp,
+  RLS: WHERE user_id = auth.uid()
+}
+
+// Stress logs (user-specific, private)
+StressLog {
+  id: uuid,
+  user_id: uuid (foreign key → User.id),
+  date: date,
+  stress_level: number,
+  sleep_quality: number,
+  energy_level: number,
+  physical_symptoms: string[],
+  mental_symptoms: string[],
+  notes?: string,
+  RLS: WHERE user_id = auth.uid()
+}
+
+// Developer data exclusion
+// All analytics queries MUST include:
+// WHERE is_developer = FALSE
+// This ensures developer's personal health data never appears in:
+// - User statistics
+// - Aggregate metrics
+// - Public leaderboards (future)
+// - Research data exports (future)
+```
+
+**Privacy & Security Requirements:**
+1. **Row Level Security (RLS):**
+   - Each user can ONLY access their own food logs, stress data, meal templates
+   - Developers cannot access other users' private health data
+   - Admin queries explicitly exclude developer accounts from aggregates
+
+2. **Data Encryption:**
+   - All data encrypted at rest (database level)
+   - All API calls over HTTPS/TLS
+   - Sensitive fields (stress logs, notes) encrypted in database
+
+3. **Developer Data Isolation:**
+   - Developer accounts flagged with `is_developer: true`
+   - Developer food logs excluded from:
+     - Global statistics ("X users logged Y meals this week")
+     - Recommendation algorithms (if trained on aggregate data)
+     - Public sharing features (future community features)
+   - Separate test database for development (optional but recommended)
+
+4. **Data Export & Deletion:**
+   - Users can export their data (JSON, CSV)
+   - Users can delete their accounts (GDPR/CCPA compliance)
+   - Cascade delete: User deletion removes ALL associated logs, templates, profiles
+
+5. **Session Management:**
+   - JWT tokens with expiration (24 hours default)
+   - Refresh token rotation
+   - Logout invalidates tokens
+   - Multi-device support with per-device sessions
+
+**Migration Path from Current spark.kv:**
+- Current local data stored in `spark.kv` (browser local storage)
+- Upon implementing auth:
+  - Prompt existing users to create account
+  - One-time migration: upload local data to cloud database
+  - Post-migration: spark.kv used as offline cache only
+  - Sync logic: local changes pushed to cloud when online
+
+**Implementation Steps (Phase 8):**
+1. Set up Supabase project (or alternative)
+2. Create database schema with RLS policies
+3. Implement authentication UI (login, signup, forgot password)
+4. Migrate spark.kv hooks to Supabase queries
+5. Add offline sync logic (local-first, cloud backup)
+6. Test developer data isolation
+7. Implement data export/deletion features
+
+**User Experience:**
+- **First-time users:** Sign up → start logging immediately
+- **Returning users:** Log in → see their historical data
+- **Guest mode (optional):** Try app without account (data not saved)
+- **Multi-device:** Log in on phone, tablet, desktop → data syncs automatically
 
 ---
 
@@ -838,6 +1020,19 @@ SynergyRule {
 6. **Supplement Tracking Depth:** How detailed should supplement tracking be in MVP?
    - **Decision:** MVP = basic supplement logging with name, dose, timing. v1.1 = Amazon integration. v2.0+ = interaction warnings, restocking alerts.
 
+7. **User Authentication & Database:** When to implement login system?
+   - **Decision:** Phase 8 (post-MVP). Current version uses local storage (spark.kv). 
+   - **Implementation needs:** Supabase credentials (project URL, anon key) OR alternative database config
+   - **Critical requirement:** Developer health data MUST be isolated from user analytics and statistics
+   - **Benefits:** Multi-device sync, data backup, user accounts, social features (future)
+   - **Migration path:** One-time upload of local data to cloud database upon first login
+
+8. **GBDI Scoring Logic:** Should GBDI be a "destruction index" (lower = better) or health score (higher = better)?
+   - **Decision:** GBDI is a **Gut Biome Destruction Index** where lower scores indicate better health
+   - **Rationale:** Focuses on measuring harmful factors (ultra-processed foods, gut stressors, inflammatory compounds)
+   - **Includes:** Gut-brain axis components (omega-3s, neurotransmitter precursors, vagus nerve support)
+   - **Display:** Inverse visualization where green = low destruction, red = high destruction
+
 ---
 
 ## Implementation Priority Guide
@@ -988,46 +1183,100 @@ This section outlines the recommended order of implementation for maximum user v
     - Track progress with checkboxes
     - Suggest goal tasks during free time blocks
 
-### Phase 8: Education & Refinement (Week 9)
+### Phase 8: User Authentication & Multi-User Support (Week 9-10)
+**Goal:** Enable secure login, protect privacy, allow multi-device access
+
+24. **Database Setup**
+    - Set up Supabase project (or alternative database)
+    - Create tables: users, user_profiles, food_logs, meal_templates, stress_logs
+    - Implement Row Level Security (RLS) policies
+    - Configure developer account exclusion from analytics
+
+25. **Authentication UI**
+    - Sign up page (email/password or magic link)
+    - Login page with "remember me" option
+    - Forgot password flow
+    - Account verification (email confirmation)
+    - Logout functionality
+
+26. **Data Migration System**
+    - Detect existing spark.kv data on first login
+    - Prompt user: "Upload local data to cloud?"
+    - One-time migration: push all local logs to database
+    - Post-migration: mark local data as synced
+    - Keep spark.kv as offline cache
+
+27. **Multi-Device Sync**
+    - Replace spark.kv hooks with database queries
+    - Implement optimistic UI updates (local-first)
+    - Background sync when online
+    - Conflict resolution (last-write-wins for MVP)
+    - Offline mode: queue changes, sync when reconnected
+
+28. **Developer Data Isolation**
+    - Flag developer accounts with `is_developer: true`
+    - Exclude developer data from:
+      - User count statistics
+      - Aggregate nutrient averages
+      - Public leaderboards (future)
+      - Recommendation training data (future)
+    - Test isolation with queries
+    - Document data privacy practices
+
+29. **Data Export & Deletion**
+    - Export data to JSON (all user data)
+    - Export to CSV (food logs, stress logs)
+    - Account deletion with cascade delete
+    - GDPR/CCPA compliance documentation
+
+30. **Security Hardening**
+    - Implement JWT token refresh
+    - Rate limiting on auth endpoints
+    - SQL injection prevention (parameterized queries)
+    - XSS protection
+    - CSRF tokens for sensitive actions
+
+### Phase 9: Education Content Expansion (Week 11)
 **Goal:** Educate users, refine UX
 
-24. **Education Content Library**
+31. **Education Content Library**
     - 10-15 educational cards
     - Topics: synergies, gut health, meal timing
     - Searchable by nutrient/topic
 
-25. **Recommendations Page**
+32. **Recommendations Page**
     - Personalized suggestions based on gaps
     - Food-first recommendations
     - Synergy-aware suggestions
 
-26. **Settings & Preferences**
+33. **Settings & Preferences**
     - Dietary pattern selection
     - Unit system toggle
     - Supplement visibility toggle
 
-### Phase 9: Polish & Testing (Week 10)
+### Phase 10: Polish & Testing (Week 12)
 **Goal:** Production-ready quality
 
-27. **Error Handling**
+34. **Error Handling**
     - Graceful failures for invalid inputs
     - Toast notifications for user actions
     - Loading states
 
-28. **Performance Optimization**
+35. **Performance Optimization**
     - Lazy load historical data
     - Memoize expensive calculations
     - Optimize re-renders
 
-29. **User Testing**
-    - Beta test with 10-20 users
+36. **User Testing**
+    - Beta test with 10-20 users (diverse dietary patterns)
     - Gather feedback on friction points
     - Iterate on confusing UI elements
 
-30. **Legal & Compliance**
+37. **Legal & Compliance**
     - Finalize disclaimer language
     - Persistent banner on all pages
     - Privacy policy and ToS pages
+    - GDPR/CCPA compliance review
 
 ---
 
@@ -1040,6 +1289,151 @@ This section outlines the recommended order of implementation for maximum user v
 5. **Respect User Rituals:** Honor staples like liver, cultured dairy, pumpkin seeds
 6. **Transparency:** Clear disclaimers, honest about limitations, visible affiliate links
 7. **Data Accuracy:** Precise unit conversions and calculations are non-negotiable for user trust
+8. **Privacy First:** User health data is sacred - protect it rigorously, isolate developer data
+
+---
+
+## UI/UX Design Guidelines
+
+### Visual Design System
+
+**Color Palette:**
+- **Primary Green (oklch(0.42 0.19 160)):** Health, growth, nature - used for CTAs and positive actions
+- **Secondary Sage (oklch(0.88 0.05 130)):** Calm, supportive - used for secondary UI elements
+- **Accent Teal (oklch(0.70 0.15 150)):** Energy, vitality - used for highlights and active states
+- **Background Warm Cream (oklch(0.98 0.005 85)):** Soft, non-clinical - reduces eye strain
+- **Text Charcoal (oklch(0.15 0.01 85)):** Clear, readable - high contrast with background
+
+**Typography:**
+- **Headings:** Crimson Pro (serif) - elegant, trustworthy, health-conscious
+- **Body:** Inter (sans-serif) - clean, modern, highly readable
+- **Hierarchy:**
+  - H1 (App Title): Crimson Pro Bold, 32-40px
+  - H2 (Page Title): Crimson Pro Semibold, 24-28px
+  - H3 (Section): Inter Semibold, 18-20px
+  - Body: Inter Regular, 16px, line-height 1.6
+  - Small: Inter Regular, 14px (for metadata, timestamps)
+
+**Spacing & Layout:**
+- Container max-width: 1200px (7xl)
+- Content padding: 4-6 units (1-1.5rem)
+- Card padding: 6 units (1.5rem)
+- Section gaps: 8 units (2rem)
+- Element gaps: 4 units (1rem)
+- Grid: 12-column responsive grid
+
+**Border Radius:**
+- Cards: 0.75rem (rounded-xl)
+- Buttons: 0.75rem
+- Inputs: 0.75rem
+- Badges: 9999px (fully rounded)
+- Consistent rounding creates visual harmony
+
+**Shadows:**
+- Subtle elevation for cards (no harsh shadows)
+- Hover states: slight shadow increase
+- Focus states: ring with primary color
+
+### Component Design Patterns
+
+**Navigation:**
+- Horizontal tab navigation for main pages
+- Active tab highlighted with primary color
+- Icons + labels for clarity
+- Sticky navigation on scroll (optional)
+
+**Cards:**
+- White background (#FFFFFF) on cream page background
+- Subtle border (border-border)
+- Generous padding (6-8 units)
+- Clear hierarchy: title → metadata → content → actions
+- Hover states for interactive cards
+
+**Buttons:**
+- Primary: Solid primary color, white text, bold
+- Secondary: Outline, primary color border and text
+- Ghost: Text only, subtle hover background
+- Destructive: Red color for dangerous actions
+- Icon buttons: Phosphor icons, consistent size (20-24px)
+
+**Forms & Inputs:**
+- Clear labels above inputs
+- Placeholder text for examples
+- Inline validation (success/error states)
+- Helper text below for guidance
+- Focus states with ring
+
+**Data Visualization:**
+- Progress bars for nutrient %DV (color-coded by status)
+- Line charts for trends over time (Recharts)
+- Badge indicators for status (Excellent, Good, Fair, Poor)
+- Trend arrows (↑↓) for day-over-day changes
+- Color coding:
+  - Green: Optimal, sufficient, positive
+  - Yellow: Approaching, moderate, caution
+  - Orange: Low, needs attention
+  - Red: Critical, urgent, danger
+
+**Feedback & Notifications:**
+- Toast notifications (Sonner) for actions
+- Success: Green with checkmark icon
+- Error: Red with warning icon
+- Info: Blue with info icon
+- Loading states: Skeleton screens or spinners
+- Empty states: Friendly illustrations + CTA
+
+**Gamification Elements:**
+- Achievement badges with rarity colors (common, rare, epic, legendary)
+- Progress bars with smooth animations
+- Streak counter with fire emoji 🔥
+- Score cards with large numbers and trend indicators
+- Celebration animations on milestones (Framer Motion)
+
+### Responsive Design
+
+**Breakpoints:**
+- Mobile: < 768px (sm)
+- Tablet: 768px - 1024px (md)
+- Desktop: > 1024px (lg)
+
+**Mobile Adaptations:**
+- Navigation: Collapse to hamburger menu or bottom nav
+- Cards: Full-width, stack vertically
+- Tables: Horizontal scroll or card view
+- Forms: Full-width inputs, larger touch targets (44px min)
+- Charts: Simplified, key metrics only
+
+**Desktop Enhancements:**
+- Multi-column layouts (sidebar + content)
+- Hover states and tooltips
+- Keyboard shortcuts (future)
+- Expanded charts and visualizations
+
+### Accessibility
+
+**WCAG AA Compliance:**
+- Color contrast ratio: 4.5:1 for normal text, 3:1 for large text
+- All interactive elements have focus states
+- Form inputs have labels (not just placeholders)
+- Error messages are descriptive and actionable
+- Semantic HTML (headings, landmarks, lists)
+
+**Keyboard Navigation:**
+- Tab through interactive elements in logical order
+- Enter/Space to activate buttons
+- Escape to close modals/dialogs
+- Arrow keys for navigation menus (future)
+
+**Screen Reader Support:**
+- ARIA labels for icon-only buttons
+- ARIA live regions for dynamic content (toast notifications)
+- Descriptive alt text for images
+- Landmarks (header, main, nav, footer)
+
+**Motion Preferences:**
+- Respect `prefers-reduced-motion` media query
+- Disable animations for users who opt out
+- Provide instant feedback instead of transitions
 
 ---
 
