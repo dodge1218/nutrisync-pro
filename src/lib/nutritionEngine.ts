@@ -329,6 +329,75 @@ export function generateSynergySuggestions(logs: FoodLog[], totals: NutrientTota
     })
   }
 
+  const vitaminDGap = (totals.vitaminD / getNutrientDV('vitaminD')) * 100
+  const hasVitaminKFoods = logs.some(log => log.food.vitaminK > 20)
+  if (vitaminDGap < 50 && !hasVitaminKFoods) {
+    suggestions.push({
+      type: 'add-enhancer',
+      title: 'Vitamin D + K2: The Bone Health Duo',
+      description: 'Low vitamin D detected, and no vitamin K foods. These work together to direct calcium to bones, not arteries.',
+      priority: 'high',
+      warmOption: 'Add fatty fish (salmon, mackerel) with sautéed kale or spinach for the D+K synergy.'
+    })
+  }
+
+  const hasFatSolubleVitamins = totals.vitaminA > 100 || totals.vitaminD > 2 || totals.vitaminE > 2
+  const hasHealthyFats = totals.fat > 10
+  if (hasFatSolubleVitamins && !hasHealthyFats) {
+    suggestions.push({
+      type: 'add-enhancer',
+      title: 'Add Healthy Fats for Vitamin Absorption',
+      description: 'You have fat-soluble vitamins (A, D, E, K) but low dietary fat. These vitamins need fat to be absorbed.',
+      priority: 'high',
+      warmOption: 'Drizzle olive oil on vegetables, add avocado to meals, or eat nuts with your vitamin-rich foods.'
+    })
+  }
+
+  const zincGap = (totals.zinc / getNutrientDV('zinc')) * 100
+  if (zincGap < 60) {
+    suggestions.push({
+      type: 'add-enhancer',
+      title: 'Boost Zinc for Immune Function',
+      description: 'Zinc is critical for immune health, wound healing, and hormone production. You\'re running low.',
+      priority: 'medium',
+      warmOption: 'Add pumpkin seeds (roasted), beef, oysters, or chickpeas to boost zinc intake.'
+    })
+  }
+
+  const proteinGap = (totals.protein / getNutrientDV('protein')) * 100
+  if (proteinGap < 70) {
+    suggestions.push({
+      type: 'add-enhancer',
+      title: 'Increase Protein for Muscle & Satiety',
+      description: 'Protein intake is below optimal levels. Adequate protein supports muscle mass, recovery, and keeps you full.',
+      priority: 'medium',
+      warmOption: 'Add chicken breast, Greek yogurt, lentils, or eggs to reach protein goals.'
+    })
+  }
+
+  const calciumGap = (totals.calcium / getNutrientDV('calcium')) * 100
+  const hasMagnesium = totals.magnesium > 150
+  if (calciumGap < 60 && hasMagnesium) {
+    suggestions.push({
+      type: 'add-enhancer',
+      title: 'Balance Calcium with Your Magnesium',
+      description: 'You have decent magnesium but low calcium. These minerals work together for bone and muscle health.',
+      priority: 'medium',
+      warmOption: 'Add kefir, sardines with bones, or fortified plant milk to balance the mineral ratio.'
+    })
+  }
+
+  const b12Gap = (totals.vitaminB12 / getNutrientDV('vitaminB12')) * 100
+  if (b12Gap < 50) {
+    suggestions.push({
+      type: 'add-enhancer',
+      title: 'Critical B12 Deficiency Detected',
+      description: 'Vitamin B12 is essential for nerve function, DNA synthesis, and energy. Deficiency causes fatigue and neurological issues.',
+      priority: 'high',
+      warmOption: 'Add liver (nature\'s B12 bomb), salmon, eggs, or fortified nutritional yeast immediately.'
+    })
+  }
+
   return suggestions
 }
 
@@ -493,39 +562,101 @@ export function checkStapleCompliance(logs: FoodLog[], weeklyLogs?: FoodLog[]): 
 export function generateTopFixes(
   gaps: NutrientGap[], 
   synergySuggestions: SynergySuggestion[], 
-  wellnessAudit: WellnessAudit
+  wellnessAudit: WellnessAudit,
+  totals: NutrientTotals
 ): string[] {
-  const fixes: string[] = []
+  const fixes: Array<{ priority: number; text: string }> = []
 
-  const criticalGaps = gaps.filter(g => g.severity === 'critical').slice(0, 2)
+  const criticalGaps = gaps.filter(g => g.severity === 'critical')
+  const moderateGaps = gaps.filter(g => g.severity === 'moderate')
+
   criticalGaps.forEach(gap => {
-    if (gap.nutrient === 'fiber') {
-      fixes.push('Add 1-2 servings of cooked vegetables or lentils to reach fiber target')
-    } else if (gap.nutrient === 'magnesium') {
-      fixes.push('Add pumpkin seeds (1 oz) or cooked spinach (1 cup) for magnesium boost')
-    } else if (gap.nutrient === 'vitaminD') {
-      fixes.push('Add fatty fish (salmon, sardines) or consider vitamin D3 supplement')
-    } else if (gap.nutrient === 'iron') {
-      fixes.push('Add iron-rich food (lentils, liver) with vitamin C source (bell pepper, broccoli)')
-    } else if (gap.nutrient === 'potassium') {
-      fixes.push('Add baked sweet potato or cooked spinach for potassium')
+    let priority = 10
+    let text = ''
+
+    if (gap.nutrient === 'fiber' && gap.percentOfDV < 50) {
+      text = `Boost fiber to ${Math.round(getNutrientDV('fiber') * 0.8)}g - Add lentil soup (16g), cooked broccoli (5g), or oatmeal (8g)`
+      priority = 10
+    } else if (gap.nutrient === 'magnesium' && gap.percentOfDV < 50) {
+      const needed = Math.round(getNutrientDV('magnesium') * 0.8 - gap.current)
+      text = `Need ${needed}mg magnesium - Add pumpkin seeds 1oz (150mg), dark chocolate 1oz (64mg), or spinach 1 cup (157mg)`
+      priority = 9
+    } else if (gap.nutrient === 'vitaminD' && gap.percentOfDV < 50) {
+      text = `Vitamin D critically low - Eat salmon 3oz (14mcg), sardines (2.7mcg), or consider D3 supplement (2000 IU)`
+      priority = 8
+    } else if (gap.nutrient === 'iron' && gap.percentOfDV < 50) {
+      const hasVitaminC = totals.vitaminC > 30
+      if (hasVitaminC) {
+        text = `Iron at ${Math.round(gap.percentOfDV)}% - Add lentils 1 cup (6.6mg) or liver 3oz (5mg)`
+      } else {
+        text = `Iron critically low AND no vitamin C - Add lentils with bell pepper or liver with broccoli for 3x absorption`
+        priority = 11
+      }
+    } else if (gap.nutrient === 'potassium' && gap.percentOfDV < 50) {
+      const needed = Math.round(getNutrientDV('potassium') * 0.8 - gap.current)
+      text = `Need ${needed}mg potassium - Baked sweet potato (542mg), avocado (487mg), or spinach 1 cup (839mg)`
+      priority = 7
+    } else if (gap.nutrient === 'vitaminC' && gap.percentOfDV < 50) {
+      text = `Vitamin C low (${Math.round(gap.percentOfDV)}%) - Add bell pepper (120mg), broccoli 1 cup (81mg), or orange (70mg)`
+      priority = 6
+    } else if (gap.nutrient === 'vitaminB12' && gap.percentOfDV < 50) {
+      text = `B12 critically low - Add salmon 3oz (4.8mcg), liver 3oz (70mcg), or fortified nutritional yeast`
+      priority = 8
+    } else if (gap.nutrient === 'calcium' && gap.percentOfDV < 50) {
+      text = `Calcium low - Add kefir 1 cup (317mg), sardines with bones (325mg), or fortified plant milk`
+      priority = 7
+    } else if (gap.nutrient === 'zinc' && gap.percentOfDV < 50) {
+      text = `Zinc deficient (${Math.round(gap.percentOfDV)}%) - Pumpkin seeds 1oz (2.2mg), beef 3oz (7mg), or oysters (32mg)`
+      priority = 7
+    }
+
+    if (text) {
+      fixes.push({ priority, text })
     }
   })
 
-  if (wellnessAudit.fermentedFoodCount === 0) {
-    fixes.push('Add 1 serving of fermented food (kefir, yogurt, sauerkraut) for gut health')
+  if (wellnessAudit.fermentedFoodCount === 0 && wellnessAudit.gbdi < 60) {
+    fixes.push({ 
+      priority: 9, 
+      text: 'Gut health critical - Add kefir (1 cup, 10+ probiotic strains) or sauerkraut (½ cup, billions CFU)' 
+    })
   }
 
-  if (wellnessAudit.adrenalLoad > 60) {
-    fixes.push('Reduce caffeine and add magnesium-rich foods to support stress response')
+  if (wellnessAudit.adrenalLoad > 70) {
+    fixes.push({ 
+      priority: 8, 
+      text: `Adrenal load high (${Math.round(wellnessAudit.adrenalLoad)}/100) - Cut caffeine, add magnesium, increase vitamin C` 
+    })
   }
 
-  const topSynergySuggestion = synergySuggestions.find(s => s.priority === 'high')
-  if (topSynergySuggestion && fixes.length < 3) {
-    fixes.push(topSynergySuggestion.warmOption || topSynergySuggestion.description)
+  if (wellnessAudit.plantDiversityCount < 10 && moderateGaps.length > 3) {
+    fixes.push({
+      priority: 7,
+      text: `Low plant diversity (${wellnessAudit.plantDiversityCount} types) - Aim for 30+ different plants/week for microbiome health`
+    })
   }
 
-  return fixes.slice(0, 3)
+  const highPrioritySynergy = synergySuggestions.find(s => s.priority === 'high')
+  if (highPrioritySynergy && fixes.length < 5) {
+    fixes.push({
+      priority: 8,
+      text: highPrioritySynergy.warmOption || highPrioritySynergy.description
+    })
+  }
+
+  const proteinGap = gaps.find(g => g.nutrient === 'protein')
+  if (proteinGap && proteinGap.percentOfDV < 70) {
+    const needed = Math.round(getNutrientDV('protein') * 0.9 - proteinGap.current)
+    fixes.push({
+      priority: 6,
+      text: `Protein at ${Math.round(proteinGap.percentOfDV)}% - Add ${needed}g more (1 chicken breast = 53g, Greek yogurt = 20g)`
+    })
+  }
+
+  return fixes
+    .sort((a, b) => b.priority - a.priority)
+    .slice(0, 3)
+    .map(f => f.text)
 }
 
 export function analyzeDailyIntake(logs: FoodLog[], userProfile?: { staples?: boolean }): AnalysisResult {
@@ -535,7 +666,7 @@ export function analyzeDailyIntake(logs: FoodLog[], userProfile?: { staples?: bo
   const synergySuggestions = generateSynergySuggestions(logs, totals)
   const wellnessAudit = performWellnessAudit(logs, totals)
   const gutSupportScore = calculateGutSupportScore(logs, totals)
-  const topFixes = generateTopFixes(gaps, synergySuggestions, wellnessAudit)
+  const topFixes = generateTopFixes(gaps, synergySuggestions, wellnessAudit, totals)
 
   const result: AnalysisResult = {
     totals,
