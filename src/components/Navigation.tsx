@@ -1,5 +1,5 @@
 import { Button } from './ui/button'
-import { House, Notepad, Lightbulb, Book, Gear } from '@phosphor-icons/react'
+import { House, Notepad, Lightbulb, Book, Trophy, Gear } from '@phosphor-icons/react'
 import type { Page } from '../App'
 
 interface NavigationProps {
@@ -13,6 +13,7 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
     { page: 'log-food', label: 'Log Food', icon: <Notepad weight="fill" /> },
     { page: 'recommendations', label: 'Insights', icon: <Lightbulb weight="fill" /> },
     { page: 'education', label: 'Learn', icon: <Book weight="fill" /> },
+    { page: 'achievements', label: 'Achievements', icon: <Trophy weight="fill" /> },
     { page: 'settings', label: 'Settings', icon: <Gear weight="fill" /> },
   ]
 

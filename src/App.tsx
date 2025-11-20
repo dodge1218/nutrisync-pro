@@ -6,11 +6,12 @@ import LogFood from './components/pages/LogFood'
 import Recommendations from './components/pages/Recommendations'
 import Education from './components/pages/Education'
 import Settings from './components/pages/Settings'
+import Achievements from './components/pages/Achievements'
 import DisclaimerBanner from './components/DisclaimerBanner'
 import Navigation from './components/Navigation'
 import type { FoodLog } from './lib/nutritionEngine'
 
-export type Page = 'dashboard' | 'log-food' | 'recommendations' | 'education' | 'settings'
+export type Page = 'dashboard' | 'log-food' | 'recommendations' | 'education' | 'achievements' | 'settings'
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard')
@@ -50,6 +51,9 @@ function App() {
           )}
           {currentPage === 'education' && (
             <Education />
+          )}
+          {currentPage === 'achievements' && (
+            <Achievements foodLogs={logs} />
           )}
           {currentPage === 'settings' && (
             <Settings />

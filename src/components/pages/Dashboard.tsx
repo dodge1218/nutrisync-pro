@@ -7,7 +7,6 @@ import { analyzeDailyIntake, type FoodLog } from '../../lib/nutritionEngine'
 import { NUTRIENT_DISPLAY_NAMES, type NutrientKey } from '../../lib/dailyValues'
 import GBDIDisplay from '../GBDIDisplay'
 import StreakTracker from '../StreakTracker'
-import AchievementsPanel from '../AchievementsPanel'
 import GBDIHistory from '../GBDIHistory'
 import { useKV } from '@github/spark/hooks'
 
@@ -147,13 +146,6 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
           </AlertDescription>
         </Alert>
       )}
-
-      <AchievementsPanel 
-        foodLogs={foodLogs}
-        gbdi={analysis.wellnessAudit.gbdi}
-        fermentedFoodCount={analysis.wellnessAudit.fermentedFoodCount}
-        plantDiversityCount={analysis.wellnessAudit.plantDiversityCount}
-      />
 
       <GBDIHistory 
         currentGbdi={analysis.wellnessAudit.gbdi}

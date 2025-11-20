@@ -4,7 +4,8 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Badge } from '../ui/badge'
-import { Plus, Trash, Check } from '@phosphor-icons/react'
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group'
+import { Plus, Trash, Check, Storefront } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { FOODS_DATABASE, type Food } from '../../data/foods'
 import type { FoodLog } from '../../lib/nutritionEngine'
@@ -20,13 +21,15 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedFood, setSelectedFood] = useState<Food | null>(null)
   const [quantity, setQuantity] = useState('1')
+  const [selectedPortion, setSelectedPortion] = useState<number>(1)
 
   const searchResults = searchQuery.length > 0
     ? FOODS_DATABASE.filter(food =>
         food.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         food.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        food.tags.some(tag => tag.includes(searchQuery.toLowerCase()))
-      ).slice(0, 8)
+        food.tags.some(tag => tag.includes(searchQuery.toLowerCase())) ||
+        (food.brand && food.brand.toLowerCase().includes(searchQuery.toLowerCase()))
+      ).slice(0, 10)
     : []
 
   const handleAddLog = () => {
@@ -41,11 +44,13 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
       return
     }
 
+    const finalQuantity = selectedPortion * quantityNum
+
     const newLog: FoodLog = {
       id: `${Date.now()}-${Math.random()}`,
       foodId: selectedFood.id,
       food: selectedFood,
-      quantity: quantityNum,
+      quantity: finalQuantity,
       timestamp: new Date().toISOString(),
     }
 
@@ -54,6 +59,7 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
     setSelectedFood(null)
     setSearchQuery('')
     setQuantity('1')
+    setSelectedPortion(1)
   }
 
   const handleQuickAdd = (foodId: string) => {
@@ -120,10 +126,10 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="search">Search Foods</Label>
+            <Label htmlFor="search">Search Foods & Brands</Label>
             <Input
               id="search"
-              placeholder="Type to search (e.g., 'lentils', 'salmon', 'kefir')..."
+              placeholder="Type to search (e.g., 'Fage yogurt', 'salmon', 'Lifeway kefir')..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -139,11 +145,20 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
                     onClick={() => {
                       setSelectedFood(food)
                       setSearchQuery('')
+                      setSelectedPortion(1)
                     }}
                     className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted transition-colors text-left"
                   >
                     <div>
-                      <div className="font-medium">{food.name}</div>
+                      <div className="flex items-center gap-2">
+                        <div className="font-medium">{food.name}</div>
+                        {food.brand && (
+                          <Badge variant="secondary" className="gap-1 text-xs">
+                            <Storefront className="h-3 w-3" weight="fill" />
+                            {food.brand}
+                          </Badge>
+                        )}
+                      </div>
                       <div className="text-sm text-muted-foreground">{food.servingSize} · {food.calories} cal</div>
                       <div className="flex gap-1 mt-1 flex-wrap">
                         {food.tags.slice(0, 3).map(tag => (
@@ -163,10 +178,37 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
           {selectedFood && (
             <Card className="border-primary">
               <CardHeader>
-                <CardTitle className="text-lg">Add {selectedFood.name}</CardTitle>
-                <CardDescription>{selectedFood.servingSize} · {selectedFood.calories} cal</CardDescription>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-lg">Add {selectedFood.name}</CardTitle>
+                  {selectedFood.brand && (
+                    <Badge variant="outline" className="gap-1">
+                      <Storefront className="h-3 w-3" weight="fill" />
+                      {selectedFood.brand}
+                    </Badge>
+                  )}
+                </div>
+                <CardDescription>{selectedFood.servingSize} · {selectedFood.calories} cal per serving</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                {selectedFood.portionOptions && selectedFood.portionOptions.length > 0 && (
+                  <div className="space-y-2">
+                    <Label>Select Portion Size</Label>
+                    <RadioGroup value={selectedPortion.toString()} onValueChange={(val) => setSelectedPortion(parseFloat(val))}>
+                      {selectedFood.portionOptions.map((option, idx) => (
+                        <div key={idx} className="flex items-center space-x-2">
+                          <RadioGroupItem value={option.multiplier.toString()} id={`portion-${idx}`} />
+                          <Label htmlFor={`portion-${idx}`} className="font-normal cursor-pointer">
+                            {option.label}
+                            <span className="text-muted-foreground ml-2">
+                              ({Math.round(selectedFood.calories * option.multiplier)} cal)
+                            </span>
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <Label htmlFor="quantity">How many servings?</Label>
                   <Input
@@ -177,6 +219,9 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
                     value={quantity}
                     onChange={(e) => setQuantity(e.target.value)}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Total: {Math.round(selectedFood.calories * selectedPortion * parseFloat(quantity || '1'))} calories
+                  </p>
                 </div>
 
                 <div className="flex gap-2">
@@ -184,7 +229,10 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
                     <Check />
                     Add to Log
                   </Button>
-                  <Button variant="outline" onClick={() => setSelectedFood(null)}>
+                  <Button variant="outline" onClick={() => {
+                    setSelectedFood(null)
+                    setSelectedPortion(1)
+                  }}>
                     Cancel
                   </Button>
                 </div>
@@ -214,7 +262,14 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
                   className="flex items-center justify-between p-3 border rounded-lg"
                 >
                   <div>
-                    <div className="font-medium">{log.food.name}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="font-medium">{log.food.name}</div>
+                      {log.food.brand && (
+                        <Badge variant="secondary" className="text-xs">
+                          {log.food.brand}
+                        </Badge>
+                      )}
+                    </div>
                     <div className="text-sm text-muted-foreground">
                       {log.quantity} × {log.food.servingSize} · {Math.round(log.food.calories * log.quantity)} cal
                     </div>

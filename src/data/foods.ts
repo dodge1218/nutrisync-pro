@@ -36,6 +36,8 @@ export interface Food {
   gutStressors: boolean
   warmSuitable: boolean
   category: string
+  brand?: string
+  portionOptions?: { label: string; multiplier: number }[]
 }
 
 export const FOODS_DATABASE: Food[] = [
@@ -241,7 +243,13 @@ export const FOODS_DATABASE: Food[] = [
     tags: ['fermented', 'probiotic', 'cultured-dairy', 'gut-friendly'],
     gutStressors: false,
     warmSuitable: false,
-    category: 'dairy'
+    category: 'dairy',
+    portionOptions: [
+      { label: '1/2 cup', multiplier: 0.5 },
+      { label: '1 cup (standard)', multiplier: 1 },
+      { label: '1.5 cups', multiplier: 1.5 },
+      { label: '2 cups', multiplier: 2 }
+    ]
   },
   {
     id: 'sauerkraut',
@@ -377,7 +385,13 @@ export const FOODS_DATABASE: Food[] = [
     tags: ['animal-protein', 'nutrient-dense'],
     gutStressors: false,
     warmSuitable: true,
-    category: 'protein'
+    category: 'protein',
+    portionOptions: [
+      { label: '1 egg', multiplier: 0.5 },
+      { label: '2 eggs (standard)', multiplier: 1 },
+      { label: '3 eggs', multiplier: 1.5 },
+      { label: '4 eggs', multiplier: 2 }
+    ]
   },
   {
     id: 'blueberries',
@@ -479,7 +493,13 @@ export const FOODS_DATABASE: Food[] = [
     tags: ['whole-grain', 'fiber-rich', 'beta-glucan'],
     gutStressors: false,
     warmSuitable: true,
-    category: 'grains'
+    category: 'grains',
+    portionOptions: [
+      { label: '1/2 cup', multiplier: 0.5 },
+      { label: '1 cup (standard)', multiplier: 1 },
+      { label: '1.5 cups', multiplier: 1.5 },
+      { label: '2 cups', multiplier: 2 }
+    ]
   },
   {
     id: 'greek-yogurt',
@@ -513,7 +533,14 @@ export const FOODS_DATABASE: Food[] = [
     tags: ['fermented', 'probiotic', 'cultured-dairy', 'gut-friendly', 'protein'],
     gutStressors: false,
     warmSuitable: false,
-    category: 'dairy'
+    category: 'dairy',
+    portionOptions: [
+      { label: '1/2 cup (85g)', multiplier: 0.5 },
+      { label: '3/4 cup (128g)', multiplier: 0.75 },
+      { label: '1 cup / 170g (standard)', multiplier: 1 },
+      { label: '1 container / 5.3oz (150g)', multiplier: 0.88 },
+      { label: '2 containers / 10.6oz (300g)', multiplier: 1.76 }
+    ]
   },
   {
     id: 'broccoli',
@@ -752,6 +779,242 @@ export const FOODS_DATABASE: Food[] = [
     gutStressors: false,
     warmSuitable: true,
     category: 'treats'
+  },
+  {
+    id: 'fage-greek-yogurt',
+    name: 'Fage Total 0% Greek Yogurt',
+    servingSize: '1 container / 5.3oz (150g)',
+    calories: 90,
+    protein: 15,
+    carbs: 5,
+    fat: 0,
+    fiber: 0,
+    vitaminA: 0,
+    vitaminC: 0,
+    vitaminD: 0,
+    vitaminE: 0,
+    vitaminK: 0,
+    vitaminB1: 0.1,
+    vitaminB2: 0.3,
+    vitaminB3: 0.2,
+    vitaminB6: 0.1,
+    vitaminB9: 10,
+    vitaminB12: 1.2,
+    calcium: 150,
+    iron: 0,
+    magnesium: 20,
+    zinc: 0.9,
+    selenium: 15,
+    copper: 18,
+    manganese: 0,
+    sodium: 50,
+    potassium: 210,
+    tags: ['fermented', 'probiotic', 'cultured-dairy', 'gut-friendly', 'protein'],
+    gutStressors: false,
+    warmSuitable: false,
+    category: 'dairy',
+    brand: 'Fage',
+    portionOptions: [
+      { label: '1 container / 5.3oz (standard)', multiplier: 1 },
+      { label: '2 containers / 10.6oz', multiplier: 2 }
+    ]
+  },
+  {
+    id: 'chobani-greek-yogurt',
+    name: 'Chobani Plain Non-Fat Greek Yogurt',
+    servingSize: '1 container / 5.3oz (150g)',
+    calories: 80,
+    protein: 15,
+    carbs: 6,
+    fat: 0,
+    fiber: 0,
+    vitaminA: 0,
+    vitaminC: 0,
+    vitaminD: 0,
+    vitaminE: 0,
+    vitaminK: 0,
+    vitaminB1: 0.1,
+    vitaminB2: 0.3,
+    vitaminB3: 0.2,
+    vitaminB6: 0.1,
+    vitaminB9: 10,
+    vitaminB12: 1.0,
+    calcium: 130,
+    iron: 0,
+    magnesium: 18,
+    zinc: 0.8,
+    selenium: 14,
+    copper: 15,
+    manganese: 0,
+    sodium: 55,
+    potassium: 200,
+    tags: ['fermented', 'probiotic', 'cultured-dairy', 'gut-friendly', 'protein'],
+    gutStressors: false,
+    warmSuitable: false,
+    category: 'dairy',
+    brand: 'Chobani',
+    portionOptions: [
+      { label: '1 container / 5.3oz (standard)', multiplier: 1 },
+      { label: '2 containers / 10.6oz', multiplier: 2 }
+    ]
+  },
+  {
+    id: 'lifeway-kefir',
+    name: 'Lifeway Plain Kefir',
+    servingSize: '1 cup (243g)',
+    calories: 140,
+    protein: 11,
+    carbs: 12,
+    fat: 5,
+    fiber: 0,
+    vitaminA: 150,
+    vitaminC: 0,
+    vitaminD: 3,
+    vitaminE: 0,
+    vitaminK: 0,
+    vitaminB1: 0.1,
+    vitaminB2: 0.5,
+    vitaminB3: 0.2,
+    vitaminB6: 0.1,
+    vitaminB9: 24,
+    vitaminB12: 1.5,
+    calcium: 390,
+    iron: 0,
+    magnesium: 29,
+    zinc: 1.2,
+    selenium: 8,
+    copper: 24,
+    manganese: 0,
+    sodium: 125,
+    potassium: 376,
+    tags: ['fermented', 'probiotic', 'cultured-dairy', 'gut-friendly', '12-live-cultures'],
+    gutStressors: false,
+    warmSuitable: false,
+    category: 'dairy',
+    brand: 'Lifeway',
+    portionOptions: [
+      { label: '1/2 cup', multiplier: 0.5 },
+      { label: '1 cup (standard)', multiplier: 1 },
+      { label: '1 bottle / 8oz', multiplier: 1 }
+    ]
+  },
+  {
+    id: 'siggi-skyr',
+    name: "Siggi's Plain Whole Milk Skyr",
+    servingSize: '1 container / 5.3oz (150g)',
+    calories: 110,
+    protein: 14,
+    carbs: 8,
+    fat: 3,
+    fiber: 0,
+    vitaminA: 100,
+    vitaminC: 0,
+    vitaminD: 0,
+    vitaminE: 0,
+    vitaminK: 0,
+    vitaminB1: 0.1,
+    vitaminB2: 0.4,
+    vitaminB3: 0.2,
+    vitaminB6: 0.1,
+    vitaminB9: 12,
+    vitaminB12: 1.4,
+    calcium: 150,
+    iron: 0,
+    magnesium: 20,
+    zinc: 1.0,
+    selenium: 16,
+    copper: 19,
+    manganese: 0,
+    sodium: 60,
+    potassium: 220,
+    tags: ['fermented', 'probiotic', 'cultured-dairy', 'gut-friendly', 'protein', 'simple-ingredients'],
+    gutStressors: false,
+    warmSuitable: false,
+    category: 'dairy',
+    brand: "Siggi's",
+    portionOptions: [
+      { label: '1 container / 5.3oz (standard)', multiplier: 1 },
+      { label: '2 containers / 10.6oz', multiplier: 2 }
+    ]
+  },
+  {
+    id: 'quaker-oats',
+    name: 'Quaker Old Fashioned Oats',
+    servingSize: '1/2 cup dry (40g)',
+    calories: 150,
+    protein: 5,
+    carbs: 27,
+    fat: 3,
+    fiber: 4,
+    vitaminA: 0,
+    vitaminC: 0,
+    vitaminD: 0,
+    vitaminE: 0.2,
+    vitaminK: 0,
+    vitaminB1: 0.2,
+    vitaminB2: 0.1,
+    vitaminB3: 0.5,
+    vitaminB6: 0,
+    vitaminB9: 12,
+    vitaminB12: 0,
+    calcium: 20,
+    iron: 1.8,
+    magnesium: 60,
+    zinc: 1.4,
+    selenium: 12,
+    copper: 180,
+    manganese: 1.3,
+    sodium: 0,
+    potassium: 140,
+    tags: ['whole-grain', 'fiber-rich', 'beta-glucan', 'heart-healthy'],
+    gutStressors: false,
+    warmSuitable: true,
+    category: 'grains',
+    brand: 'Quaker',
+    portionOptions: [
+      { label: '1/2 cup dry (standard)', multiplier: 1 },
+      { label: '3/4 cup dry', multiplier: 1.5 },
+      { label: '1 cup dry', multiplier: 2 }
+    ]
+  },
+  {
+    id: 'wild-planet-sardines',
+    name: 'Wild Planet Wild Sardines in Extra Virgin Olive Oil',
+    servingSize: '1 can / 4.4oz (125g)',
+    calories: 200,
+    protein: 24,
+    carbs: 0,
+    fat: 12,
+    fiber: 0,
+    vitaminA: 60,
+    vitaminC: 0,
+    vitaminD: 6,
+    vitaminE: 2,
+    vitaminK: 3,
+    vitaminB1: 0.1,
+    vitaminB2: 0.3,
+    vitaminB3: 6,
+    vitaminB6: 0.2,
+    vitaminB9: 12,
+    vitaminB12: 10,
+    calcium: 460,
+    iron: 3.6,
+    magnesium: 48,
+    zinc: 1.6,
+    selenium: 65,
+    copper: 230,
+    manganese: 0.1,
+    sodium: 360,
+    potassium: 480,
+    tags: ['animal-protein', 'omega-3', 'calcium-rich', 'vitamin-d', 'wild-caught', 'sustainable'],
+    gutStressors: false,
+    warmSuitable: true,
+    category: 'protein',
+    brand: 'Wild Planet',
+    portionOptions: [
+      { label: '1 can / 4.4oz (standard)', multiplier: 1 },
+      { label: '1/2 can', multiplier: 0.5 }
+    ]
   }
 ]
 
