@@ -68,11 +68,28 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
   }
 
   const addMealToPlan = (templateId: string, day: number, mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack') => {
+    const defaultTimes = {
+      breakfast: '07:00',
+      lunch: '12:00',
+      dinner: '18:00',
+      snack: '15:00'
+    }
+
+    const now = new Date()
+    const targetDay = new Date(now)
+    const currentDay = now.getDay() || 7
+    const daysToAdd = (day - currentDay + 7) % 7
+    targetDay.setDate(now.getDate() + daysToAdd)
+
+    const [hours, minutes] = defaultTimes[mealType].split(':').map(Number)
+    targetDay.setHours(hours, minutes, 0, 0)
+
     const newPlannedMeal: PlannedMeal = {
       id: `${Date.now()}-${Math.random()}`,
       templateId,
       dayOfWeek: day,
       mealType,
+      timestamp: targetDay.toISOString(),
       supplements: []
     }
 
@@ -116,6 +133,8 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
     const template = allTemplates.find(t => t.id === plannedMeal.templateId)
     if (!template) return
 
+    const timestamp = plannedMeal.timestamp || new Date().toISOString()
+
     const newLogs: FoodLog[] = template.ingredients.map(ingredient => {
       const food = FOODS_DATABASE.find(f => f.id === ingredient.foodId)
       if (!food) return null
@@ -125,7 +144,7 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
         foodId: food.id,
         food,
         quantity: ingredient.quantity,
-        timestamp: new Date().toISOString(),
+        timestamp,
         mealType: plannedMeal.mealType,
       }
     }).filter(Boolean) as FoodLog[]

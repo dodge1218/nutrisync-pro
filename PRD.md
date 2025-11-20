@@ -153,6 +153,47 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Plant diversity counter:** Track unique plant foods consumed
 - **Guided gap filling:** System identifies deficiencies and guides toward foods that close multiple gaps efficiently
 
+#### 1.7 CircaFast - Sleep-Optimized Meal Timing (NEW)
+- **Circadian meal timing analysis:** Analyzes when user eats to optimize sleep quality
+  - Tracks meal timestamps automatically from logged meals
+  - Detects eating patterns over time (last meal time, eating window)
+  - Calculates "digestive buffer" before typical sleep time
+- **Sleep science principles from Blueprint protocol:**
+  - 3-4 hour digestion window before sleep (optimal: last meal by 6-7pm for 10pm sleep)
+  - Early eating window optimization (finish eating earlier for better sleep)
+  - Meal composition impact on sleep (heavy proteins/fats delay digestion)
+  - Caffeine cutoff timing (8-10 hours before sleep)
+- **Meal timing dashboard:**
+  - Visual timeline showing meals plotted against optimal circadian window
+  - "Sleep readiness score" based on last meal timing
+  - Warnings for late meals, heavy dinners, evening caffeine
+  - Personalized recommendations based on detected patterns
+- **Time input for meals:**
+  - User selects time when logging/planning meals
+  - Default times suggested based on meal type (breakfast: 7am, lunch: 12pm, dinner: 6pm)
+  - Time picker for custom scheduling
+- **Pattern detection & guidance:**
+  - Identifies if user is a "late eater" (meals after 8pm frequently)
+  - Calculates average "eating window" (first to last meal)
+  - Suggests earlier meal times when patterns harm sleep quality
+  - Tracks improvements over time
+- **Sleep optimization features:**
+  - "Fast start" timer: countdown to when digestion completes
+  - Meal composition warnings: "High-fat meal will take 4-5 hours to digest"
+  - Alternative suggestions: "Try lighter dinner options for better sleep"
+  - Educational content on circadian eating, autophagy, sleep quality
+- **Bryan Johnson Blueprint principles:**
+  - Early time-restricted feeding (eTRF) support
+  - Last meal by 5-6pm guidance for optimal results
+  - Meal sequencing for metabolic health
+  - Sleep quality as primary metric
+  - Anti-inflammatory, gut-friendly evening meals
+- **Integration with existing features:**
+  - Works with Meal Planner to suggest optimal meal times
+  - Analyzes Food Budget data for meal composition
+  - Provides CircaFast-specific achievements (7-day early eating streak, etc.)
+  - Shows sleep optimization score alongside GBDI on dashboard
+
 #### 2. Gamification System (NEW)
 - **GBDI Score Display:** Large, animated score card with trend indicators (↑↓) comparing to previous day
 - **Streak Tracker:** Daily logging streak with visual calendar, achievements at 3, 7, 14, 30+ days

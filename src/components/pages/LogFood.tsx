@@ -25,6 +25,11 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
   const [selectedFood, setSelectedFood] = useState<Food | null>(null)
   const [quantity, setQuantity] = useState('1')
   const [selectedPortion, setSelectedPortion] = useState<number>(1)
+  const [mealType, setMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('lunch')
+  const [mealTime, setMealTime] = useState(() => {
+    const now = new Date()
+    return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+  })
   const [customTemplates] = useKV<MealTemplate[]>('custom-meal-templates', [])
 
   const searchResults = searchQuery.length > 0
@@ -50,12 +55,17 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
 
     const finalQuantity = selectedPortion * quantityNum
 
+    const now = new Date()
+    const [hours, minutes] = mealTime.split(':').map(Number)
+    now.setHours(hours, minutes, 0, 0)
+
     const newLog: FoodLog = {
       id: `${Date.now()}-${Math.random()}`,
       foodId: selectedFood.id,
       food: selectedFood,
       quantity: finalQuantity,
-      timestamp: new Date().toISOString(),
+      timestamp: now.toISOString(),
+      mealType,
     }
 
     setFoodLogs((current) => [...current, newLog])
@@ -70,12 +80,17 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
     const food = FOODS_DATABASE.find(f => f.id === foodId)
     if (!food) return
 
+    const now = new Date()
+    const [hours, minutes] = mealTime.split(':').map(Number)
+    now.setHours(hours, minutes, 0, 0)
+
     const newLog: FoodLog = {
       id: `${Date.now()}-${Math.random()}`,
       foodId: food.id,
       food,
       quantity: 1,
-      timestamp: new Date().toISOString(),
+      timestamp: now.toISOString(),
+      mealType,
     }
 
     setFoodLogs((current) => [...current, newLog])
@@ -88,6 +103,10 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
   }
 
   const handleLogMealTemplate = (template: MealTemplate) => {
+    const now = new Date()
+    const [hours, minutes] = mealTime.split(':').map(Number)
+    now.setHours(hours, minutes, 0, 0)
+
     const newLogs: FoodLog[] = template.ingredients.map(ingredient => {
       const food = FOODS_DATABASE.find(f => f.id === ingredient.foodId)
       if (!food) return null
@@ -97,7 +116,8 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
         foodId: food.id,
         food,
         quantity: ingredient.quantity,
-        timestamp: new Date().toISOString(),
+        timestamp: now.toISOString(),
+        mealType,
       }
     }).filter(Boolean) as FoodLog[]
 
@@ -131,6 +151,44 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="meal-type">Meal Type</Label>
+              <RadioGroup value={mealType} onValueChange={(val) => setMealType(val as any)}>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="breakfast" id="breakfast" />
+                    <Label htmlFor="breakfast" className="font-normal cursor-pointer">Breakfast</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="lunch" id="lunch" />
+                    <Label htmlFor="lunch" className="font-normal cursor-pointer">Lunch</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="dinner" id="dinner" />
+                    <Label htmlFor="dinner" className="font-normal cursor-pointer">Dinner</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="snack" id="snack" />
+                    <Label htmlFor="snack" className="font-normal cursor-pointer">Snack</Label>
+                  </div>
+                </div>
+              </RadioGroup>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="meal-time">Meal Time</Label>
+              <Input
+                id="meal-time"
+                type="time"
+                value={mealTime}
+                onChange={(e) => setMealTime(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Used for sleep timing analysis in CircaFast
+              </p>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label>Quick Add (Common Foods)</Label>
             <div className="flex flex-wrap gap-2">
