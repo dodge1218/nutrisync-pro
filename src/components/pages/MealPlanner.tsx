@@ -41,6 +41,7 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
   const [newTemplateMealType, setNewTemplateMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('lunch')
   const [selectedIngredients, setSelectedIngredients] = useState<MealIngredient[]>([])
   const [searchQuery, setSearchQuery] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
 
   const allTemplates = [...MEAL_TEMPLATES, ...(customTemplates || [])]
   const dayIndex = selectedDay === 7 ? 0 : selectedDay
@@ -164,6 +165,61 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
     toast.success('Custom template deleted')
   }
 
+  const generateMealFromDescription = async () => {
+    if (!newTemplateDescription.trim()) {
+      toast.error('Please enter a meal description')
+      return
+    }
+
+    setIsGenerating(true)
+    try {
+      const prompt = spark.llmPrompt`You are a nutrition expert. Given the meal description below, suggest 3-8 appropriate ingredients from the available food database.
+
+Meal Description: "${newTemplateDescription}"
+Meal Type: ${newTemplateMealType}
+
+Available Foods (use only IDs from this list):
+${FOODS_DATABASE.map(f => `- ${f.id}: ${f.name} (${f.servingSize})`).join('\n')}
+
+Return ONLY a valid JSON object with a single property "ingredients" containing an array of objects with:
+- foodId: exact ID from the list above
+- quantity: integer amount in ounces (1-16, no decimals)
+
+Example format:
+{
+  "ingredients": [
+    {"foodId": "chicken-breast", "quantity": 6},
+    {"foodId": "broccoli", "quantity": 4}
+  ]
+}`
+
+      const response = await spark.llm(prompt, 'gpt-4o', true)
+      const parsed = JSON.parse(response)
+      
+      if (parsed.ingredients && Array.isArray(parsed.ingredients)) {
+        const validIngredients = parsed.ingredients.filter((ing: any) => {
+          const food = FOODS_DATABASE.find(f => f.id === ing.foodId)
+          return food && typeof ing.quantity === 'number' && ing.quantity > 0
+        })
+
+        if (validIngredients.length > 0) {
+          setSelectedIngredients(validIngredients.map((ing: any) => ({
+            foodId: ing.foodId,
+            quantity: Math.round(Math.max(1, ing.quantity))
+          })))
+          toast.success(`Generated ${validIngredients.length} ingredients`)
+        } else {
+          toast.error('No valid ingredients generated. Try manual search.')
+        }
+      }
+    } catch (error) {
+      console.error('AI generation error:', error)
+      toast.error('Failed to generate meal. Try manual search.')
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
   const searchResults = searchQuery.length > 0
     ? FOODS_DATABASE.filter(food =>
         food.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -207,13 +263,30 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="template-description">Description (optional)</Label>
-                <Input
-                  id="template-description"
-                  placeholder="e.g., Eggs with toast and fruit"
-                  value={newTemplateDescription}
-                  onChange={(e) => setNewTemplateDescription(e.target.value)}
-                />
+                <Label htmlFor="template-description">Description</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="template-description"
+                    placeholder="e.g., Grilled chicken with vegetables and rice"
+                    value={newTemplateDescription}
+                    onChange={(e) => setNewTemplateDescription(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && newTemplateDescription.trim()) {
+                        generateMealFromDescription()
+                      }
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    onClick={generateMealFromDescription}
+                    disabled={isGenerating || !newTemplateDescription.trim()}
+                  >
+                    {isGenerating ? 'Generating...' : 'AI Fill'}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Describe your meal and click "AI Fill" to auto-populate ingredients
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -241,13 +314,13 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
                           <span className="flex-1 text-sm">{food.name}</span>
                           <Input
                             type="number"
-                            step="0.1"
-                            min="0.1"
+                            step="1"
+                            min="1"
                             value={ingredient.quantity}
-                            onChange={(e) => updateIngredientQuantity(ingredient.foodId, parseFloat(e.target.value) || 1)}
+                            onChange={(e) => updateIngredientQuantity(ingredient.foodId, parseInt(e.target.value) || 1)}
                             className="w-20 h-8"
                           />
-                          <span className="text-xs text-muted-foreground whitespace-nowrap">× {food.servingSize}</span>
+                          <span className="text-xs text-muted-foreground whitespace-nowrap">oz</span>
                           <Button
                             variant="ghost"
                             size="sm"
@@ -379,7 +452,7 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
                                                 if (!food) return null
                                                 return (
                                                   <div key={ing.foodId} className="text-sm text-muted-foreground">
-                                                    • {ing.quantity}× {food.name} ({food.servingSize})
+                                                    • {ing.quantity}oz {food.name}
                                                   </div>
                                                 )
                                               })}
@@ -421,7 +494,7 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
                                                   if (!food) return null
                                                   return (
                                                     <div key={ing.foodId} className="text-sm text-muted-foreground">
-                                                      • {ing.quantity}× {food.name} ({food.servingSize})
+                                                      • {ing.quantity}oz {food.name}
                                                     </div>
                                                   )
                                                 })}

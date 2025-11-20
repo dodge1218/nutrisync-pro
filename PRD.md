@@ -96,21 +96,50 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Meal templates:** Quick log complete meals with all ingredients
 - **Timestamp tracking:** For meal timing analysis (future)
 
-#### 1.5 Meal Planning & Templates (NEW)
+#### 1.5 Meal Planning & Templates (ENHANCED)
 - **Weekly meal planner:** Plan meals across all days of the week
 - **Preset meal templates:** Pre-built healthy meal combinations organized by meal type
   - Breakfast: Protein oats, Greek yogurt parfait, scrambled eggs with spinach
   - Lunch: Chicken & rice bowls, lentil bowls, salads
   - Dinner: Salmon with quinoa, liver & onions, chickpea curry
   - Snacks: Apple with almond butter, kefir smoothie, sauerkraut with seeds
-- **Custom meal templates:** Create your own meal templates with multiple ingredients
+- **Custom meal templates with AI autofill:** Create your own meal templates with intelligent assistance
+  - Type a meal description (e.g., "grilled chicken with broccoli and sweet potato")
+  - AI automatically suggests appropriate ingredients from food database
+  - Manual search and add still available for full control
   - Name your common meals (e.g., "My Usual Breakfast")
-  - Add multiple ingredients with quantities
-  - Save for repeated use
+- **Portion tracking in ounces:** All ingredients measured in 1oz portions
+  - Integer-only quantities (no decimals) for simplicity
+  - Clear "oz" labels on all ingredient amounts
+  - Easy mental math for portion sizing
 - **One-click logging:** Log entire meals with all ingredients in one action
 - **Meal planning:** Assign templates to specific days and meal times
 - **Template management:** Edit, delete, and organize custom meal templates
 - **Quick access:** Log meal templates directly from the Log Food page
+
+#### 1.6 Food Budget Tracker (NEW)
+- **Nutrient budget tracking:** View nutrient intake over time like financial budgeting
+  - Track spending/consumption of each nutrient against daily "budget" (DV)
+  - Visual "deficit" and "surplus" indicators for each nutrient
+  - Time period selection: Today, 7 days, 30 days
+  - Daily averages calculated for multi-day periods
+- **Comprehensive nutrient monitoring:**
+  - Macronutrients: Protein, carbs, fat, fiber with trend indicators
+  - Vitamins: All B vitamins, A, C, D, E, K with deficit calculations
+  - Minerals: Calcium, iron, magnesium, zinc, selenium, copper, manganese, potassium
+- **Critical gap alerts:** Highlighted warnings for nutrients below 50% DV
+  - Shows exact amount needed to reach target
+  - Prioritized by severity (critical vs. moderate)
+  - Actionable recommendations for each gap
+- **Budget status categories:**
+  - Critical (<50% DV): Red, immediate action needed
+  - Low (50-80% DV): Orange, improvement recommended
+  - Approaching (80-100% DV): Yellow, nearly optimal
+  - Optimal (100-150% DV): Green, on target
+  - Excess (>150% DV): Gray, above target
+- **GBDI tracking over time:** Monitor gut health score trends
+- **Plant diversity counter:** Track unique plant foods consumed
+- **Guided gap filling:** System identifies deficiencies and guides toward foods that close multiple gaps efficiently
 
 #### 2. Gamification System (NEW)
 - **GBDI Score Display:** Large, animated score card with trend indicators (↑↓) comparing to previous day

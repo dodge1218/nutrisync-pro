@@ -101,3 +101,9 @@ export function getNutrientUnit(nutrient: NutrientKey): string {
   }
   return ''
 }
+
+export function formatNutrientAmount(amount: number, nutrient: NutrientKey): string {
+  const unit = getNutrientUnit(nutrient)
+  const rounded = Math.round(amount * 10) / 10
+  return `${rounded}${unit}`
+}
