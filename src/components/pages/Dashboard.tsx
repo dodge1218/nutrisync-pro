@@ -2,7 +2,8 @@ import { useMemo } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
-import { Leaf, Fire, DropHalf, Sparkle } from '@phosphor-icons/react'
+import { Separator } from '../ui/separator'
+import { Leaf, Fire, DropHalf, Sparkle, Heart } from '@phosphor-icons/react'
 import { analyzeDailyIntake, type FoodLog } from '../../lib/nutritionEngine'
 import { NUTRIENT_DISPLAY_NAMES, type NutrientKey } from '../../lib/dailyValues'
 import GBDIDisplay from '../GBDIDisplay'
@@ -14,6 +15,14 @@ interface DashboardProps {
   foodLogs: FoodLog[]
 }
 
+interface DetectedStaple {
+  foodId: string
+  foodName: string
+  count: number
+  lastLogged: string
+  frequency: string
+}
+
 export default function Dashboard({ foodLogs }: DashboardProps) {
   const today = new Date().toISOString().split('T')[0]
   const todaysLogs = foodLogs.filter(log => log.timestamp.startsWith(today))
@@ -23,6 +32,49 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
     if (todaysLogs.length === 0) return null
     return analyzeDailyIntake(todaysLogs, { staples: true })
   }, [todaysLogs])
+
+  const detectedStaples = useMemo(() => {
+    const last30Days = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    const recentLogs = foodLogs.filter(log => new Date(log.timestamp) >= last30Days)
+    
+    const foodFrequency = new Map<string, { count: number; lastLogged: string; name: string }>()
+    
+    recentLogs.forEach(log => {
+      const existing = foodFrequency.get(log.foodId)
+      if (existing) {
+        existing.count++
+        if (new Date(log.timestamp) > new Date(existing.lastLogged)) {
+          existing.lastLogged = log.timestamp
+        }
+      } else {
+        foodFrequency.set(log.foodId, {
+          count: 1,
+          lastLogged: log.timestamp,
+          name: log.food.name
+        })
+      }
+    })
+
+    const staples: DetectedStaple[] = []
+    foodFrequency.forEach((data, foodId) => {
+      if (data.count >= 4) {
+        let frequency = ''
+        if (data.count >= 20) frequency = 'Daily staple'
+        else if (data.count >= 10) frequency = `${Math.round(data.count / 4)}x/week`
+        else frequency = `${data.count}x/month`
+
+        staples.push({
+          foodId,
+          foodName: data.name,
+          count: data.count,
+          lastLogged: data.lastLogged,
+          frequency
+        })
+      }
+    })
+
+    return staples.sort((a, b) => b.count - a.count).slice(0, 6)
+  }, [foodLogs])
 
   if (todaysLogs.length === 0) {
     return (
@@ -220,34 +272,39 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
           </CardContent>
         </Card>
 
-        {analysis.stapleCompliance && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Staple Compliance</CardTitle>
-              <CardDescription>Weekly staple food targets</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Liver (2-3x/week)</span>
-                <Badge variant={analysis.stapleCompliance.liver.met ? 'default' : 'secondary'}>
-                  {analysis.stapleCompliance.liver.actual}x this period
-                </Badge>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Cultured Dairy (2x/week)</span>
-                <Badge variant={analysis.stapleCompliance.culturedDairy.met ? 'default' : 'secondary'}>
-                  {analysis.stapleCompliance.culturedDairy.actual}x this period
-                </Badge>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Pumpkin Seeds (daily)</span>
-                <Badge variant={analysis.stapleCompliance.pumpkinSeeds.met ? 'default' : 'secondary'}>
-                  {analysis.stapleCompliance.pumpkinSeeds.actual}x today
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Heart weight="fill" className="text-primary" />
+              Your Staple Foods
+            </CardTitle>
+            <CardDescription>
+              Detected from your eating patterns (last 30 days)
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {detectedStaples.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                Keep logging meals to see your staple foods
+              </p>
+            ) : (
+              detectedStaples.map((staple, idx) => (
+                <div key={staple.foodId}>
+                  {idx > 0 && <Separator className="my-2" />}
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="font-medium text-sm">{staple.foodName}</div>
+                      <div className="text-xs text-muted-foreground">{staple.count} times logged</div>
+                    </div>
+                    <Badge variant="secondary" className="text-xs">
+                      {staple.frequency}
+                    </Badge>
+                  </div>
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <Card>

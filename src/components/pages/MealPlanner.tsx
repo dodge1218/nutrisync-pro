@@ -7,10 +7,11 @@ import { Label } from '../ui/label'
 import { Badge } from '../ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '../ui/dialog'
-import { Plus, Trash, CalendarDots, ForkKnife, Coffee, FlowerLotus, Copy, CheckCircle, PencilSimple } from '@phosphor-icons/react'
+import { Plus, Trash, CalendarDots, ForkKnife, Coffee, FlowerLotus, Copy, CheckCircle, PencilSimple, Pill, Sparkle } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { MEAL_TEMPLATES, type MealTemplate, type MealIngredient } from '../../data/mealTemplates'
 import { FOODS_DATABASE } from '../../data/foods'
+import { WELLNESS_SUPPLEMENTS, type WellnessSupplement } from '../../data/wellnessSupplements'
 import type { FoodLog } from '../../lib/nutritionEngine'
 import type { Page } from '../../App'
 
@@ -26,6 +27,7 @@ interface PlannedMeal {
   dayOfWeek: number
   mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack'
   timestamp?: string
+  supplements?: string[]
 }
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -71,10 +73,38 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
       templateId,
       dayOfWeek: day,
       mealType,
+      supplements: []
     }
 
     setPlannedMeals((current) => [...(current || []), newPlannedMeal])
     toast.success('Meal added to plan')
+  }
+
+  const addSupplementToMeal = (mealId: string, supplementId: string) => {
+    setPlannedMeals((current) => 
+      (current || []).map(meal => 
+        meal.id === mealId 
+          ? { ...meal, supplements: [...(meal.supplements || []), supplementId] }
+          : meal
+      )
+    )
+    toast.success('Supplement added')
+  }
+
+  const removeSupplementFromMeal = (mealId: string, supplementId: string) => {
+    setPlannedMeals((current) => 
+      (current || []).map(meal => 
+        meal.id === mealId 
+          ? { ...meal, supplements: (meal.supplements || []).filter(s => s !== supplementId) }
+          : meal
+      )
+    )
+  }
+
+  const getAISuggestions = (mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack', count: number = 3) => {
+    const suitable = WELLNESS_SUPPLEMENTS.filter(s => s.bestFor.includes(mealType))
+    const shuffled = [...suitable].sort(() => Math.random() - 0.5)
+    return shuffled.slice(0, count)
   }
 
   const removeMealFromPlan = (mealId: string) => {
@@ -173,13 +203,14 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
 
     setIsGenerating(true)
     try {
-      const prompt = spark.llmPrompt`You are a nutrition expert. Given the meal description below, suggest 3-8 appropriate ingredients from the available food database.
+      const foodsList = FOODS_DATABASE.map(f => `- ${f.id}: ${f.name} (${f.servingSize})`).join('\n')
+      const promptText = `You are a nutrition expert. Given the meal description below, suggest 3-8 appropriate ingredients from the available food database.
 
 Meal Description: "${newTemplateDescription}"
 Meal Type: ${newTemplateMealType}
 
 Available Foods (use only IDs from this list):
-${FOODS_DATABASE.map(f => `- ${f.id}: ${f.name} (${f.servingSize})`).join('\n')}
+${foodsList}
 
 Return ONLY a valid JSON object with a single property "ingredients" containing an array of objects with:
 - foodId: exact ID from the list above
@@ -193,7 +224,7 @@ Example format:
   ]
 }`
 
-      const response = await spark.llm(prompt, 'gpt-4o', true)
+      const response = await window.spark.llm(promptText, 'gpt-4o', true)
       const parsed = JSON.parse(response)
       
       if (parsed.ingredients && Array.isArray(parsed.ingredients)) {
@@ -528,39 +559,141 @@ Example format:
                       </CardHeader>
                       <CardContent>
                         {mealsOfType.length === 0 ? (
-                          <p className="text-sm text-muted-foreground text-center py-4">
-                            No meals planned
-                          </p>
+                          <div className="text-center py-8">
+                            <p className="text-sm text-muted-foreground mb-4">
+                              No meals planned
+                            </p>
+                            <div className="space-y-2">
+                              <p className="text-xs font-medium text-muted-foreground mb-2">Try these wellness habits:</p>
+                              {getAISuggestions(mealType, 2).map(suggestion => (
+                                <div key={suggestion.id} className="flex items-start gap-2 p-3 bg-accent/10 rounded-lg text-left">
+                                  <Sparkle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" weight="fill" />
+                                  <div className="flex-1">
+                                    <div className="font-medium text-sm">{suggestion.name}</div>
+                                    <div className="text-xs text-muted-foreground">{suggestion.description}</div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         ) : (
-                          <div className="space-y-2">
+                          <div className="space-y-3">
                             {mealsOfType.map((plannedMeal) => {
                               const template = allTemplates.find(t => t.id === plannedMeal.templateId)
                               if (!template) return null
 
                               return (
-                                <div key={plannedMeal.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                                  <div className="flex-1">
-                                    <div className="font-medium">{template.name}</div>
-                                    <div className="text-sm text-muted-foreground">
-                                      {template.ingredients.length} ingredients
+                                <div key={plannedMeal.id} className="space-y-3">
+                                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                                    <div className="flex-1">
+                                      <div className="font-medium">{template.name}</div>
+                                      <div className="text-sm text-muted-foreground">
+                                        {template.ingredients.length} ingredients
+                                      </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => logPlannedMeal(plannedMeal)}
+                                      >
+                                        <CheckCircle className="w-4 h-4 mr-2" />
+                                        Log Now
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => removeMealFromPlan(plannedMeal.id)}
+                                      >
+                                        <Trash className="w-4 h-4 text-destructive" />
+                                      </Button>
                                     </div>
                                   </div>
-                                  <div className="flex gap-2">
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() => logPlannedMeal(plannedMeal)}
-                                    >
-                                      <CheckCircle className="w-4 h-4 mr-2" />
-                                      Log Now
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="ghost"
-                                      onClick={() => removeMealFromPlan(plannedMeal.id)}
-                                    >
-                                      <Trash className="w-4 h-4 text-destructive" />
-                                    </Button>
+
+                                  <div className="pl-4 space-y-2">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-2">
+                                        <Pill className="w-4 h-4 text-muted-foreground" />
+                                        <span className="text-xs font-medium text-muted-foreground">Wellness Additions</span>
+                                      </div>
+                                      <Dialog>
+                                        <DialogTrigger asChild>
+                                          <Button variant="ghost" size="sm" className="h-7 text-xs">
+                                            <Plus className="w-3 h-3 mr-1" />
+                                            Add
+                                          </Button>
+                                        </DialogTrigger>
+                                        <DialogContent>
+                                          <DialogHeader>
+                                            <DialogTitle>Add Wellness Supplement</DialogTitle>
+                                            <DialogDescription>
+                                              Choose a supplement, activity, or wellness practice
+                                            </DialogDescription>
+                                          </DialogHeader>
+                                          <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                                            {WELLNESS_SUPPLEMENTS.filter(s => s.bestFor.includes(mealType)).map(supplement => (
+                                              <button
+                                                key={supplement.id}
+                                                onClick={() => {
+                                                  addSupplementToMeal(plannedMeal.id, supplement.id)
+                                                }}
+                                                className="w-full text-left p-3 border rounded-lg hover:bg-accent transition-colors"
+                                                disabled={(plannedMeal.supplements || []).includes(supplement.id)}
+                                              >
+                                                <div className="flex items-start justify-between gap-2">
+                                                  <div className="flex-1">
+                                                    <div className="font-medium text-sm">{supplement.name}</div>
+                                                    <div className="text-xs text-muted-foreground mt-1">{supplement.description}</div>
+                                                  </div>
+                                                  <Badge variant="outline" className="text-xs">
+                                                    {supplement.category}
+                                                  </Badge>
+                                                </div>
+                                              </button>
+                                            ))}
+                                          </div>
+                                        </DialogContent>
+                                      </Dialog>
+                                    </div>
+
+                                    {plannedMeal.supplements && plannedMeal.supplements.length > 0 ? (
+                                      <div className="space-y-1">
+                                        {plannedMeal.supplements.map(suppId => {
+                                          const supplement = WELLNESS_SUPPLEMENTS.find(s => s.id === suppId)
+                                          if (!supplement) return null
+                                          return (
+                                            <div key={suppId} className="flex items-center justify-between p-2 bg-accent/10 rounded text-xs">
+                                              <span className="flex-1">{supplement.name}</span>
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-6 w-6 p-0"
+                                                onClick={() => removeSupplementFromMeal(plannedMeal.id, suppId)}
+                                              >
+                                                <Trash className="w-3 h-3 text-destructive" />
+                                              </Button>
+                                            </div>
+                                          )
+                                        })}
+                                      </div>
+                                    ) : (
+                                      <div className="space-y-1">
+                                        <p className="text-xs text-muted-foreground mb-1">AI Suggestions:</p>
+                                        {getAISuggestions(mealType, 2).map(suggestion => (
+                                          <button
+                                            key={suggestion.id}
+                                            onClick={() => addSupplementToMeal(plannedMeal.id, suggestion.id)}
+                                            className="w-full flex items-start gap-2 p-2 bg-primary/5 rounded text-left hover:bg-primary/10 transition-colors"
+                                          >
+                                            <Sparkle className="w-3 h-3 text-primary flex-shrink-0 mt-0.5" weight="fill" />
+                                            <div className="flex-1">
+                                              <div className="text-xs font-medium">{suggestion.name}</div>
+                                              <div className="text-xs text-muted-foreground">{suggestion.description}</div>
+                                            </div>
+                                          </button>
+                                        ))}
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               )

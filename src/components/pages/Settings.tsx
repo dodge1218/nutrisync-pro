@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
 import { Separator } from '../ui/separator'
-import { User, Heart, BellRinging, FileText } from '@phosphor-icons/react'
+import { Alert, AlertDescription } from '../ui/alert'
+import { User, BellRinging, FileText, Info } from '@phosphor-icons/react'
 
 export default function Settings() {
   return (
@@ -18,42 +19,13 @@ export default function Settings() {
         </CardHeader>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Heart weight="fill" />
-            User Staples (Weekly Goals)
-          </CardTitle>
-          <CardDescription>
-            Track your commitment to nutrient-dense staple foods
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium">Liver</div>
-              <div className="text-sm text-muted-foreground">Nature's multivitamin - rich in B12, iron, vitamin A</div>
-            </div>
-            <Badge>2-3x/week</Badge>
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium">Cultured Dairy (Kefir, Yogurt)</div>
-              <div className="text-sm text-muted-foreground">Probiotic-rich for gut health</div>
-            </div>
-            <Badge>2x/week</Badge>
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium">Pumpkin Seeds</div>
-              <div className="text-sm text-muted-foreground">Magnesium and zinc powerhouse</div>
-            </div>
-            <Badge>Daily</Badge>
-          </div>
-        </CardContent>
-      </Card>
+      <Alert>
+        <Info className="h-4 w-4" />
+        <AlertDescription>
+          Your staple foods are now automatically detected from your eating patterns and displayed on the Dashboard. 
+          Foods you log frequently become your tracked staples.
+        </AlertDescription>
+      </Alert>
 
       <Card>
         <CardHeader>

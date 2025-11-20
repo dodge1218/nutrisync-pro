@@ -112,6 +112,18 @@ This creates a gap where health-conscious users track religiously but still expe
   - Integer-only quantities (no decimals) for simplicity
   - Clear "oz" labels on all ingredient amounts
   - Easy mental math for portion sizing
+- **Wellness supplements & practices at each meal:** (NEW)
+  - Each meal slot includes wellness supplement recommendations
+  - AI suggests context-appropriate additions: herbal teas, water reminders, walks, stretching, meditation
+  - Categories: beverages (herbal teas, water, bone broth), activities (walks, stretching), practices (breathing, gratitude), supplements (probiotics, vitamins)
+  - When meal slot is empty, shows 2-3 wellness suggestions automatically
+  - When meal is planned, shows "Add Supplement" button with AI suggestions below
+  - Curated list includes:
+    - Beverages: Chamomile tea, ginger tea, lemon water, bone broth
+    - Activities: 10-15 minute walks, sunlight exposure, light stretching
+    - Practices: Deep breathing, meditation, posture checks, gratitude moments
+    - Supplements: Probiotics, omega-3, vitamin D, magnesium (with timing guidance)
+  - Each suggestion contextually appropriate to meal time (e.g., magnesium at dinner, morning sunlight at breakfast)
 - **One-click logging:** Log entire meals with all ingredients in one action
 - **Meal planning:** Assign templates to specific days and meal times
 - **Template management:** Edit, delete, and organize custom meal templates
@@ -183,10 +195,12 @@ This creates a gap where health-conscious users track religiously but still expe
   - High calcium + iron in same meal
 - **Mineral Trio Sufficiency:** Magnesium + potassium + calcium balance
 - **Gut Stressors:** NSAIDs mention, ultra-processed food %, alcohol
-- **User Staples Compliance:**
-  - Liver 2-3x/week
-  - Cultured dairy 2x/week
-  - Pumpkin seeds daily
+- **Auto-Detected Staple Foods:** (NEW)
+  - System automatically detects foods user logs frequently (4+ times in 30 days)
+  - Displayed on Dashboard with frequency labels (daily staple, 2x/week, etc.)
+  - Replaces manual staple configuration in Settings
+  - Top 6 most-logged foods shown as "Your Staple Foods"
+  - Provides feedback on eating patterns without manual input
 
 #### 6. Suggestion Engine
 - **Synergy suggestions:**
