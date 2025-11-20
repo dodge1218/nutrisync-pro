@@ -14,6 +14,8 @@ import GBDIHistory from '../GBDIHistory'
 import StressTracker, { type StressLog } from '../StressTracker'
 import AdrenalLoadDisplay from '../AdrenalLoadDisplay'
 import StressHistory from '../StressHistory'
+import HealthCorrelations from '../HealthCorrelations'
+import AIInsights from '../AIInsights'
 
 interface DashboardProps {
   foodLogs: FoodLog[]
@@ -225,6 +227,10 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
       />
 
       <StressHistory foodLogs={foodLogs} daysToShow={7} />
+
+      <HealthCorrelations foodLogs={foodLogs} daysToShow={7} />
+
+      <AIInsights foodLogs={foodLogs} daysToAnalyze={7} />
 
       <Card>
         <CardHeader>

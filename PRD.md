@@ -2,7 +2,7 @@
 
 **Status**: Production Ready - All Core Features Complete  
 **Last Updated**: January 2025  
-**Version**: 2.3
+**Version**: 2.4
 
 ---
 
@@ -20,7 +20,9 @@
 - [x] **Phase 7d**: Enhanced stress tracking with user input system, stress history visualization, pattern detection
 - [x] **Phase 7e**: LifeFlow meal autofill with editable templates - COMPLETE
 - [x] **Phase 7f**: Stress-aware personalized recommendations - COMPLETE
-- [x] **Phase 7g**: GBDI history tracking with 7-day trends and insights
+- [x] **Phase 7g**: GBDI history tracking with 7-day trends and insights - COMPLETE
+- [x] **Phase 7h**: Multi-metric health correlations visualization - COMPLETE
+- [x] **Phase 7i**: AI-powered weekly insights and recommendations - COMPLETE
 
 ### 📋 Future Enhancements (Post-MVP)
 - [ ] **Phase 8**: User Authentication & Multi-User Support
@@ -477,6 +479,78 @@ This creates a gap where health-conscious users track religiously but still expe
   - ✅ Stress-aware recommendation filtering in Recommendations page
   - ✅ Stress pattern history chart with correlation detection
   - ✅ 3+ consecutive day high stress alerts
+
+#### 4.7 Health Correlations Visualization (✅ COMPLETE - Phase 7h)
+**Status**: Fully implemented with intelligent pattern detection
+
+- **Multi-Metric Charting:**
+  - ✅ Unified timeline showing GBDI, stress, sleep quality, and energy levels
+  - ✅ 7-day trend visualization using Recharts
+  - ✅ Color-coded lines for each health metric
+  - ✅ Responsive design for mobile and desktop
+  - ✅ Interactive tooltips showing detailed daily values
+
+- **Correlation Detection Algorithms:**
+  - ✅ **Stress-Gut Health Correlation**: Detects when high stress days coincide with low GBDI
+  - ✅ **Sleep-Energy Correlation**: Identifies poor sleep impacting energy levels
+  - ✅ **Stress-Magnesium Correlation**: Flags low magnesium intake on high stress days
+  - ✅ **Trend Analysis**: Compares first and last days to detect improving/declining patterns
+  - ✅ **Positive Reinforcement**: Celebrates when gut health and energy are both high
+
+- **Intelligent Insights:**
+  - ✅ Strength indicators (strong, moderate, weak correlations)
+  - ✅ Direction indicators (positive or negative relationships)
+  - ✅ Actionable recommendations based on detected patterns
+  - ✅ Visual badges showing correlation strength
+  - ✅ Priority alerts for concerning patterns
+
+- **User Experience:**
+  - ✅ Empty state guidance for new users
+  - ✅ Minimum 3 days of data required for analysis
+  - ✅ Clear explanations of scaling (stress/sleep/energy × 10 to match GBDI scale)
+  - ✅ Visual hierarchy emphasizing most important correlations
+
+- **Implementation:**
+  - ✅ `/components/HealthCorrelations.tsx` - Main component
+  - ✅ Dashboard integration below stress and GBDI history
+  - ✅ Pattern detection with configurable thresholds
+  - ✅ Real-time updates as user logs more data
+
+#### 4.8 AI-Powered Weekly Insights (✅ COMPLETE - Phase 7i)
+**Status**: Fully implemented using spark.llm API
+
+- **Intelligent Analysis:**
+  - ✅ Analyzes 7 days of nutrition and wellness data
+  - ✅ Uses GPT-4o-mini for cost-effective insights
+  - ✅ Aggregates GBDI, gut support, fiber, fermented foods, gaps
+  - ✅ Considers weekly patterns and trends
+
+- **Personalized Recommendations:**
+  - ✅ Notable pattern identification (improving, declining, consistent)
+  - ✅ Specific actionable suggestions tailored to user's data
+  - ✅ Positive reinforcement for healthy habits
+  - ✅ Priority action for the coming week
+  - ✅ Encouraging, practical tone (not generic advice)
+
+- **User Interface:**
+  - ✅ One-click "Generate Insights" button
+  - ✅ Loading skeleton while processing
+  - ✅ Formatted bullet points for readability
+  - ✅ "Regenerate" option for fresh perspective
+  - ✅ Error handling with helpful messages
+  - ✅ Minimum 2 days of data required
+
+- **Data Privacy:**
+  - ✅ All analysis happens client-side
+  - ✅ Only aggregated metrics sent to LLM (no personal identifiers)
+  - ✅ Results stored only in session (not persisted)
+
+- **Technical Implementation:**
+  - ✅ `/components/AIInsights.tsx` - Main component
+  - ✅ Uses window.spark.llm() API
+  - ✅ JSON-free text generation for natural language output
+  - ✅ Graceful error handling and retry capability
+  - ✅ Dashboard integration for easy access
 
 #### 5. Wellness Audit Lenses
 - **GBDI (Gut Biome Destruction Index):** Composite score measuring gut-brain-digestive health
