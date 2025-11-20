@@ -13,6 +13,7 @@ import StreakTracker from '../StreakTracker'
 import GBDIHistory from '../GBDIHistory'
 import StressTracker, { type StressLog } from '../StressTracker'
 import AdrenalLoadDisplay from '../AdrenalLoadDisplay'
+import StressHistory from '../StressHistory'
 
 interface DashboardProps {
   foodLogs: FoodLog[]
@@ -222,6 +223,8 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
         currentGbdi={analysis.wellnessAudit.gbdi}
         currentDate={today}
       />
+
+      <StressHistory foodLogs={foodLogs} daysToShow={7} />
 
       <Card>
         <CardHeader>
