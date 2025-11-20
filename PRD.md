@@ -89,13 +89,22 @@ This creates a gap where health-conscious users track religiously but still expe
 
 #### 1. Food Logging
 - **Manual text entry:** "2 cups lentils", "6oz chicken breast", "1 tbsp olive oil"
-- **Unit detection:** Properly distinguishes weight oz vs fluid oz for accurate calculations
+- **Intelligent unit detection & conversion:**
+  - Properly distinguishes weight oz vs fluid oz (fl oz) for accurate calculations
+  - Weight-based: "100g chicken" auto-converts to oz when needed
+  - Volume-based: "20 fl oz water" or "20oz water" correctly interprets as fluid ounces
+  - Handles both metric (g, kg, ml, L) and imperial (oz, lb, fl oz, cups) inputs
+  - Backend calculations ensure accuracy across different measurement systems
 - **Quick presets:** "usual breakfast", "usual lunch", "copy yesterday"
 - **Simple meal buttons:** "add a fruit", "add fermented food", "add greens"
 - **Brand detection:** Search for specific brands (e.g., "Fage yogurt", "Lifeway kefir")
 - **Portion options:** Common portion sizes (container, cup, half-serving, etc.)
 - **Meal templates:** Quick log complete meals with all ingredients
-- **Supplements tracking:** Add supplements with proper doses to any meal
+- **Supplements tracking:** 
+  - Dedicated supplements button on Log Food and Meal Planner pages
+  - Add supplements with proper doses (mg, mcg, IU, g)
+  - Track supplement timing relative to meals
+  - Future: Amazon order history integration for auto-detection and restocking reminders
 - **Timestamp tracking:** For meal timing analysis (future)
 
 #### 1.5 Meal Planning & Templates (ENHANCED)
@@ -108,13 +117,17 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Custom meal templates with AI autofill:** Create your own meal templates with intelligent assistance
   - Type a meal description (e.g., "grilled chicken with broccoli and sweet potato")
   - AI automatically suggests appropriate ingredients from food database
-  - Handles unit conversions properly (100g chicken → oz calculation, distinguishes fluid oz from weight oz)
+  - **Intelligent unit handling:** AI autofill respects unit preferences and converts properly
+    - Example: User types "100g chicken" → AI calculates nutrition for 100g, displays in oz equivalent
+    - Distinguishes weight measurements from volume (100g chicken vs 20 fl oz water)
+    - Backend validation ensures calculations are accurate regardless of input format
   - Manual search and add still available for full control
   - Name your common meals (e.g., "My Usual Breakfast")
-- **Supplements at each meal:** (NEW)
-  - Add supplements to meal plans with proper dosing
+- **Supplements at each meal:** 
+  - Dedicated "Supplements" button on Meal Planner interface
+  - Add supplements to meal plans with proper dosing (mg, mcg, IU)
   - Track supplement timing (with food, before bed, morning, etc.)
-  - Amazon integration for auto-detection (future)
+  - Future: Amazon integration for auto-detection of supplement purchases and restocking alerts
 - **Portion tracking in ounces:** All ingredients measured in 1oz portions
   - Integer-only quantities (no decimals) for simplicity
   - Clear "oz" labels on all ingredient amounts
@@ -204,7 +217,8 @@ This creates a gap where health-conscious users track religiously but still expe
   - Input system for recurring activities: work, walking dog, cooking, exercise, hygiene tasks, etc.
   - Category-based organization (work, exercise, hygiene, cooking, pet-care, meal, custom)
   - Day-of-week selection for each activity (M-Su)
-  - Time and duration inputs for each activity with minutes/hours toggle
+  - Time and duration inputs for each activity
+  - **Minutes/hours toggle:** Switch between minute and hour-based duration input for flexibility
   - Visual icons and color-coding by category
 - **Schedule generation:**
   - Auto-generates timeblocked schedules for next 3-7 days
@@ -255,12 +269,26 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Macronutrients:** Protein, carbs, fat, fiber
 - **Micronutrients:** Key vitamins (C, D, A, E, K, B-complex), minerals (iron, zinc, calcium, magnesium)
 - **Electrolytes:** Sodium, potassium, magnesium
+- **Phytonutrients & Bioactive Compounds:**
+  - Polyphenols (from berries, green tea, dark chocolate, olive oil)
+  - Carotenoids (beta-carotene, lycopene, lutein from colorful vegetables)
+  - Flavonoids (quercetin, anthocyanins from fruits and vegetables)
+  - Sulfur compounds (from garlic, onions, cruciferous vegetables)
+  - Gingerol, curcumin, capsaicin from spices
 - **Gut health markers:**
   - Fermented food presence (y/n)
-  - Fiber grams
+  - Fiber grams (soluble vs insoluble tracking in future)
   - Polyphenol-rich foods
   - Ultra-processed flag
   - Plant food diversity count
+  - Prebiotic foods (garlic, onion, asparagus, Jerusalem artichoke)
+- **Synergy tracking system:** (NEW)
+  - Automatically detects nutrient synergies and antagonisms across logged meals
+  - Positive synergies: Vitamin C + iron, vitamin D + calcium, black pepper + turmeric (piperine + curcumin)
+  - Negative interactions: Calcium + iron, coffee/tea + iron, high fiber + mineral absorption
+  - Tracks spices and garnishes for bioavailability enhancement
+  - Fat-soluble vitamins (A, D, E, K) tracked with fat intake in same meal
+  - Provides real-time feedback on meal combinations
 
 #### 4. Gap Detection & Scoring
 - **Daily Value (DV) comparison:** Show % of DV achieved for each nutrient
@@ -373,6 +401,143 @@ This creates a gap where health-conscious users track religiously but still expe
 
 ---
 
+### Version 3.0 — Advanced Intelligence & Personalization (IDEAL FEATURES)
+**Goal:** Deep personalization, predictive intelligence, comprehensive tracking
+
+#### Ideal Features for Long-Term Roadmap:
+
+1. **Supplement Auto-Detection & Management**
+   - **Amazon order history integration:** Automatically detect supplement purchases
+   - Parse product names to identify vitamins, minerals, probiotics, adaptogens
+   - Track dosing schedules and adherence
+   - Restocking alerts based on serving size and purchase date
+   - Price tracking: notify when supplements on sale
+   - Brand comparison: suggest alternatives based on value/quality
+   - Interaction warnings: flag potential supplement-supplement or supplement-medication conflicts
+
+2. **Advanced Synergy Intelligence**
+   - **Real-time bioavailability optimization:** 
+     - Detects when user logs iron-rich food → prompts "Add vitamin C source to this meal?"
+     - Tracks fat intake with fat-soluble vitamins (A, D, E, K) → suggests adding healthy fat if missing
+     - Monitors black pepper consumption with turmeric for curcumin absorption
+   - **Spice & garnish tracking for enhanced benefits:**
+     - Garlic + allicin formation timing (crush and wait 10 min before cooking)
+     - Ginger + anti-inflammatory compounds
+     - Cinnamon + blood sugar regulation
+     - Herbs (basil, oregano, rosemary) + antioxidant compounds
+   - **Meal sequence optimization:**
+     - Vinegar or lemon before carb-heavy meals (blood sugar management)
+     - Protein distribution across meals for muscle synthesis
+     - Pre-meal rituals: apple cider vinegar, bitters, digestive enzymes
+   - **Anti-nutrient management:**
+     - Phytic acid in grains/legumes → soaking recommendations
+     - Oxalates in spinach → pairing advice or cooking methods
+     - Lectins in beans → proper cooking guidance
+     - Tannins in tea → spacing from iron-rich meals
+
+3. **Personalized Lab Integration**
+   - Import blood work results (CBC, CMP, vitamin levels, hormones)
+   - Map nutrient intake to biomarkers over time
+   - Identify if dietary changes correlate with lab improvements
+   - Specific recommendations based on actual deficiencies (not just DV)
+   - Track ferritin, B12, vitamin D, magnesium RBC, homocysteine, etc.
+
+4. **Genetic Nutrition (Nutrigenomics)**
+   - Upload 23andMe/AncestryDNA raw data
+   - Screen for SNPs affecting nutrient needs:
+     - MTHFR (folate metabolism) → methylfolate recommendations
+     - VDR (vitamin D receptor) → personalized D3 dosing
+     - FTO (fat metabolism) → macronutrient ratio guidance
+     - COMT (dopamine) → protein timing, coffee sensitivity
+     - DAO (histamine) → fermented food tolerance
+   - Personalize DV targets based on genetic predispositions
+
+5. **Microbiome Integration**
+   - Import gut microbiome test results (Viome, Thorne, DayTwo, etc.)
+   - Map beneficial/pathogenic bacteria to food recommendations
+   - Track prebiotic/probiotic intake against microbiome composition
+   - Suggest foods that feed beneficial strains
+   - Identify trigger foods based on microbiome profile
+   - Monitor diversity score improvements over time
+
+6. **Meal Timing Circadian Optimization**
+   - Advanced circadian rhythm tracking beyond SleepSync
+   - Optimal protein timing (morning for muscle synthesis)
+   - Carb timing for performance (pre-workout) vs. sleep (low at dinner)
+   - Chronotype-based eating windows (early bird vs. night owl)
+   - Shift worker special protocols
+   - Jet lag nutritional support
+
+7. **Symptom Tracking & Pattern Detection**
+   - Log symptoms: bloating, energy dips, headaches, skin issues, mood
+   - AI pattern detection: "You report bloating 2-3 hours after dairy"
+   - Elimination diet guidance and reintroduction protocols
+   - Food sensitivity probability scores
+   - Correlate symptoms with specific ingredients, meal timing, combinations
+
+8. **Budget-Conscious Shopping Assistant**
+   - Price tracking for staple foods at local stores
+   - Generate shopping lists from meal plans with cost estimates
+   - Suggest budget-friendly swaps (frozen vs. fresh, seasonal produce)
+   - Bulk buying recommendations for shelf-stable items
+   - Compare cost-per-nutrient across foods (best iron per dollar, etc.)
+   - Coupon integration and sales alerts
+
+9. **Restaurant & Travel Mode**
+   - Restaurant database integration (MenuStat, Nutritionix)
+   - Quick-log common restaurant meals
+   - Travel-friendly meal suggestions (airport, hotel, convenience stores)
+   - Maintain streaks while traveling with flexible logging
+   - International food database (when traveling abroad)
+
+10. **Social Accountability & Challenges**
+    - Friend groups for shared goals
+    - Weekly challenges: "Eat 30 plants this week", "7-day fermented food streak"
+    - Leaderboards (optional, privacy-first)
+    - Share achievements and meal templates
+    - Cooking challenges and recipe swaps
+
+11. **Menstrual Cycle Nutrition**
+    - Track cycle phase (follicular, ovulatory, luteal, menstrual)
+    - Phase-specific nutrient recommendations:
+      - Follicular: Iron-rich foods post-period
+      - Ovulatory: Antioxidants, fiber for estrogen metabolism
+      - Luteal: Magnesium, B6 for PMS
+      - Menstrual: Iron, vitamin C, anti-inflammatory foods
+    - Craving management with nutrient-dense alternatives
+
+12. **Performance & Athletic Optimization**
+    - Training load integration (from Strava, Garmin, Whoop)
+    - Periodized nutrition (base, build, peak, recovery phases)
+    - Electrolyte optimization for endurance activities
+    - Glycogen loading protocols for events
+    - Recovery nutrition timing and macros
+    - Hydration tracking with sweat loss estimates
+
+13. **Longevity & Healthspan Focus**
+    - Track longevity markers: polyphenol intake, omega-3:6 ratio, glycemic load
+    - mTOR modulation: protein cycling, fasting protocols
+    - Autophagy support: fasting windows, polyphenols, spermidine-rich foods
+    - Senolytic food compounds (quercetin, fisetin)
+    - NAD+ boosting foods (niacin, NMN precursors)
+    - Telomere-supporting nutrients (folate, B12, omega-3)
+
+14. **AI Meal Generation**
+    - "Generate a 500-calorie, high-iron, gut-friendly dinner"
+    - Respects dietary restrictions, preferences, available ingredients
+    - Adapts to seasonal produce
+    - Learns from user ratings and frequency of logged meals
+    - Generates shopping lists automatically
+
+15. **Family & Household Management**
+    - Multiple user profiles (different DV targets)
+    - Shared meal planning for families
+    - Kid-friendly nutrient tracking (age-appropriate DVs)
+    - Batch cooking suggestions for meal prep
+    - Allergen management across family members
+
+---
+
 ## Non-Goals (Out of Scope)
 
 1. **Medical diagnosis or treatment** — This is educational, not clinical
@@ -395,43 +560,106 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Future:** API integrations (wearables, affiliate tracking)
 
 ### Key Modules
-- **/lib/nutritionEngine.ts** — Core analysis logic
+- **/lib/nutritionEngine.ts** — Core analysis logic with unit conversion system
 - **/lib/dailyValues.ts** — Reference DV constants
-- **/lib/synergies.ts** — Nutrient pairing rules (future)
+- **/lib/synergies.ts** — Nutrient pairing rules with bioavailability calculations
 - **/lib/affiliate.ts** — Product matching logic
-- **/data/foods.ts** — Comprehensive food database with 100+ items including:
-  - Proteins: meats, fish, eggs, plant proteins
-  - Vegetables: leafy greens, cruciferous, starchy
-  - Fruits: berries, tropical, citrus
-  - Grains: whole grains, bread, pasta
-  - Dairy: yogurt, kefir, cheese, milk (branded and generic)
-  - Oils & Fats: olive oil, coconut oil, butter, avocado oil
-  - Spices & Seasonings: turmeric, garlic, ginger, cinnamon, salt, pepper, herbs
-  - Condiments: hot sauce, mustard, vinegar, soy sauce
-  - Processed foods: protein bars, granola, chips, crackers
-  - Beverages: coffee, tea, water, juices
-  - Supplements: vitamins, minerals, probiotics, omega-3
+- **/lib/unitConverter.ts** — (NEW) Intelligent unit conversion system
+  - Handles metric ↔ imperial conversions (g ↔ oz, ml ↔ fl oz, kg ↔ lb)
+  - Distinguishes weight vs. volume measurements
+  - Context-aware: "100g chicken" (weight) vs "20oz water" (volume)
+  - Validation: prevents nonsensical conversions (e.g., converting fluid volume to weight without density)
+  - Standardized internal storage format (grams for solids, ml for liquids)
+  - Display format respects user preference or regional standards
+- **/data/foods.ts** — Comprehensive food database with 200+ items including:
+  - **Proteins:** meats (chicken, beef, pork, turkey, lamb), fish (salmon, tuna, sardines, cod), eggs, plant proteins (tofu, tempeh, seitan, legumes)
+  - **Vegetables:** leafy greens (spinach, kale, arugula, chard), cruciferous (broccoli, cauliflower, brussels sprouts), starchy (sweet potato, potato), nightshades (tomato, bell pepper, eggplant), root vegetables (carrot, beet, turnip)
+  - **Fruits:** berries (blueberry, strawberry, raspberry, blackberry), tropical (mango, pineapple, papaya), citrus (orange, lemon, lime, grapefruit), stone fruits (peach, plum, cherry), apples, pears, bananas
+  - **Grains & Starches:** whole grains (quinoa, brown rice, oats, barley, farro, buckwheat), bread (sourdough, whole wheat, rye), pasta (whole wheat, regular, rice noodles), tortillas
+  - **Dairy & Alternatives:** yogurt (Greek, regular, Icelandic), kefir (plain, flavored), cheese (cheddar, mozzarella, feta, parmesan, cottage), milk (whole, 2%, skim, almond, oat, coconut)
+  - **Fermented Foods:** sauerkraut, kimchi, kombucha, miso, tempeh, natto, pickles, fermented vegetables
+  - **Oils & Fats:** olive oil (EVOO, regular), coconut oil, avocado oil, butter, ghee, sesame oil, grapeseed oil, flaxseed oil, MCT oil
+  - **Nuts & Seeds:** almonds, walnuts, cashews, pecans, pumpkin seeds, sunflower seeds, chia seeds, flaxseeds, hemp seeds, sesame seeds
+  - **Legumes:** lentils (red, green, brown), chickpeas, black beans, kidney beans, pinto beans, navy beans, split peas, edamame
+  - **Spices & Seasonings:** turmeric, garlic, ginger, cinnamon, cumin, paprika, oregano, basil, thyme, rosemary, parsley, cilantro, dill, mint, black pepper, sea salt, pink salt, cayenne, curry powder, nutritional yeast
+  - **Condiments & Sauces:** hot sauce, mustard (yellow, dijon, whole grain), vinegar (apple cider, balsamic, white, rice), soy sauce, tamari, coconut aminos, tahini, hummus, salsa, pesto
+  - **Processed foods:** protein bars, granola, chips, crackers, cookies, protein powder, meal replacement shakes
+  - **Beverages:** coffee (black, with cream), tea (green, black, herbal, matcha), water, sparkling water, coconut water, juices (orange, apple, vegetable), bone broth, protein shakes
+  - **Sweeteners:** honey, maple syrup, agave, stevia, monk fruit, dates, coconut sugar
+  - **Supplements:** 
+    - Vitamins: D3, B12, B-complex, C, A, E, K2
+    - Minerals: magnesium (glycinate, citrate, threonate), zinc, iron, calcium, selenium, iodine
+    - Probiotics: multi-strain, specific strains (L. reuteri, L. plantarum, etc.)
+    - Omega-3: fish oil, algae oil, krill oil
+    - Specialty: collagen, creatine, ashwagandha, rhodiola, lion's mane, cordyceps, chlorella, spirulina
+    - Digestive: betaine HCL, digestive enzymes, l-glutamine, psyllium husk
 
 ### Data Model
 ```typescript
 Food {
-  id, name, servingSize, calories,
+  id, name, servingSize, servingUnit (g/ml/oz/fl oz/cup/etc),
+  calories,
   protein, carbs, fat, fiber,
-  vitamins: { C, D, A, E, K, B12, ... },
-  minerals: { iron, zinc, calcium, magnesium, potassium },
+  vitamins: { C, D, A, E, K, B12, B6, folate, thiamin, riboflavin, niacin, ... },
+  minerals: { iron, zinc, calcium, magnesium, potassium, selenium, copper, manganese, ... },
   electrolytes: { sodium, potassium, magnesium },
-  tags: ["fermented", "polyphenol-rich", "ultra-processed", "warm-suitable"],
-  gutStressors: boolean
+  phytonutrients: { polyphenols, carotenoids, flavonoids, ... },
+  tags: ["fermented", "polyphenol-rich", "ultra-processed", "warm-suitable", "prebiotic"],
+  gutStressors: boolean,
+  measurementType: "weight" | "volume" | "count"
+}
+
+Supplement {
+  id, name, brand?, 
+  type: "vitamin" | "mineral" | "probiotic" | "omega3" | "adaptogen" | "digestive" | "other",
+  dosage: { amount: number, unit: "mg" | "mcg" | "IU" | "g" | "billion CFU" },
+  nutrients: { ... }, // Similar to Food but supplement-specific
+  timing: "morning" | "with-food" | "before-bed" | "empty-stomach",
+  tags: ["daily", "as-needed"],
+  amazonASIN?: string, // For future Amazon integration
+  purchaseDate?: timestamp,
+  servingsRemaining?: number
 }
 
 UserLog {
-  timestamp, food, quantity, mealType
+  timestamp, 
+  food?, 
+  supplement?,
+  quantity, 
+  mealType: "breakfast" | "lunch" | "dinner" | "snack",
+  mealTime?: string, // For SleepSync timing analysis
+  notes?: string
+}
+
+MealTemplate {
+  id, name, mealType,
+  ingredients: [{ foodId, quantity, unit }],
+  supplements: [{ supplementId, quantity }],
+  totalNutrition: { ... }, // Pre-calculated for speed
+  tags: ["quick", "gut-friendly", "high-protein", "warm"],
+  createdBy: "user" | "preset"
 }
 
 UserProfile {
   staples: { liver: "2-3x/week", culturedDairy: "2x/week", pumpkinSeeds: "daily" },
-  preferences: { warmFoods: true, showSupplements: false },
-  demographics: { age, sex, activityLevel }
+  preferences: { 
+    warmFoods: true, 
+    showSupplements: false,
+    unitSystem: "imperial" | "metric" | "auto"
+  },
+  demographics: { age, sex, activityLevel },
+  sleepSchedule?: { wakeTime, sleepTime, targetLastMeal },
+  activeGoals: [{ goalId, milestones: [...] }],
+  recurringActivities: [{ name, category, days, time, duration }]
+}
+
+SynergyRule {
+  type: "positive" | "negative",
+  nutrients: [nutrientA, nutrientB],
+  effect: "enhances-absorption" | "reduces-absorption" | "requires-together",
+  magnitude: "high" | "medium" | "low",
+  explanation: string,
+  timeWindow?: number // minutes between meals for timing conflicts
 }
 ```
 
@@ -464,13 +692,210 @@ UserProfile {
    - **Decision:** Start with single baseline (adult RDA), add customization in v1.1
 
 2. **Food Database:** Build custom, or integrate API (e.g., USDA, Nutritionix)?
-   - **Decision:** Start with curated 100-food mock database, migrate to API in v1.1
+   - **Decision:** Start with curated 200-food mock database with comprehensive coverage, migrate to API in v1.1
 
 3. **Affiliate Partners:** Which brands to partner with?
    - **Decision:** Start with Amazon Associates (broad), add specialized brands (Thorne, Garden of Life) in v1.1
 
 4. **Freemium Limits:** How much to give away free?
    - **Decision:** Free = 7-day lookback, 3 gap suggestions/day. Premium = unlimited history, full suggestions, wearables.
+
+5. **Unit System Default:** Imperial (oz, lb) vs Metric (g, kg)?
+   - **Decision:** Default to imperial for US users, metric for international. Allow toggle in settings. Backend calculations standardized to metric for accuracy.
+
+6. **Supplement Tracking Depth:** How detailed should supplement tracking be in MVP?
+   - **Decision:** MVP = basic supplement logging with name, dose, timing. v1.1 = Amazon integration. v2.0+ = interaction warnings, restocking alerts.
+
+---
+
+## Implementation Priority Guide
+
+This section outlines the recommended order of implementation for maximum user value with minimal complexity.
+
+### Phase 1: Core Functionality (Weeks 1-2)
+**Goal:** Users can log food, see basic analysis, understand gaps
+
+1. **Food Database Foundation**
+   - Build comprehensive 200+ item food database
+   - Include all basic foods: proteins, vegetables, fruits, grains, dairy, oils, spices
+   - Add processed foods and common packaged items
+   - Implement basic supplements as "food" items initially
+
+2. **Unit Conversion System** ⚠️ CRITICAL
+   - Build `/lib/unitConverter.ts` with robust conversion logic
+   - Weight vs. volume detection ("100g chicken" vs "20oz water")
+   - Standardize backend storage (grams for solids, ml for liquids)
+   - Test edge cases: "6oz chicken" (weight), "20 fl oz water" (volume)
+   - Validation to prevent user errors
+
+3. **Logging Interface (Log Food page)**
+   - Text input with smart parsing
+   - Manual search and add ingredients
+   - Meal type selection (breakfast, lunch, dinner, snack)
+   - Display logged foods with portions
+
+4. **Nutrition Analysis Engine**
+   - Calculate daily totals for macros and micros
+   - Compare against Daily Values (DV)
+   - Color-coded status (red/yellow/green)
+
+5. **Basic Dashboard**
+   - Today's summary
+   - Nutrient grid with %DV
+   - Top 3 nutrient gaps
+
+### Phase 2: Gamification & Engagement (Week 3)
+**Goal:** Users return daily, feel progress, discover patterns
+
+6. **GBDI Score System**
+   - Calculate gut health score based on fiber, fermented foods, diversity
+   - Animated hero card on Dashboard
+   - Trend indicators (↑↓ vs yesterday)
+
+7. **Streak Tracker**
+   - Count consecutive logging days
+   - Visual calendar (last 7 days)
+   - Milestone celebrations
+
+8. **Achievement System**
+   - Define 15-20 achievements across rarity tiers
+   - Unlock logic based on logs
+   - Achievements panel with progress bars
+
+### Phase 3: Meal Planning & Templates (Week 4)
+**Goal:** Reduce friction, enable meal prep, build habits
+
+9. **Preset Meal Templates**
+   - 20-30 pre-built healthy meal templates
+   - Organized by meal type
+   - One-click logging from templates
+
+10. **Custom Meal Templates**
+    - Create template from current logs
+    - Manual ingredient builder
+    - Name and save for reuse
+
+11. **AI Autofill (optional for MVP)**
+    - User types meal description
+    - AI suggests ingredients using spark.llm
+    - Validate suggestions against food database
+    - Allow manual override
+
+12. **Weekly Meal Planner**
+    - Assign templates to days/meals
+    - Drag-and-drop interface
+    - Copy meals across days
+
+### Phase 4: Budget Tracker & Deep Analysis (Week 5)
+**Goal:** Users understand patterns over time
+
+13. **Food Budget Page**
+    - Time period selector (today, 7d, 30d)
+    - Nutrient "spending" vs "budget" (DV)
+    - Critical gap alerts (<50% DV)
+    - Trend indicators
+
+14. **Nutrient Timeline**
+    - Visual charts showing intake over days
+    - Identify deficiency patterns
+
+### Phase 5: Supplements & Synergies (Week 6)
+**Goal:** Track supplements, understand interactions
+
+15. **Supplement Data Model**
+    - Separate supplement type from food
+    - Dosing units (mg, mcg, IU)
+    - Timing preferences
+
+16. **Supplements UI**
+    - "Add Supplement" button on Log Food and Meal Planner
+    - Supplement-specific input form
+    - Display supplements separately in logs
+
+17. **Basic Synergy Detection**
+    - Build `/lib/synergies.ts` with rule engine
+    - Detect positive synergies (vitamin C + iron)
+    - Detect antagonisms (calcium + iron in same meal)
+    - Display warnings/suggestions in Dashboard
+
+### Phase 6: SleepSync Mode (Week 7)
+**Goal:** Optimize meal timing for sleep
+
+18. **Meal Time Tracking**
+    - Add time input to food logging
+    - Default times by meal type
+    - Store timestamps in logs
+
+19. **SleepSync Dashboard**
+    - Visual timeline of meals
+    - Last meal to sleep time calculation
+    - Sleep readiness score
+    - Recommendations for earlier eating
+
+20. **Sleep Schedule Configuration**
+    - User sets typical wake/sleep times
+    - Calculate optimal eating window
+    - Adjust recommendations accordingly
+
+### Phase 7: LifeFlow Mode (Week 8)
+**Goal:** Time-block scheduling with goals
+
+21. **Recurring Activities**
+    - Input form: name, category, days, time, duration
+    - Minutes/hours toggle for duration input
+    - Visual icon and color per category
+
+22. **Schedule Generation**
+    - Auto-generate 3-7 day schedule
+    - Pull in meals from NutriWell logs
+    - Detect conflicts and gaps
+    - Completion tracking
+
+23. **Goal System**
+    - Create goals with milestones
+    - Track progress with checkboxes
+    - Suggest goal tasks during free time blocks
+
+### Phase 8: Education & Refinement (Week 9)
+**Goal:** Educate users, refine UX
+
+24. **Education Content Library**
+    - 10-15 educational cards
+    - Topics: synergies, gut health, meal timing
+    - Searchable by nutrient/topic
+
+25. **Recommendations Page**
+    - Personalized suggestions based on gaps
+    - Food-first recommendations
+    - Synergy-aware suggestions
+
+26. **Settings & Preferences**
+    - Dietary pattern selection
+    - Unit system toggle
+    - Supplement visibility toggle
+
+### Phase 9: Polish & Testing (Week 10)
+**Goal:** Production-ready quality
+
+27. **Error Handling**
+    - Graceful failures for invalid inputs
+    - Toast notifications for user actions
+    - Loading states
+
+28. **Performance Optimization**
+    - Lazy load historical data
+    - Memoize expensive calculations
+    - Optimize re-renders
+
+29. **User Testing**
+    - Beta test with 10-20 users
+    - Gather feedback on friction points
+    - Iterate on confusing UI elements
+
+30. **Legal & Compliance**
+    - Finalize disclaimer language
+    - Persistent banner on all pages
+    - Privacy policy and ToS pages
 
 ---
 
@@ -482,6 +907,94 @@ UserProfile {
 4. **Educate, Don't Nag:** Explain *why* (synergy), not just *what* (eat more X)
 5. **Respect User Rituals:** Honor staples like liver, cultured dairy, pumpkin seeds
 6. **Transparency:** Clear disclaimers, honest about limitations, visible affiliate links
+7. **Data Accuracy:** Precise unit conversions and calculations are non-negotiable for user trust
+
+---
+
+## Data Quality & Accuracy Standards
+
+Given the critical importance of accurate nutritional calculations, especially with unit conversions, the following standards must be maintained:
+
+### Unit Conversion Accuracy
+1. **Weight Conversions:**
+   - 1 oz (weight) = 28.3495 g (use full precision in calculations, round for display)
+   - 1 lb = 453.592 g
+   - Always clarify "oz" vs "fl oz" to users
+
+2. **Volume Conversions:**
+   - 1 fl oz = 29.5735 ml
+   - 1 cup = 236.588 ml = 8 fl oz
+   - 1 tbsp = 14.7868 ml
+   - 1 tsp = 4.9289 ml
+
+3. **Context Detection Rules:**
+   - Liquids (water, milk, juice, oil) → default to volume (fl oz, ml, cups)
+   - Solids (meat, vegetables, fruits, grains) → default to weight (oz, g, lb)
+   - Ambiguous inputs → prompt user for clarification
+   - Examples:
+     - "20oz water" → interpret as 20 fl oz (volume)
+     - "6oz chicken" → interpret as 6 oz weight
+     - "100g chicken" → store as 100g, display oz equivalent (3.5 oz)
+
+4. **Validation Rules:**
+   - Prevent nonsensical entries (e.g., "1000g water glass")
+   - Warn on unusual quantities (e.g., "50 cups oatmeal")
+   - Suggest typical serving sizes when user enters atypical amounts
+
+### Nutritional Database Standards
+1. **Source Priority:**
+   - USDA FoodData Central (primary reference)
+   - Manufacturer nutrition labels (branded items)
+   - Peer-reviewed nutritional databases
+   - Never estimate or guess nutritional values
+
+2. **Serving Size Standardization:**
+   - All foods have standardized serving size in database
+   - Nutritional values stored per 100g (solids) or 100ml (liquids)
+   - User quantities scaled proportionally with high precision
+
+3. **Micronutrient Coverage:**
+   - Aim for complete micronutrient profiles (20+ nutrients per food)
+   - Mark missing data explicitly (null vs. 0)
+   - Prioritize foods with complete data for MVP database
+
+4. **Regular Updates:**
+   - Review and update nutritional data quarterly
+   - Flag items needing review when new data published
+   - Version database for audit trail
+
+### Calculation Precision
+1. **Internal Calculations:**
+   - Use floating-point precision for all calculations
+   - Never round intermediate values
+   - Only round for final display to user
+
+2. **Display Rounding:**
+   - Calories: whole numbers
+   - Macros: 1 decimal place (e.g., 23.5g protein)
+   - Micros: contextual (vitamin C: whole numbers mg, B12: 1 decimal mcg)
+   - Percentages: whole numbers (e.g., 85% DV)
+
+3. **Aggregation Logic:**
+   - Sum nutrients across all logged foods per day
+   - Handle missing data gracefully (don't count as 0)
+   - Flag incomplete data to user when significant
+
+### Testing & Validation
+1. **Unit Test Coverage:**
+   - 100% coverage for unit conversion functions
+   - Edge cases: very small amounts, very large amounts, zero
+   - Boundary testing for all conversion factors
+
+2. **Integration Testing:**
+   - End-to-end logging scenarios with various units
+   - Cross-verify calculations against known meal totals
+   - Test AI autofill suggestions for accuracy
+
+3. **User Acceptance Testing:**
+   - Beta testers verify real meal logs against manual calculations
+   - Spot-check random logs for accuracy
+   - Gather feedback on confusing unit interpretations
 
 ---
 
