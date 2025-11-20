@@ -1,5 +1,35 @@
 # Product Requirements Document: NutriWell & Wellness Suite
 
+**Status**: In Progress - Phase 7 (Adrenal Tracking & LifeFlow Enhancements)  
+**Last Updated**: January 2025  
+**Version**: 2.1
+
+---
+
+## Implementation Progress Tracker
+
+### ✅ Completed Features
+- [x] **Phase 1-2**: Core food logging, nutrition engine, dashboard
+- [x] **Phase 3**: Meal planning, templates, AI autofill
+- [x] **Phase 4**: Food Budget tracker with time periods
+- [x] **Phase 5**: GBDI scoring, gamification, achievements
+- [x] **Phase 6**: SleepSync mode with circadian timing
+- [x] **Phase 7a**: LifeFlow scheduling with recurring activities
+- [x] **Phase 7b**: Meal pattern analysis and cook time estimation
+- [x] **Phase 7c**: Adrenal load calculation (dietary component)
+
+### 🔄 In Progress
+- [ ] **Phase 7d**: Enhanced stress tracking with user input system
+- [ ] **Phase 7e**: LifeFlow meal autofill with editable templates
+- [ ] **Phase 7f**: Stress-aware personalized recommendations
+
+### 📋 Next Up
+- [ ] **Phase 8**: Education content expansion
+- [ ] **Phase 9**: Advanced synergy detection
+- [ ] **Phase 10**: Polish and optimization
+
+---
+
 ## Problem Statement
 
 Most people eat on autopilot without understanding specific nutrient gaps in their diet, particularly around gut health, micronutrients, and nutrient synergies. Existing tracking apps focus heavily on calories and macros while ignoring:
@@ -208,45 +238,68 @@ This creates a gap where health-conscious users track religiously but still expe
   - Provides SleepSync-specific achievements (7-day early eating streak, etc.)
   - Shows sleep optimization score alongside GBDI on dashboard
 
-#### 1.8 LifeFlow - Time-Blocked Schedule Builder (NEW)
+#### 1.8 LifeFlow - Time-Blocked Schedule Builder (✅ IMPLEMENTED)
+**Status**: Core functionality complete, meal autofill active
+
 - **Intelligent scheduling system:** Builds timeblocked todo lists based on food, sleep, and daily activities
-  - Detects awake window from sleep preferences (wake to sleep time)
-  - Integrates meal times from food logs automatically
-  - Creates comprehensive daily schedules for 3-7 days at a time
+  - ✅ Detects awake window from sleep preferences (wake to sleep time)
+  - ✅ Integrates meal times from food logs automatically
+  - ✅ Creates comprehensive daily schedules for 3-7 days at a time
+
 - **Recurring activity management:**
-  - Input system for recurring activities: work, walking dog, cooking, exercise, hygiene tasks, etc.
-  - Category-based organization (work, exercise, hygiene, cooking, pet-care, meal, custom)
-  - Day-of-week selection for each activity (M-Su)
-  - Time and duration inputs for each activity
-  - **Minutes/hours toggle:** Switch between minute and hour-based duration input for flexibility
-  - Visual icons and color-coding by category
+  - ✅ Input system for recurring activities: work, walking dog, cooking, exercise, hygiene tasks, etc.
+  - ✅ Category-based organization (work, exercise, hygiene, cooking, pet-care, meal, custom)
+  - ✅ Day-of-week selection for each activity (M-Su)
+  - ✅ Time and duration inputs for each activity
+  - ✅ **Minutes/hours toggle:** Switch between minute and hour-based duration input for flexibility
+  - ✅ Visual icons and color-coding by category
+
 - **Schedule generation:**
-  - Auto-generates timeblocked schedules for next 3-7 days
-  - Pulls in recurring activities based on selected days
-  - Integrates meal times from food logs
-  - Detects conflicts and time gaps
-  - Sortable timeline view with start/end times
-- **Intelligent meal template autofill (NEW):**
-  - **Automatic cook time estimation:** System learns cooking times from recurring meal patterns
-    - Tracks how long each meal template takes based on user history
-    - Calculates average cook time per meal template (e.g., "Chicken & rice bowl" = 35 min)
-    - Auto-fills cooking activity blocks before meal times in schedule
-    - Updates estimates as more data is collected
-  - **Future day meal autofill:** Automatically fills future days with meal templates based on patterns
-    - Analyzes user's typical meal rotation (e.g., "Protein oats" every Mon/Wed breakfast)
-    - Pre-populates future meal slots with likely templates
-    - Suggests meal prep timing based on upcoming meal schedule
-    - Learns from user edits and adjustments over time
-  - **Editable meal templates in LifeFlow:**
-    - Edit meal template ingredients directly from schedule view
-    - Adjust cook times for specific instances without changing template defaults
-    - Quick-swap meals when schedule changes
-    - One-click "Cook this meal" button adds cooking time block automatically
-  - **Cook time tracking:**
-    - Each meal template stores estimated cook time (default: 30 min)
-    - User can manually adjust cook times per meal
-    - System learns from completion patterns (if user consistently takes 45 min for a 30 min meal, adjust estimate)
-    - Cook time appears in schedule as separate activity before meal time
+  - ✅ Auto-generates timeblocked schedules for next 3-7 days
+  - ✅ Pulls in recurring activities based on selected days
+  - ✅ Integrates meal times from food logs
+  - ✅ Detects conflicts and time gaps
+  - ✅ Sortable timeline view with start/end times
+
+- **Intelligent Meal Template Autofill (✅ IMPLEMENTED):**
+  
+  1. **Automatic Cook Time Estimation:**
+     - ✅ Tracks cooking duration history per meal template
+     - ✅ Calculates average cook time from historical data
+     - ✅ Default 30 min for new templates, learns over time
+     - ✅ Auto-generates cooking activity blocks before meal times
+     - ✅ Stored in `cook-history` KV store: `{ templateId, actualMinutes, timestamp }`
+     - ✅ Implementation: `/lib/mealPatternEngine.ts` - `estimateCookTime()`
+  
+  2. **Future Day Meal Autofill:**
+     - ✅ Analyzes last 30 days of meal patterns
+     - ✅ Detects recurring meal templates by day/mealType
+     - ✅ Calculates confidence score (0-100) based on frequency
+     - ✅ Auto-populates future meal slots with >30% confidence
+     - ✅ Shows pattern detection count in UI
+     - ✅ Implementation: `/lib/mealPatternEngine.ts` - `analyzeMealPatterns()`, `predictFutureMeals()`
+  
+  3. **Smart Cooking Schedule Generation:**
+     - ✅ Generates cook start time based on meal time and cook duration
+     - ✅ Creates separate "Cook: [meal name]" activity block
+     - ✅ Links cooking activity to meal template via `mealTemplateId`
+     - ✅ Marks with `isCookingActivity: true` flag
+     - ✅ Implementation: `generateCookingSchedule()` function
+  
+  4. **Editable Meal Templates in LifeFlow (🔄 PARTIAL):**
+     - ✅ Meal templates displayed with cook time in schedule
+     - ✅ Quick-swap capability (remove/add meals)
+     - ✅ Completion tracking for cooking activities
+     - 🔄 **TODO**: Direct template editing from schedule view
+     - 🔄 **TODO**: Per-instance cook time overrides without affecting template default
+     - 🔄 **TODO**: "Edit this meal" button in schedule activity card
+  
+  5. **Pattern Learning & Adaptation:**
+     - ✅ Learns from user's actual meal scheduling behavior
+     - ✅ Updates confidence scores as patterns strengthen
+     - ✅ Respects user overrides and deletions
+     - 🔄 **TODO**: Learn from cook time adjustments (if user consistently takes longer)
+     - 🔄 **TODO**: Suggest prep timing for batch cooking
 - **Goal tracking system:**
   - Create goals with titles, descriptions, and target dates
   - Break down goals into milestones
@@ -318,31 +371,63 @@ This creates a gap where health-conscious users track religiously but still expe
   - 🟡 Yellow: 50-79% DV
   - 🔴 Red: <50% DV
 - **Gut Support Score:** 0-100 based on fiber, fermented foods, diversity, ultra-processed burden
-- **Adrenal Load Score & Stress Tracking (NEW):** 
-  - **Base calculation:** Caffeine intake, sugar spikes, ultra-processed foods, sleep quality
-  - **User stress input system:** Interactive questions to gauge current stress level
-    - Stress level scale (1-10): "How stressed do you feel today?"
-    - Sleep quality (1-10): "How well did you sleep last night?"
-    - Energy level (1-10): "How is your energy level?"
-    - Physical symptoms: Tension, headaches, digestive issues, fatigue
-    - Mental symptoms: Anxiety, brain fog, irritability, overwhelm
-  - **Personalized stress-aware recommendations:**
-    - High stress + high caffeine → "Consider reducing caffeine and adding adaptogenic herbs"
-    - Poor sleep + high sugar → "Focus on protein-rich breakfast and limit refined carbs"
-    - Low energy + nutrient gaps → "Prioritize magnesium, B-vitamins, and iron-rich foods"
-    - Digestive issues + stress → "Try fermented foods and warm, cooked meals"
-  - **Adrenal-supportive nutrients:**
-    - Track intake of: magnesium, B-vitamins (B5, B6), vitamin C, adaptogens, quality protein
-    - Highlight foods that support stress resilience (salmon, eggs, leafy greens, nuts, berries)
-    - Monitor cortisol-spiking foods (high caffeine, refined sugar, alcohol)
-  - **Weekly stress patterns:**
-    - Track stress levels over time alongside nutrient intake
-    - Identify correlations (e.g., high stress on days with low magnesium)
-    - Suggest dietary interventions based on patterns
-  - **Stress level categories:**
-    - Low stress (1-3): Maintenance mode, focus on prevention
-    - Moderate stress (4-6): Active support, prioritize stress-reducing nutrients
-    - High stress (7-10): Urgent intervention, eliminate stressors, maximize supportive foods
+
+#### 4.5 Adrenal Load Score & Stress Tracking (✅ IN PROGRESS)
+**Status**: Dietary calculation complete, user input system implemented, integration in progress
+
+- **Two-Part Calculation System:**
+  1. **Dietary Load (40% weight):** Calculated from food logs
+     - Caffeine intake tracking
+     - Refined sugar burden
+     - Ultra-processed food percentage
+     - Supportive nutrient adequacy (magnesium, B-vitamins, vitamin C)
+  
+  2. **Stress Load (60% weight):** User-reported metrics via StressTracker component
+     - Stress level scale (1-10): "How stressed do you feel today?"
+     - Sleep quality (1-10): "How well did you sleep last night?"
+     - Energy level (1-10): "How is your energy level today?"
+     - Physical symptoms: Tension, headaches, digestive issues, fatigue, racing heart, shallow breathing
+     - Mental symptoms: Anxiety, brain fog, irritability, overwhelm, racing thoughts, difficulty focusing
+
+- **Combined Adrenal Load Score (0-100):**
+  - 0-33 (Low): Maintenance mode - focus on prevention
+  - 34-66 (Moderate): Active support - prioritize stress-reducing nutrients
+  - 67-100 (High): Urgent intervention - eliminate stressors, maximize supportive foods
+
+- **Personalized Stress-Aware Recommendations Engine:**
+  - High stress + high caffeine → "Consider reducing caffeine and adding adaptogenic herbs"
+  - Poor sleep + high sugar → "Focus on protein-rich breakfast and limit refined carbs"
+  - Low energy + nutrient gaps → "Prioritize magnesium, B-vitamins, and iron-rich foods"
+  - Digestive issues + stress → "Try fermented foods and warm, cooked meals"
+  - Physical symptoms → "Add magnesium-rich foods (pumpkin seeds, dark leafy greens)"
+  - Mental fog → "Increase B-vitamins (eggs, salmon, nutritional yeast)"
+
+- **Adrenal-Supportive Nutrient Tracking:**
+  - **Key nutrients monitored:**
+    - Magnesium (target: 400mg/day) - stress resilience
+    - B5 Pantothenic acid (target: 5mg/day) - adrenal function
+    - B6 (target: 1.7mg/day) - neurotransmitter production
+    - Vitamin C (target: 90mg/day) - cortisol regulation
+    - Quality protein (target: 0.8g/kg body weight) - neurotransmitter building blocks
+  - **Food recommendations:**
+    - Stress-resilient: Salmon, eggs, leafy greens, nuts, berries, avocado
+    - Cortisol-balancing: Sweet potatoes, oats, dark chocolate, green tea
+    - Avoid/limit: High caffeine (>400mg/day), refined sugar, alcohol
+
+- **Weekly Stress Pattern Analysis:**
+  - Track stress logs over time alongside nutrient intake
+  - Identify correlations (e.g., high stress on days with low magnesium)
+  - Visual trend charts showing stress vs. nutrient adequacy
+  - Suggest dietary interventions based on detected patterns
+  - Alert when stress is high for 3+ consecutive days
+
+- **Implementation Components:**
+  - ✅ `/lib/adrenalEngine.ts` - Calculation logic
+  - ✅ `/components/StressTracker.tsx` - User input interface
+  - ✅ `/components/AdrenalLoadDisplay.tsx` - Score visualization
+  - 🔄 Dashboard integration with daily stress logging prompt
+  - 🔄 Stress-aware recommendation filtering in Recommendations page
+  - 🔄 Stress pattern history chart
 
 #### 5. Wellness Audit Lenses
 - **GBDI (Gut-Brain-Digestive Index):** Composite score

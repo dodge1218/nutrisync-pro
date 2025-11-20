@@ -1,11 +1,14 @@
 import { useMemo } from 'react'
+import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Separator } from '../ui/separator'
-import { Lightbulb, Warning, Sparkle, ShoppingCart } from '@phosphor-icons/react'
+import { Lightbulb, Warning, Sparkle, ShoppingCart, Lightning } from '@phosphor-icons/react'
 import { analyzeDailyIntake, type FoodLog } from '../../lib/nutritionEngine'
 import { matchProductsToGaps } from '../../lib/affiliate'
+import { calculateEnhancedAdrenalLoad } from '../../lib/adrenalEngine'
+import type { StressLog } from '../StressTracker'
 
 interface RecommendationsProps {
   foodLogs: FoodLog[]
@@ -14,11 +17,21 @@ interface RecommendationsProps {
 export default function Recommendations({ foodLogs }: RecommendationsProps) {
   const today = new Date().toISOString().split('T')[0]
   const todaysLogs = foodLogs.filter(log => log.timestamp.startsWith(today))
+  const [stressLogs] = useKV<StressLog[]>('stress-logs', [])
+
+  const todayStressLog = stressLogs?.find(log => 
+    log.timestamp.startsWith(today)
+  )
 
   const analysis = useMemo(() => {
     if (todaysLogs.length === 0) return null
     return analyzeDailyIntake(todaysLogs, { staples: true })
   }, [todaysLogs])
+
+  const adrenalLoadResult = useMemo(() => {
+    if (!analysis) return null
+    return calculateEnhancedAdrenalLoad(todaysLogs, analysis.totals, todayStressLog)
+  }, [todaysLogs, analysis, todayStressLog])
 
   const matchedProducts = useMemo(() => {
     if (!analysis) return []
@@ -90,6 +103,56 @@ export default function Recommendations({ foodLogs }: RecommendationsProps) {
                 {index < analysis.synergySuggestions.length - 1 && <Separator />}
               </div>
             ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {adrenalLoadResult && adrenalLoadResult.recommendations.length > 0 && (
+        <Card className="border-orange-200 bg-orange-50/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightning className="text-orange-600" weight="fill" />
+              Stress-Aware Recommendations
+            </CardTitle>
+            <CardDescription className="text-orange-900">
+              Based on your adrenal load score of {adrenalLoadResult.score}/100 ({adrenalLoadResult.categoryLabel})
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {adrenalLoadResult.recommendations.map((recommendation, index) => (
+              <div key={index} className="space-y-2">
+                <Alert className="bg-white border-orange-300">
+                  <AlertDescription className="text-sm text-foreground">
+                    {recommendation}
+                  </AlertDescription>
+                </Alert>
+                {index < adrenalLoadResult.recommendations.length - 1 && <Separator />}
+              </div>
+            ))}
+            
+            {adrenalLoadResult.supportiveNutrients.length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-3 text-orange-900">Stress-Supportive Nutrients Status:</h4>
+                <div className="space-y-2">
+                  {adrenalLoadResult.supportiveNutrients.map((nutrient) => (
+                    <div key={nutrient.nutrient} className="flex items-center justify-between p-2 rounded bg-white">
+                      <div className="flex-1">
+                        <div className="font-medium text-sm">{nutrient.nutrient}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {Math.round(nutrient.current)} / {nutrient.target}
+                        </div>
+                      </div>
+                      <Badge variant={
+                        nutrient.status === 'low' ? 'destructive' :
+                        nutrient.status === 'adequate' ? 'secondary' : 'default'
+                      }>
+                        {nutrient.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
