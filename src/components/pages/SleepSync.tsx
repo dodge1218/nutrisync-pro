@@ -17,14 +17,12 @@ import {
   Warning,
   CheckCircle,
   Coffee,
-  ForkKnife,
   Timer,
   Brain,
   Sparkle
 } from '@phosphor-icons/react'
 import { 
   analyzeCircadianPattern, 
-  getDigestiveBufferColor, 
   getSleepReadinessMessage,
   parseTimeString,
   type UserSleepPreferences,
@@ -32,11 +30,11 @@ import {
 } from '../../lib/circadianEngine'
 import type { FoodLog } from '../../lib/nutritionEngine'
 
-interface CircaFastProps {
+interface SleepSyncProps {
   foodLogs: FoodLog[]
 }
 
-export default function SleepSync({ foodLogs }: CircaFastProps) {
+export default function SleepSync({ foodLogs }: SleepSyncProps) {
   const [sleepPreferences, setSleepPreferences] = useKV<UserSleepPreferences>('sleep-preferences', {
     targetSleepTime: '22:00',
     targetWakeTime: '06:30',

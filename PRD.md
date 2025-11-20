@@ -1,4 +1,4 @@
-# Product Requirements Document: NutriWell
+# Product Requirements Document: NutriWell & Wellness Suite
 
 ## Problem Statement
 
@@ -153,7 +153,7 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Plant diversity counter:** Track unique plant foods consumed
 - **Guided gap filling:** System identifies deficiencies and guides toward foods that close multiple gaps efficiently
 
-#### 1.7 CircaFast - Sleep-Optimized Meal Timing (NEW)
+#### 1.7 SleepSync - Sleep-Optimized Meal Timing (RENAMED from CircaFast)
 - **Circadian meal timing analysis:** Analyzes when user eats to optimize sleep quality
   - Tracks meal timestamps automatically from logged meals
   - Detects eating patterns over time (last meal time, eating window)
@@ -191,8 +191,52 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Integration with existing features:**
   - Works with Meal Planner to suggest optimal meal times
   - Analyzes Food Budget data for meal composition
-  - Provides CircaFast-specific achievements (7-day early eating streak, etc.)
+  - Provides SleepSync-specific achievements (7-day early eating streak, etc.)
   - Shows sleep optimization score alongside GBDI on dashboard
+
+#### 1.8 LifeFlow - Time-Blocked Schedule Builder (NEW)
+- **Intelligent scheduling system:** Builds timeblocked todo lists based on food, sleep, and daily activities
+  - Detects awake window from sleep preferences (wake to sleep time)
+  - Integrates meal times from food logs automatically
+  - Creates comprehensive daily schedules for 3-7 days at a time
+- **Recurring activity management:**
+  - Input system for recurring activities: work, walking dog, cooking, exercise, hygiene tasks, etc.
+  - Category-based organization (work, exercise, hygiene, cooking, pet-care, meal, custom)
+  - Day-of-week selection for each activity (M-Su)
+  - Time and duration inputs for each activity
+  - Visual icons and color-coding by category
+- **Schedule generation:**
+  - Auto-generates timeblocked schedules for next 3-7 days
+  - Pulls in recurring activities based on selected days
+  - Integrates meal times from food logs
+  - Detects conflicts and time gaps
+  - Sortable timeline view with start/end times
+- **Goal tracking system:**
+  - Create goals with titles, descriptions, and target dates
+  - Break down goals into milestones
+  - Track milestone completion with checkboxes
+  - Progress bars showing completion percentage
+  - Active/completed/paused status management
+- **Activity completion tracking:**
+  - Check off activities as completed throughout the day
+  - Visual progress indicators per day (percentage complete)
+  - Completion stats across multiple days
+  - Recurring activity completion history
+- **Scaffolding intelligence:**
+  - Detects time blocks where user is awake but unscheduled
+  - Suggests activities that fit available time slots
+  - Recommends goal-related tasks during free time
+  - Guides user to accomplish goals incrementally
+- **3-day minimum planning:**
+  - Default view shows 3 days of scheduling
+  - Options for 5-day and 7-day views
+  - Rolling window (updates as days pass)
+  - Historical view of past schedules
+- **Integration with other modes:**
+  - Uses sleep schedule from SleepSync
+  - Auto-imports meal times from NutriWell logs
+  - Respects eating window and digestion buffers
+  - Coordinates work, exercise, meals for optimal timing
 
 #### 2. Gamification System (NEW)
 - **GBDI Score Display:** Large, animated score card with trend indicators (↑↓) comparing to previous day

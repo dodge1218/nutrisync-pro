@@ -10,14 +10,15 @@ import Settings from './components/pages/Settings'
 import Achievements from './components/pages/Achievements'
 import MealPlanner from './components/pages/MealPlanner'
 import FoodBudget from './components/pages/FoodBudget'
-import CircaFast from './components/pages/CircaFast'
+import SleepSync from './components/pages/SleepSync'
+import LifeFlow from './components/pages/LifeFlow'
 import DisclaimerBanner from './components/DisclaimerBanner'
 import Navigation from './components/Navigation'
-import { Moon, Leaf } from '@phosphor-icons/react'
+import { Moon, Leaf, CalendarBlank } from '@phosphor-icons/react'
 import type { FoodLog } from './lib/nutritionEngine'
 
-export type Page = 'dashboard' | 'log-food' | 'meal-planner' | 'food-budget' | 'recommendations' | 'education' | 'achievements' | 'settings' | 'circafast'
-export type AppMode = 'nutriwell' | 'circafast'
+export type Page = 'dashboard' | 'log-food' | 'meal-planner' | 'food-budget' | 'recommendations' | 'education' | 'achievements' | 'settings' | 'sleepsync' | 'lifeflow'
+export type AppMode = 'nutriwell' | 'sleepsync' | 'lifeflow'
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard')
@@ -27,10 +28,15 @@ function App() {
   const logs = foodLogs || []
   const mode = appMode || 'nutriwell'
 
-  const toggleMode = () => {
-    const newMode = mode === 'nutriwell' ? 'circafast' : 'nutriwell'
-    setAppMode(newMode)
-    setCurrentPage(newMode === 'circafast' ? 'circafast' : 'dashboard')
+  const switchMode = (targetMode: AppMode) => {
+    setAppMode(targetMode)
+    if (targetMode === 'nutriwell') {
+      setCurrentPage('dashboard')
+    } else if (targetMode === 'sleepsync') {
+      setCurrentPage('sleepsync')
+    } else if (targetMode === 'lifeflow') {
+      setCurrentPage('lifeflow')
+    }
   }
 
   return (
@@ -39,7 +45,7 @@ function App() {
       
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         <header className="mb-8">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="text-4xl font-bold text-foreground mb-2 flex items-center gap-3">
                 {mode === 'nutriwell' ? (
@@ -47,38 +53,62 @@ function App() {
                     <Leaf className="w-10 h-10 text-primary" />
                     NutriWell
                   </>
-                ) : (
+                ) : mode === 'sleepsync' ? (
                   <>
                     <Moon className="w-10 h-10 text-primary" />
-                    CircaFast
+                    SleepSync
+                  </>
+                ) : (
+                  <>
+                    <CalendarBlank className="w-10 h-10 text-primary" />
+                    LifeFlow
                   </>
                 )}
               </h1>
               <p className="text-muted-foreground">
                 {mode === 'nutriwell' 
                   ? 'Smart nutrition intelligence for optimal health'
-                  : 'Sleep-optimized meal timing for better rest'
+                  : mode === 'sleepsync'
+                  ? 'Sleep-optimized meal timing for better rest'
+                  : 'Time-blocked scheduling for your goals'
                 }
               </p>
             </div>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={toggleMode}
-              className="flex items-center gap-2"
-            >
-              {mode === 'nutriwell' ? (
-                <>
-                  <Moon className="w-5 h-5" />
-                  Switch to CircaFast
-                </>
-              ) : (
-                <>
-                  <Leaf className="w-5 h-5" />
-                  Switch to NutriWell
-                </>
+            <div className="flex gap-2">
+              {mode !== 'nutriwell' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => switchMode('nutriwell')}
+                  className="flex items-center gap-2"
+                >
+                  <Leaf className="w-4 h-4" />
+                  NutriWell
+                </Button>
               )}
-            </Button>
+              {mode !== 'sleepsync' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => switchMode('sleepsync')}
+                  className="flex items-center gap-2"
+                >
+                  <Moon className="w-4 h-4" />
+                  SleepSync
+                </Button>
+              )}
+              {mode !== 'lifeflow' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => switchMode('lifeflow')}
+                  className="flex items-center gap-2"
+                >
+                  <CalendarBlank className="w-4 h-4" />
+                  LifeFlow
+                </Button>
+              )}
+            </div>
           </div>
         </header>
 
@@ -121,9 +151,13 @@ function App() {
               )}
             </main>
           </>
+        ) : mode === 'sleepsync' ? (
+          <main className="mt-8">
+            <SleepSync foodLogs={logs} />
+          </main>
         ) : (
           <main className="mt-8">
-            <CircaFast foodLogs={logs} />
+            <LifeFlow foodLogs={logs} />
           </main>
         )}
       </div>
