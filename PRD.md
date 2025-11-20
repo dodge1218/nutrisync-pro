@@ -226,6 +226,27 @@ This creates a gap where health-conscious users track religiously but still expe
   - Integrates meal times from food logs
   - Detects conflicts and time gaps
   - Sortable timeline view with start/end times
+- **Intelligent meal template autofill (NEW):**
+  - **Automatic cook time estimation:** System learns cooking times from recurring meal patterns
+    - Tracks how long each meal template takes based on user history
+    - Calculates average cook time per meal template (e.g., "Chicken & rice bowl" = 35 min)
+    - Auto-fills cooking activity blocks before meal times in schedule
+    - Updates estimates as more data is collected
+  - **Future day meal autofill:** Automatically fills future days with meal templates based on patterns
+    - Analyzes user's typical meal rotation (e.g., "Protein oats" every Mon/Wed breakfast)
+    - Pre-populates future meal slots with likely templates
+    - Suggests meal prep timing based on upcoming meal schedule
+    - Learns from user edits and adjustments over time
+  - **Editable meal templates in LifeFlow:**
+    - Edit meal template ingredients directly from schedule view
+    - Adjust cook times for specific instances without changing template defaults
+    - Quick-swap meals when schedule changes
+    - One-click "Cook this meal" button adds cooking time block automatically
+  - **Cook time tracking:**
+    - Each meal template stores estimated cook time (default: 30 min)
+    - User can manually adjust cook times per meal
+    - System learns from completion patterns (if user consistently takes 45 min for a 30 min meal, adjust estimate)
+    - Cook time appears in schedule as separate activity before meal time
 - **Goal tracking system:**
   - Create goals with titles, descriptions, and target dates
   - Break down goals into milestones
@@ -297,7 +318,31 @@ This creates a gap where health-conscious users track religiously but still expe
   - 🟡 Yellow: 50-79% DV
   - 🔴 Red: <50% DV
 - **Gut Support Score:** 0-100 based on fiber, fermented foods, diversity, ultra-processed burden
-- **Adrenal Load Score:** Based on caffeine, sugar spikes, ultra-processed foods (future refinement)
+- **Adrenal Load Score & Stress Tracking (NEW):** 
+  - **Base calculation:** Caffeine intake, sugar spikes, ultra-processed foods, sleep quality
+  - **User stress input system:** Interactive questions to gauge current stress level
+    - Stress level scale (1-10): "How stressed do you feel today?"
+    - Sleep quality (1-10): "How well did you sleep last night?"
+    - Energy level (1-10): "How is your energy level?"
+    - Physical symptoms: Tension, headaches, digestive issues, fatigue
+    - Mental symptoms: Anxiety, brain fog, irritability, overwhelm
+  - **Personalized stress-aware recommendations:**
+    - High stress + high caffeine → "Consider reducing caffeine and adding adaptogenic herbs"
+    - Poor sleep + high sugar → "Focus on protein-rich breakfast and limit refined carbs"
+    - Low energy + nutrient gaps → "Prioritize magnesium, B-vitamins, and iron-rich foods"
+    - Digestive issues + stress → "Try fermented foods and warm, cooked meals"
+  - **Adrenal-supportive nutrients:**
+    - Track intake of: magnesium, B-vitamins (B5, B6), vitamin C, adaptogens, quality protein
+    - Highlight foods that support stress resilience (salmon, eggs, leafy greens, nuts, berries)
+    - Monitor cortisol-spiking foods (high caffeine, refined sugar, alcohol)
+  - **Weekly stress patterns:**
+    - Track stress levels over time alongside nutrient intake
+    - Identify correlations (e.g., high stress on days with low magnesium)
+    - Suggest dietary interventions based on patterns
+  - **Stress level categories:**
+    - Low stress (1-3): Maintenance mode, focus on prevention
+    - Moderate stress (4-6): Active support, prioritize stress-reducing nutrients
+    - High stress (7-10): Urgent intervention, eliminate stressors, maximize supportive foods
 
 #### 5. Wellness Audit Lenses
 - **GBDI (Gut-Brain-Digestive Index):** Composite score

@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
@@ -6,10 +7,12 @@ import { Separator } from '../ui/separator'
 import { Leaf, Fire, DropHalf, Sparkle, Heart } from '@phosphor-icons/react'
 import { analyzeDailyIntake, type FoodLog } from '../../lib/nutritionEngine'
 import { NUTRIENT_DISPLAY_NAMES, type NutrientKey } from '../../lib/dailyValues'
+import { calculateEnhancedAdrenalLoad } from '../../lib/adrenalEngine'
 import GBDIDisplay from '../GBDIDisplay'
 import StreakTracker from '../StreakTracker'
 import GBDIHistory from '../GBDIHistory'
-import { useKV } from '@github/spark/hooks'
+import StressTracker, { type StressLog } from '../StressTracker'
+import AdrenalLoadDisplay from '../AdrenalLoadDisplay'
 
 interface DashboardProps {
   foodLogs: FoodLog[]
@@ -27,11 +30,21 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
   const today = new Date().toISOString().split('T')[0]
   const todaysLogs = foodLogs.filter(log => log.timestamp.startsWith(today))
   const [previousGbdi] = useKV<number>('previous-gbdi', 0)
+  const [stressLogs] = useKV<StressLog[]>('stress-logs', [])
+
+  const todayStressLog = stressLogs?.find(log => 
+    log.timestamp.startsWith(today)
+  )
 
   const analysis = useMemo(() => {
     if (todaysLogs.length === 0) return null
     return analyzeDailyIntake(todaysLogs, { staples: true })
   }, [todaysLogs])
+
+  const adrenalLoadResult = useMemo(() => {
+    if (!analysis) return null
+    return calculateEnhancedAdrenalLoad(todaysLogs, analysis.totals, todayStressLog)
+  }, [todaysLogs, analysis, todayStressLog])
 
   const detectedStaples = useMemo(() => {
     const last30Days = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
@@ -130,6 +143,12 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
         />
         <StreakTracker foodLogs={foodLogs} />
       </div>
+
+      <StressTracker compact={true} />
+
+      {adrenalLoadResult && (
+        <AdrenalLoadDisplay result={adrenalLoadResult} compact={false} />
+      )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>

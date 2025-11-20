@@ -13,7 +13,10 @@ export interface MealTemplate {
   ingredients: MealIngredient[]
   tags: string[]
   prepTime?: string
+  cookTimeMinutes?: number
   isCustom?: boolean
+  timesCooked?: number
+  totalCookTimeTracked?: number
 }
 
 export const MEAL_TEMPLATES: MealTemplate[] = [

@@ -25,10 +25,14 @@ import {
   Sun,
   Coffee,
   ListChecks,
-  Sparkle
+  Sparkle,
+  CookingPot
 } from '@phosphor-icons/react'
 import { parseTimeString, type UserSleepPreferences } from '../../lib/circadianEngine'
+import { analyzeMealPatterns, estimateCookTime, predictFutureMeals, generateCookingSchedule } from '../../lib/mealPatternEngine'
 import type { FoodLog } from '../../lib/nutritionEngine'
+import type { MealTemplate } from '../../data/mealTemplates'
+import { toast } from 'sonner'
 
 interface LifeFlowProps {
   foodLogs: FoodLog[]
@@ -74,13 +78,15 @@ export interface ScheduledActivity {
   isCompleted: boolean
   isRecurring: boolean
   recurringId?: string
+  mealTemplateId?: string
+  isCookingActivity?: boolean
 }
 
 const activityIcons: Record<string, React.ReactNode> = {
   work: <BriefcaseMetal className="w-4 h-4" />,
   exercise: <Barbell className="w-4 h-4" />,
   hygiene: <Shower className="w-4 h-4" />,
-  cooking: <ForkKnife className="w-4 h-4" />,
+  cooking: <CookingPot className="w-4 h-4" />,
   'pet-care': <Dog className="w-4 h-4" />,
   meal: <Coffee className="w-4 h-4" />,
   custom: <Circle className="w-4 h-4" />
@@ -106,10 +112,13 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
   const [recurringActivities, setRecurringActivities] = useKV<RecurringActivity[]>('lifeflow-recurring', [])
   const [schedules, setSchedules] = useKV<DaySchedule[]>('lifeflow-schedules', [])
   const [goals, setGoals] = useKV<Goal[]>('lifeflow-goals', [])
+  const [mealTemplates] = useKV<MealTemplate[]>('meal-templates', [])
+  const [cookHistory] = useKV<{ templateId: string; actualMinutes: number; timestamp: string }[]>('cook-history', [])
 
   const [isAddingActivity, setIsAddingActivity] = useState(false)
   const [isAddingGoal, setIsAddingGoal] = useState(false)
   const [selectedDays, setSelectedDays] = useState(3)
+  const [autofillMeals, setAutofillMeals] = useState(true)
 
   const [newActivity, setNewActivity] = useState<Partial<RecurringActivity>>({
     name: '',
@@ -140,6 +149,11 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
     }
     return result
   }, [selectedDays, today])
+
+  const mealPatterns = useMemo(() => {
+    if (!mealTemplates || mealTemplates.length === 0) return []
+    return analyzeMealPatterns(foodLogs, mealTemplates, 30)
+  }, [foodLogs, mealTemplates])
 
   const awakeWindow = useMemo(() => {
     if (!sleepPreferences) return { start: '06:30', end: '22:00', duration: 15.5 }
@@ -193,25 +207,73 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
         })
       })
 
-      const dateLogs = foodLogs.filter(log => log.timestamp.startsWith(dateStr))
-      dateLogs.forEach((log, idx) => {
-        const mealTime = log.timestamp.split('T')[1]?.substring(0, 5) || '12:00'
-        const startMinutes = parseTimeString(mealTime).totalMinutes
-        const endMinutes = startMinutes + 30
-        const endHour = Math.floor(endMinutes / 60)
-        const endMin = endMinutes % 60
-        const endTime = `${String(endHour).padStart(2, '0')}:${String(endMin).padStart(2, '0')}`
+      if (autofillMeals && mealPatterns.length > 0 && mealTemplates) {
+        const predictions = predictFutureMeals(mealPatterns, mealTemplates, date)
+        
+        const defaultMealTimes = {
+          breakfast: '08:00',
+          lunch: '12:30',
+          dinner: '18:00'
+        }
 
-        activities.push({
-          id: `${dateStr}-meal-${idx}`,
-          name: `Meal: ${log.food.name}`,
-          startTime: mealTime,
-          endTime,
-          category: 'meal',
-          isCompleted: false,
-          isRecurring: false
+        predictions.forEach(prediction => {
+          if (prediction.confidence > 30) {
+            const mealTime = defaultMealTimes[prediction.mealType as keyof typeof defaultMealTimes]
+            const cookEstimate = estimateCookTime(prediction.template, cookHistory)
+            
+            const cookSchedule = generateCookingSchedule(mealTime, cookEstimate.estimatedMinutes)
+
+            activities.push({
+              id: `${dateStr}-cook-${prediction.template.id}`,
+              name: `Cook: ${prediction.template.name}`,
+              startTime: cookSchedule.cookStartTime,
+              endTime: cookSchedule.cookEndTime,
+              category: 'cooking',
+              isCompleted: false,
+              isRecurring: false,
+              mealTemplateId: prediction.template.id,
+              isCookingActivity: true
+            })
+
+            const mealStartMinutes = parseTimeString(mealTime).totalMinutes
+            const mealEndMinutes = mealStartMinutes + 30
+            const mealEndHour = Math.floor(mealEndMinutes / 60)
+            const mealEndMin = mealEndMinutes % 60
+            const mealEndTime = `${String(mealEndHour).padStart(2, '0')}:${String(mealEndMin).padStart(2, '0')}`
+
+            activities.push({
+              id: `${dateStr}-meal-${prediction.template.id}`,
+              name: `Meal: ${prediction.template.name}`,
+              startTime: mealTime,
+              endTime: mealEndTime,
+              category: 'meal',
+              isCompleted: false,
+              isRecurring: false,
+              mealTemplateId: prediction.template.id
+            })
+          }
         })
-      })
+      } else {
+        const dateLogs = foodLogs.filter(log => log.timestamp.startsWith(dateStr))
+        dateLogs.forEach((log, idx) => {
+          const mealTime = log.timestamp.split('T')[1]?.substring(0, 5) || '12:00'
+          const startMinutes = parseTimeString(mealTime).totalMinutes
+          const endMinutes = startMinutes + 30
+          const endHour = Math.floor(endMinutes / 60)
+          const endMin = endMinutes % 60
+          const endTime = `${String(endHour).padStart(2, '0')}:${String(endMin).padStart(2, '0')}`
+
+          activities.push({
+            id: `${dateStr}-meal-${idx}`,
+            name: `Meal: ${log.food.name}`,
+            startTime: mealTime,
+            endTime,
+            category: 'meal',
+            isCompleted: false,
+            isRecurring: false
+          })
+        })
+      }
 
       activities.sort((a, b) => parseTimeString(a.startTime).totalMinutes - parseTimeString(b.startTime).totalMinutes)
 
@@ -222,6 +284,7 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
     })
 
     setSchedules(newSchedules)
+    toast.success(`Generated schedule for ${dates.length} days${autofillMeals ? ' with predicted meals' : ''}`)
   }
 
   const handleAddActivity = () => {
@@ -377,19 +440,33 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
 
         <TabsContent value="schedule" className="space-y-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Label>Planning days:</Label>
-              <div className="flex gap-2">
-                {[3, 5, 7].map(num => (
-                  <Button
-                    key={num}
-                    variant={selectedDays === num ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setSelectedDays(num)}
-                  >
-                    {num}
-                  </Button>
-                ))}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Label>Planning days:</Label>
+                <div className="flex gap-2">
+                  {[3, 5, 7].map(num => (
+                    <Button
+                      key={num}
+                      variant={selectedDays === num ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setSelectedDays(num)}
+                    >
+                      {num}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="autofill-meals"
+                  checked={autofillMeals}
+                  onChange={(e) => setAutofillMeals(e.target.checked)}
+                  className="w-4 h-4 rounded border-input"
+                />
+                <Label htmlFor="autofill-meals" className="cursor-pointer text-sm">
+                  Auto-predict meals
+                </Label>
               </div>
             </div>
             <Button onClick={generateSchedulesForDays}>
@@ -397,6 +474,17 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
               Generate Schedule
             </Button>
           </div>
+
+          {mealPatterns.length > 0 && autofillMeals && (
+            <Card className="border-primary/20 bg-primary/5">
+              <CardContent className="pt-4">
+                <p className="text-sm text-muted-foreground">
+                  <Sparkle className="w-4 h-4 inline mr-1" />
+                  Detected {mealPatterns.length} meal patterns from your history. Future meals and cook times will be auto-filled based on your habits.
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           {schedules && schedules.length > 0 ? (
             <div className="grid gap-4">
