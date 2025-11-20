@@ -1,11 +1,15 @@
 import { useMemo } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
-import { Progress } from '../ui/progress'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Leaf, Fire, DropHalf, Sparkle } from '@phosphor-icons/react'
 import { analyzeDailyIntake, type FoodLog } from '../../lib/nutritionEngine'
 import { NUTRIENT_DISPLAY_NAMES, type NutrientKey } from '../../lib/dailyValues'
+import GBDIDisplay from '../GBDIDisplay'
+import StreakTracker from '../StreakTracker'
+import AchievementsPanel from '../AchievementsPanel'
+import GBDIHistory from '../GBDIHistory'
+import { useKV } from '@github/spark/hooks'
 
 interface DashboardProps {
   foodLogs: FoodLog[]
@@ -14,6 +18,7 @@ interface DashboardProps {
 export default function Dashboard({ foodLogs }: DashboardProps) {
   const today = new Date().toISOString().split('T')[0]
   const todaysLogs = foodLogs.filter(log => log.timestamp.startsWith(today))
+  const [previousGbdi] = useKV<number>('previous-gbdi', 0)
 
   const analysis = useMemo(() => {
     if (todaysLogs.length === 0) return null
@@ -63,6 +68,18 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
 
   return (
     <div className="space-y-6">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <GBDIDisplay 
+          gbdi={analysis.wellnessAudit.gbdi}
+          previousGbdi={previousGbdi}
+          fermentedFoodCount={analysis.wellnessAudit.fermentedFoodCount}
+          plantDiversityCount={analysis.wellnessAudit.plantDiversityCount}
+          ultraProcessedBurden={analysis.wellnessAudit.ultraProcessedBurden}
+          gutStressorPresent={analysis.wellnessAudit.gutStressorPresent}
+        />
+        <StreakTracker foodLogs={foodLogs} />
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -92,19 +109,6 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">GBDI Score</CardTitle>
-            <Sparkle className="h-4 w-4 text-muted-foreground" weight="fill" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{Math.round(analysis.wellnessAudit.gbdi)}/100</div>
-            <p className="text-xs text-muted-foreground">
-              Gut-Brain-Digestive Index
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Adrenal Load</CardTitle>
             <DropHalf className="h-4 w-4 text-muted-foreground" weight="fill" />
           </CardHeader>
@@ -112,6 +116,19 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
             <div className="text-2xl font-bold">{Math.round(analysis.wellnessAudit.adrenalLoad)}/100</div>
             <p className="text-xs text-muted-foreground">
               {analysis.wellnessAudit.adrenalLoad > 60 ? 'High stress load' : 'Manageable'}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Mineral Trio</CardTitle>
+            <Sparkle className="h-4 w-4 text-muted-foreground" weight="fill" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{Math.round(analysis.wellnessAudit.mineralTrioSufficiency)}%</div>
+            <p className="text-xs text-muted-foreground">
+              Ca, Mg, K balance
             </p>
           </CardContent>
         </Card>
@@ -130,6 +147,18 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
           </AlertDescription>
         </Alert>
       )}
+
+      <AchievementsPanel 
+        foodLogs={foodLogs}
+        gbdi={analysis.wellnessAudit.gbdi}
+        fermentedFoodCount={analysis.wellnessAudit.fermentedFoodCount}
+        plantDiversityCount={analysis.wellnessAudit.plantDiversityCount}
+      />
+
+      <GBDIHistory 
+        currentGbdi={analysis.wellnessAudit.gbdi}
+        currentDate={today}
+      />
 
       <Card>
         <CardHeader>

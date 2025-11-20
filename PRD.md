@@ -70,6 +70,8 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Daily Active Logging:** 60% of users log ≥1 meal/day
 - **Gap Discovery:** 90% of users view their nutrient gaps within first 3 days
 - **Suggestion Engagement:** 40% of users click on ≥1 suggestion per week
+- **Gamification Engagement:** 70% of users check their GBDI score daily, 50% unlock ≥3 achievements in first 2 weeks
+- **Streak Retention:** 40% of users maintain 7-day logging streak
 - **Retention:** 50% weekly retention at 4 weeks
 - **Educational Content:** 30% of users read ≥1 education card per week
 
@@ -83,7 +85,7 @@ This creates a gap where health-conscious users track religiously but still expe
 ## Feature Roadmap
 
 ### MVP (Version 1.0) — Core Experience
-**Goal:** Prove the core loop: log → analyze → fix
+**Goal:** Prove the core loop: log → analyze → fix → level up
 
 #### 1. Food Logging
 - **Manual text entry:** "2 cups lentils", "6oz chicken breast", "1 tbsp olive oil"
@@ -91,7 +93,19 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Simple meal buttons:** "add a fruit", "add fermented food", "add greens"
 - **Timestamp tracking:** For meal timing analysis (future)
 
-#### 2. Nutrient Analysis Engine
+#### 2. Gamification System (NEW)
+- **GBDI Score Display:** Large, animated score card with trend indicators (↑↓) comparing to previous day
+- **Streak Tracker:** Daily logging streak with visual calendar, achievements at 3, 7, 14, 30+ days
+- **Achievement System:** Unlock badges for milestones:
+  - **Common:** First meal logged, 5 days streak
+  - **Rare:** 7 fermented foods in a week, Omega Warrior (3x fish/week)
+  - **Epic:** GBDI 80+, Consistency King (7-day streak), No ultra-processed for 3 days
+  - **Legendary:** Perfect Nutrient Day (100% all DVs), 30+ plant types/week, 30-day streak
+- **Progress Visualization:** Animated progress bars, color-coded status cards, satisfying animations
+- **Level System:** Starter → Rising → Champion → Master → Legendary based on streak length
+- **Gut Health Breakdown:** Visual cards showing fermented foods, plant diversity, ultra-processed burden, gut stressors
+
+#### 3. Nutrient Analysis Engine
 - **Macronutrients:** Protein, carbs, fat, fiber
 - **Micronutrients:** Key vitamins (C, D, A, E, K, B-complex), minerals (iron, zinc, calcium, magnesium)
 - **Electrolytes:** Sodium, potassium, magnesium
@@ -102,7 +116,7 @@ This creates a gap where health-conscious users track religiously but still expe
   - Ultra-processed flag
   - Plant food diversity count
 
-#### 3. Gap Detection & Scoring
+#### 4. Gap Detection & Scoring
 - **Daily Value (DV) comparison:** Show % of DV achieved for each nutrient
 - **Color-coded status:**
   - 🟢 Green: ≥80% DV
@@ -111,7 +125,7 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Gut Support Score:** 0-100 based on fiber, fermented foods, diversity, ultra-processed burden
 - **Adrenal Load Score:** Based on caffeine, sugar spikes, ultra-processed foods (future refinement)
 
-#### 4. Wellness Audit Lenses
+#### 5. Wellness Audit Lenses
 - **GBDI (Gut-Brain-Digestive Index):** Composite score
 - **Adrenal Load:** Caffeine + refined sugar + stress markers
 - **Warm vs. Cold:** Preference for cooked/room-temp foods (digestibility)
@@ -126,7 +140,7 @@ This creates a gap where health-conscious users track religiously but still expe
   - Cultured dairy 2x/week
   - Pumpkin seeds daily
 
-#### 5. Suggestion Engine
+#### 6. Suggestion Engine
 - **Synergy suggestions:**
   - "Add bell pepper (vitamin C) to boost iron absorption from lentils"
   - "Space coffee 2 hours from this iron-rich meal"
@@ -137,19 +151,22 @@ This creates a gap where health-conscious users track religiously but still expe
   - **Product options (optional):** "Consider magnesium glycinate supplement" (with disclaimer)
 - **Warm/cooked priority:** Always suggest cooked/warm options first for digestibility
 
-#### 6. Dashboard
+#### 7. Dashboard
+- **GBDI Score Hero Card:** Large animated card with current score, trend vs yesterday, status badge (Excellent/Good/Fair/Poor/Critical)
+- **Streak Tracker Card:** Current streak, best streak, last 7 days visual calendar
 - **Today's Summary:** Total calories, macros, fiber, gut score
 - **Nutrient Grid:** Visual %DV bars for all tracked nutrients
 - **Top 3 Fixes:** Highest-impact, lowest-friction improvements
+- **Achievements Panel:** Show unlocked/locked achievements with progress bars
 - **Gut Health Panel:** Fermented food count, fiber grams, plant diversity
 - **Legal Disclaimer Banner:** Persistent, prominent
 
-#### 7. Educational Content
+#### 8. Educational Content
 - **In-app cards:** "Why Vitamin C + Iron?", "Gut-Friendly Snack Ideas", "Adrenal Support Foods"
 - **Nutrient tags:** Each card tagged with relevant nutrients
 - **Beginner-friendly:** Plain language, no medical jargon
 
-#### 8. Settings & Profile
+#### 9. Settings & Profile
 - **User preferences:**
   - Age, sex, activity level (for future DV customization)
   - Dietary pattern (omnivore, vegetarian, vegan)
