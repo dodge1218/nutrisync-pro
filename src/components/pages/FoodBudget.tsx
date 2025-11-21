@@ -1,32 +1,27 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
-import { Button } from '../ui/button'
 import { Badge } from '../ui/badge'
 import { Progress } from '../ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ScrollArea } from '../ui/scroll-area'
-import { TrendUp, TrendDown, Minus, Lightbulb, Target, ChartBar } from '@phosphor-icons/react'
+import { TrendUp, TrendDown, Minus, Lightbulb, Target, ChartBar, Calendar } from '@phosphor-icons/react'
 import type { FoodLog } from '../../lib/nutritionEngine'
 import { calculateNutrientTotals, detectNutrientGaps, performWellnessAudit } from '../../lib/nutritionEngine'
 import { getNutrientDV, formatNutrientAmount, NUTRIENT_DISPLAY_NAMES, type NutrientKey } from '../../lib/dailyValues'
 import GapFiller from '../GapFiller'
 import NutrientTimeline from '../NutrientTimeline'
+import HistoryLineGraph from '../HistoryLineGraph'
+import { 
+  updateHistoryData, 
+  filterLogsForDate, 
+  getTodayKey,
+  type HistoryData 
+} from '../../lib/historyTracking'
 
 interface FoodBudgetProps {
   foodLogs: FoodLog[]
 }
-
-interface BudgetPeriod {
-  label: string
-  days: number
-}
-
-const BUDGET_PERIODS: BudgetPeriod[] = [
-  { label: 'Today', days: 1 },
-  { label: '7 Days', days: 7 },
-  { label: '30 Days', days: 30 },
-]
 
 const NUTRIENT_CATEGORIES = {
   macros: ['protein', 'carbs', 'fat', 'fiber'] as NutrientKey[],
@@ -35,22 +30,18 @@ const NUTRIENT_CATEGORIES = {
 }
 
 export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
-  const [selectedPeriod, setSelectedPeriod] = useState<number>(7)
+  const [historyData, setHistoryData] = useKV<HistoryData | null>('nutrition-history', null)
 
-  const filterLogsByPeriod = (days: number) => {
-    const now = new Date()
-    const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
-    return foodLogs.filter(log => new Date(log.timestamp) >= cutoff)
-  }
+  useEffect(() => {
+    const updatedHistory = updateHistoryData(historyData || null, foodLogs)
+    setHistoryData(updatedHistory)
+  }, [foodLogs, setHistoryData])
 
-  const periodLogs = filterLogsByPeriod(selectedPeriod)
-  const totals = calculateNutrientTotals(periodLogs)
+  const today = getTodayKey()
+  const todayLogs = filterLogsForDate(foodLogs, today)
+  const totals = calculateNutrientTotals(todayLogs)
   const gaps = detectNutrientGaps(totals)
-  const wellness = performWellnessAudit(periodLogs, totals)
-
-  const averagedTotals = Object.fromEntries(
-    Object.entries(totals).map(([key, value]) => [key, value / selectedPeriod])
-  )
+  const wellness = performWellnessAudit(todayLogs, totals)
 
   const getBudgetStatus = (percentOfDV: number) => {
     if (percentOfDV < 50) return { status: 'critical', color: 'text-destructive', trend: 'deficit' }
@@ -70,16 +61,10 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
     const gap = gaps.find(g => g.nutrient === nutrient)
     if (!gap) return null
 
-    const dailyAverage = averagedTotals[nutrient]
+    const dailyValue = totals[nutrient]
     const target = getNutrientDV(nutrient)
     const percentOfDV = gap.percentOfDV
     const { status, color, trend } = getBudgetStatus(percentOfDV)
-
-    const progressColor = 
-      percentOfDV >= 100 ? 'bg-primary' :
-      percentOfDV >= 80 ? 'bg-yellow-500' :
-      percentOfDV >= 50 ? 'bg-orange-500' :
-      'bg-destructive'
 
     return (
       <div key={nutrient} className="p-4 border rounded-lg space-y-3">
@@ -90,7 +75,7 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
               {getTrendIcon(trend)}
             </div>
             <p className="text-sm text-muted-foreground mt-1">
-              Daily avg: {formatNutrientAmount(dailyAverage, nutrient)} / {formatNutrientAmount(target, nutrient)}
+              Today: {formatNutrientAmount(dailyValue, nutrient)} / {formatNutrientAmount(target, nutrient)}
             </p>
           </div>
           <Badge variant={percentOfDV >= 80 ? 'default' : 'destructive'} className="ml-2">
@@ -103,7 +88,7 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
           <div className="flex items-center justify-between text-xs">
             <span className={color}>{status}</span>
             <span className="text-muted-foreground">
-              {percentOfDV >= 100 ? '+' : ''}{formatNutrientAmount(dailyAverage - target, nutrient)}
+              {percentOfDV >= 100 ? '+' : ''}{formatNutrientAmount(dailyValue - target, nutrient)}
             </span>
           </div>
         </div>
@@ -114,27 +99,24 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
   const criticalGaps = gaps.filter(g => g.severity === 'critical' && g.nutrient !== 'sodium')
   const moderateGaps = gaps.filter(g => g.severity === 'moderate' && g.nutrient !== 'sodium')
 
+  const todayDate = new Date()
+  const dateString = todayDate.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  })
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-foreground">Food Budget Tracker</h2>
-          <p className="text-muted-foreground mt-1">
-            Track your nutrient intake over time like a financial budget
+          <h2 className="text-3xl font-bold text-foreground">Dashboard</h2>
+          <p className="text-muted-foreground mt-1 flex items-center gap-2">
+            <Calendar className="w-4 h-4" />
+            {dateString}
           </p>
         </div>
-      </div>
-
-      <div className="flex gap-2">
-        {BUDGET_PERIODS.map(period => (
-          <Button
-            key={period.days}
-            variant={selectedPeriod === period.days ? 'default' : 'outline'}
-            onClick={() => setSelectedPeriod(period.days)}
-          >
-            {period.label}
-          </Button>
-        ))}
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -178,11 +160,15 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
               <div className="text-3xl font-bold">{wellness.plantDiversityCount}</div>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Different plant foods
+              Different plant foods today
             </p>
           </CardContent>
         </Card>
       </div>
+
+      {historyData && historyData.dailySnapshots.length > 0 && (
+        <HistoryLineGraph snapshots={historyData.dailySnapshots} />
+      )}
 
       {criticalGaps.length > 0 && (
         <Card className="border-destructive/50 bg-destructive/5">
@@ -198,13 +184,13 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
           <CardContent>
             <div className="space-y-2">
               {criticalGaps.map(gap => {
-                const deficit = getNutrientDV(gap.nutrient) - (averagedTotals[gap.nutrient] || 0)
+                const deficit = getNutrientDV(gap.nutrient) - (totals[gap.nutrient] || 0)
                 return (
                   <div key={gap.nutrient} className="flex items-center justify-between p-3 bg-background rounded-lg">
                     <div>
                       <div className="font-semibold">{NUTRIENT_DISPLAY_NAMES[gap.nutrient]}</div>
                       <div className="text-sm text-muted-foreground">
-                        Need {formatNutrientAmount(deficit, gap.nutrient)} more daily
+                        Need {formatNutrientAmount(deficit, gap.nutrient)} more today
                       </div>
                     </div>
                     <Badge variant="destructive">{Math.round(gap.percentOfDV)}%</Badge>
@@ -251,7 +237,7 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
             <div>
               <h3 className="text-lg font-semibold mb-3">Critical Nutrient Trends</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Tracking your most important nutrients over {selectedPeriod} days
+                Tracking your most important nutrients over the last 7 days
               </p>
               <div className="grid gap-4 md:grid-cols-2">
                 {criticalGaps.slice(0, 6).map(gap => (
@@ -259,7 +245,7 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
                     key={gap.nutrient}
                     foodLogs={foodLogs}
                     nutrient={gap.nutrient}
-                    days={selectedPeriod}
+                    days={7}
                   />
                 ))}
               </div>
@@ -274,7 +260,7 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
                       key={gap.nutrient}
                       foodLogs={foodLogs}
                       nutrient={gap.nutrient}
-                      days={selectedPeriod}
+                      days={7}
                     />
                   ))}
                 </div>

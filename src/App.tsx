@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Toaster } from './components/ui/sonner'
 import { Button } from './components/ui/button'
@@ -15,6 +15,7 @@ import DisclaimerBanner from './components/DisclaimerBanner'
 import Navigation from './components/Navigation'
 import { Moon, Leaf, CalendarBlank } from '@phosphor-icons/react'
 import type { FoodLog } from './lib/nutritionEngine'
+import { getLast7DaysKeys, getDateKey } from './lib/historyTracking'
 
 export type Page = 'log-food' | 'meal-planner' | 'food-budget' | 'recommendations' | 'education' | 'achievements' | 'settings' | 'sleepsync' | 'lifeflow'
 export type AppMode = 'nutriwell' | 'sleepsync' | 'lifeflow'
@@ -26,6 +27,24 @@ function App() {
 
   const logs = foodLogs || []
   const mode = appMode || 'nutriwell'
+
+  useEffect(() => {
+    const last7DaysKeys = getLast7DaysKeys()
+    const oldLogsExist = logs.some(log => {
+      const logDate = new Date(log.timestamp)
+      const logKey = getDateKey(logDate)
+      return !last7DaysKeys.includes(logKey)
+    })
+
+    if (oldLogsExist) {
+      const filteredLogs = logs.filter(log => {
+        const logDate = new Date(log.timestamp)
+        const logKey = getDateKey(logDate)
+        return last7DaysKeys.includes(logKey)
+      })
+      setFoodLogs(filteredLogs)
+    }
+  }, [])
 
   const switchMode = (targetMode: AppMode) => {
     setAppMode(targetMode)
