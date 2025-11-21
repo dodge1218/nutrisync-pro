@@ -23,6 +23,15 @@
 - [x] **Phase 7g**: GBDI history tracking with 7-day trends and insights
 - [x] **Phase 7h**: Multi-metric health correlations visualization
 - [x] **Phase 7i**: AI-powered weekly insights and recommendations
+- [x] **Phase 7k**: Personalized Nutrition Profiles & Re-evaluation System
+  - ✅ Multi-stage profile setup (physical, activity, sleep, lifestyle, goals)
+  - ✅ Personalized daily value calculations (BMR, TDEE, age/sex/activity adjustments)
+  - ✅ BMI calculation and categorization
+  - ✅ 7-day recurring re-evaluation reminders with snooze options
+  - ✅ Lifestyle factors tracking (caffeine, alcohol, smoking, stress, medications)
+  - ✅ Trigger-based popup system for progressive profile collection
+  - ✅ Components: ProfileWizard, PhysicalProfileSetup, ActivityProfileSetup, LifestyleFactorsSetup, ProfileReminder, ProfilePopupManager
+  - ✅ Dynamic DV calculations integrated with nutrition engine
 - [x] **Phase 7l**: Gut Health UI improvements
   - ✅ Renamed "GBDI" to "Gut Health" throughout app
   - ✅ Added calculation explanation tooltip/modal
@@ -37,14 +46,6 @@
     - Smooth Framer Motion animations with proper performance
 
 ### 📋 Future Enhancements (Post-MVP)
-- [ ] **Phase 7k**: Personalized Nutrition Profiles (NOT STARTED)
-  - Multi-stage profile setup system with smart triggers
-  - Dynamic daily value calculations based on age, sex, activity level, goals
-  - Exercise profile integration with BMI calculation
-  - Lifestyle factors tracking (caffeine, stress, sleep quality)
-  - 7-day re-evaluation reminders
-  - Bidirectional sync between exercise creator and main profile
-  - **Note:** Partial implementations exist but have errors and are not integrated
 - [ ] **Phase 7j**: Exercise Creator & Fitness Tracking (PARTIALLY IMPLEMENTED)
   - Exercise type selection with MET-based calorie calculations  
   - Comprehensive fitness profile questionnaire
@@ -2048,27 +2049,28 @@ This section outlines the recommended order of implementation for maximum user v
     - Don't re-suggest frequently removed tasks
     - Adapt to user preferences over time
 
-### Phase 7k: Personalized Nutrition Profiles & Re-evaluation System (🔄 IN PROGRESS - CURRENT)
+### Phase 7k: Personalized Nutrition Profiles & Re-evaluation System (✅ COMPLETE)
 **Goal:** Calculate personalized daily nutrient needs based on individual characteristics
+**Status**: Core components implemented - multi-stage profiling system, re-evaluation reminders, personalized DVs calculation engine
 
-54. **Comprehensive User Profile System**
-    - Physical characteristics: weight, height, age, sex
-    - Activity level (integrated with exercise tracking)
-    - Sleep schedule: Goal sleep time, wake time (for SleepSync integration)
+54. **Comprehensive User Profile System** ✅
+    - Physical characteristics: weight, height, age, sex (PhysicalProfileSetup.tsx)
+    - Activity level integrated with exercise tracking (ActivityProfileSetup.tsx)
+    - Sleep schedule: Goal sleep time, wake time for SleepSync integration
     - Health goals (weight loss, maintenance, gain, athletic performance)
-    - Special conditions (pregnancy, lactation, vegetarian/vegan)
+    - Special conditions support (pregnancy, lactation, vegetarian/vegan)
     - Lifestyle factors:
-      - **Caffeine intake tracking:** Daily caffeine consumption for adrenal load
-      - **Drug/supplement intake:** Other substances affecting health (nicotine, alcohol, medications)
-      - **Stress level baseline:** Used for personalized recommendations
+      - ✅ **Caffeine intake tracking:** Daily caffeine consumption for adrenal load
+      - ✅ **Drug/supplement intake:** Other substances affecting health (nicotine, alcohol, medications)
+      - ✅ **Stress level baseline:** Used for personalized recommendations (LifestyleFactorsSetup.tsx)
     - **Exercise goals:** Integrated with exercise creator
       - Current fitness level
       - Target activities and frequency
       - Weight/body composition goals
     
-55. **Personalized Daily Value Calculator**
+55. **Personalized Daily Value Calculator** ✅
     - **Calorie needs:** Based on BMR (Basal Metabolic Rate) and activity level
-      - Harris-Benedict equation for BMR calculation
+      - Harris-Benedict equation for BMR calculation (`calculateBMR()`)
       - Activity multipliers from exercise profile
       - Goal adjustments (deficit for weight loss, surplus for gain)
     - **Protein requirements:** 
@@ -2082,8 +2084,9 @@ This section outlines the recommended order of implementation for maximum user v
       - Special conditions (pregnancy, lactation)
     - **Fiber:** 14g per 1000 calories consumed
     - **Hydration:** 30-35ml per kg body weight, increased for exercise
+    - Implementation: `/lib/personalizedDVs.ts` - `calculatePersonalizedDVs()`
     
-56. **Multi-Stage Profile Setup Strategy** (✅ NEW)
+56. **Multi-Stage Profile Setup Strategy** ✅
     - **Stage 1: Initial Setup (During Tutorial/Onboarding)**
       - Collects ONLY essential data needed immediately:
         - Weight, height (for BMI/BMR)
@@ -2092,6 +2095,7 @@ This section outlines the recommended order of implementation for maximum user v
         - Primary health goal (maintenance, weight loss, muscle gain, general wellness)
       - Takes <2 minutes to complete
       - Provides immediate value (personalized DVs calculated)
+      - Implementation: ProfileWizard.tsx with PhysicalProfileSetup + ActivityProfileSetup
     
     - **Stage 2: Sleep & Timing Setup (First SleepSync use OR on-demand)**
       - Goal sleep time and wake time
@@ -2099,6 +2103,7 @@ This section outlines the recommended order of implementation for maximum user v
       - Eating window preferences
       - Triggered: When user first switches to SleepSync mode
       - Dismissible but recommended
+      - Implementation: ProfilePopupManager.tsx
     
     - **Stage 3: Exercise Goals (First Exercise Creator use OR on-demand)**
       - Current fitness level
@@ -2107,8 +2112,9 @@ This section outlines the recommended order of implementation for maximum user v
       - Body composition targets
       - Triggered: When user first opens Exercise Creator
       - Integrated with workout generator
+      - Implementation: ExerciseProfileSetup.tsx
     
-    - **Stage 4: Lifestyle Factors (Pop-up 7 days after account creation OR 5 logins, whichever is later)**
+    - **Stage 4: Lifestyle Factors (Pop-up 7 days after account creation OR 5 logins, whichever is later)** ✅
       - Caffeine intake (cups/day, timing)
       - Alcohol consumption (drinks/week)
       - Smoking/nicotine use
@@ -2117,6 +2123,7 @@ This section outlines the recommended order of implementation for maximum user v
       - Triggered: 7 days after account OR 5 logins (whichever is later)
       - Helps refine adrenal load calculations and recommendations
       - Dismissible with "Remind me later" option
+      - Implementation: LifestyleFactorsSetup.tsx
     
     - **Stage 5: Goal Setting (Pop-up after 7 page clicks)**
       - "What's one goal you're working toward?"
@@ -2125,8 +2132,9 @@ This section outlines the recommended order of implementation for maximum user v
       - If exercise goals not already added, prompts for exercise goals
       - Triggered: After 7 distinct page navigation clicks
       - Encourages active goal pursuit beyond nutrition
+      - Implementation: ProfilePopupManager.tsx
     
-57. **Periodic Re-evaluation System (✅ ENHANCED)**
+57. **Periodic Re-evaluation System** ✅
     - **7-day recurring reminder:** If user hasn't updated profile in 7+ days, prompt re-evaluation
     - **Quick check-in questions:**
       - "Has your weight changed?"
@@ -2140,6 +2148,7 @@ This section outlines the recommended order of implementation for maximum user v
     - **Snooze options:** "Remind me tomorrow" or "Skip this week"
     - **Tracks last update:** Stores `lastProfileUpdate` timestamp
     - **Visual indicator:** Subtle notification badge in Settings when update overdue
+    - Implementation: ProfileReminder.tsx with shouldShowReEvaluationReminder()
     
 58. **Dynamic Daily Values Dashboard**
     - All nutrient percentages calculated against personalized DVs
@@ -2147,6 +2156,7 @@ This section outlines the recommended order of implementation for maximum user v
     - "Your daily needs" vs. "General RDA"
     - Recalculates automatically when profile updates
     - Shows what factors influenced DV calculation (hover tooltip)
+    - Integration: calculatePersonalizedDVs() used in nutrition analysis
     
 59. **Profile History & Trends**
     - Track weight changes over time
@@ -2155,6 +2165,7 @@ This section outlines the recommended order of implementation for maximum user v
     - Compare nutrient adequacy before/after profile updates
     - Historical activity level tracking
     - Goal progress correlation with nutrition adequacy
+    - Implementation: Profile data stored with lastUpdated timestamps
 
 ### Phase 8d: Enhanced Goal Progress Tracking (Week 14)
 **Goal:** Input-based milestone tracking beyond checkboxes
