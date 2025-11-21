@@ -1,48 +1,81 @@
-# NutriWell - Smart Nutrition Intelligence
+# NutriWell, SleepSync & LifeFlow - Complete Wellness Suite
 
-A comprehensive nutrition tracking and analysis platform that helps users identify nutrient gaps, optimize absorption through synergy insights, and support gut health — all with a food-first, low-friction approach.
+A comprehensive wellness platform combining intelligent nutrition tracking, meal timing optimization, and time-blocked scheduling. Track nutrients, optimize gut health, improve sleep through meal timing, and schedule your days for maximum wellness impact.
 
-![NutriWell](https://img.shields.io/badge/Status-MVP-green) ![React](https://img.shields.io/badge/React-19-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen) ![React](https://img.shields.io/badge/React-19-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue) ![Version](https://img.shields.io/badge/Version-3.0-blue)
 
 ---
 
-## 🌟 Key Features
+## 🌟 Three Integrated Modes
 
-### Core Functionality
-- **Low-Friction Food Logging** — Quick add buttons, search, and simple serving input
-- **Comprehensive Nutrient Analysis** — Track 25+ nutrients (macros, vitamins, minerals, electrolytes)
-- **Gap Detection** — Color-coded status for each nutrient with % of Daily Value
-- **Synergy Intelligence** — Suggestions for nutrient pairings (e.g., vitamin C + iron)
-- **Timing Conflict Detection** — Alerts for absorption issues (e.g., coffee near iron-rich meals)
+### 🥗 NutriWell - Nutrition Intelligence
+Track meals, analyze nutrients, close gaps, and support gut health with science-backed recommendations.
 
-### Wellness Framework
-- **Gut Support Score (0-100)** — Based on fiber, fermented foods, plant diversity, ultra-processed burden
-- **GBDI (Gut-Brain-Digestive Index)** — Holistic digestive wellness metric
-- **Adrenal Load Score** — Tracks stress impact from caffeine, sugar, processed foods
-- **Mineral Trio Sufficiency** — Calcium, magnesium, potassium balance
-- **Warm Food Preference** — Prioritizes cooked/room-temp options for easier digestion
+**Key Features:**
+- Comprehensive food logging with 200+ item database
+- 25+ nutrient tracking (macros, vitamins, minerals, electrolytes)
+- Gut Health (GBDI) scoring with 7-day history
+- Meal templates with AI-powered autofill
+- Food Budget tracker (daily, weekly, monthly views)
+- Achievement system & streak tracking
+- Personalized recommendations engine
+
+### 🌙 SleepSync - Meal Timing Optimization
+Optimize when you eat to improve sleep quality using circadian science and digestive timing.
+
+**Key Features:**
+- Sleep schedule configuration
+- Meal timing analysis
+- Circadian eating window calculator
+- Sleep readiness score
+- Digestive buffer recommendations
+- Late meal warnings
+- Integration with NutriWell food logs
+
+### 📅 LifeFlow - Time-Blocked Scheduling
+Build daily schedules that integrate nutrition, sleep, activities, and personal goals.
+
+**Key Features:**
+- Recurring activity management
+- 3-7 day schedule generation
+- Goal tracking with milestones
+- Intelligent meal autofill from patterns
+- Cook time estimation
+- Activity completion tracking
+- Free time scaffolding for goals
+
+---
+
+## 🚀 Advanced Features
+
+### Wellness Intelligence
+- **Stress Tracking** — Daily stress, sleep quality, and energy monitoring
+- **Health Correlations** — Multi-metric pattern detection (stress vs. gut health, sleep vs. energy)
+- **AI Insights** — Weekly personalized recommendations using GPT-4o-mini
+- **GBDI History** — 7-day gut health trend tracking with insights
 
 ### Educational Content
-- **In-App Learning** — 9+ educational cards covering nutrient synergies, timing, and wellness
-- **Actionable Takeaways** — Every card includes practical "what to do" steps
-- **Contextual Delivery** — Relevant content appears based on detected gaps
-
-### Future Features (Roadmap)
-- **Wearable Integration (v2.0)** — Apple Watch, Fitbit sync for activity, sleep, HRV-informed recommendations
-- **Affiliate Product Recommendations (v1.1)** — Targeted supplement suggestions (with clear disclaimers)
-- **Premium Tier (v1.1)** — Deeper analysis, trends, exports
+- 15+ in-app learning cards
+- Nutrient synergy education
+- Meal timing science
+- Gut health fundamentals
 
 ---
 
 ## 📋 Documentation
 
-This project includes comprehensive business and technical documentation:
+Comprehensive documentation for users, developers, and stakeholders:
 
-- **[PRD.md](./PRD.md)** — Product Requirements Document (features, personas, roadmap, metrics)
-- **[docs/business-plan.md](./docs/business-plan.md)** — Market analysis, revenue model, go-to-market strategy
-- **[docs/legal-disclaimer.md](./docs/legal-disclaimer.md)** — Full legal disclaimers and compliance notes
-- **[docs/integration-plan.md](./docs/integration-plan.md)** — Wearable/biometric integration strategy
-- **[docs/content-model.md](./docs/content-model.md)** — Educational content structure and creation workflow
+### Core Documentation
+- **[PRODUCTION-READY.md](./PRODUCTION-READY.md)** — Production deployment status and readiness checklist
+- **[PRD.md](./PRD.md)** — Complete Product Requirements Document (v3.0)
+- **[IMPLEMENTATION-STATUS.md](./IMPLEMENTATION-STATUS.md)** — Feature completion tracker (100%)
+- **[NEXT-STEPS.md](./NEXT-STEPS.md)** — Future enhancement roadmap
+- **[COMPLETION-SUMMARY.md](./COMPLETION-SUMMARY.md)** — Implementation work summary
+
+### Additional Documentation
+- **[/src/components/_archived/README.md](./src/components/_archived/README.md)** — Future Phase 7k/7j feature documentation
+- **[docs/legal-disclaimer.md](./docs/legal-disclaimer.md)** — Full legal disclaimers
 
 ---
 
@@ -77,10 +110,15 @@ This project includes comprehensive business and technical documentation:
 
 ### Seed Data
 
-Sample food logs are automatically seeded on first load. You can:
-- View sample analysis on the Dashboard
-- Add new foods via Log Food page
-- Clear data in browser DevTools → Application → Storage → spark.kv
+The app includes realistic sample data demonstrating all three modes:
+- **15 food log entries** across 2 days with varied meals
+- **3 days of stress tracking** data
+- **3 custom meal templates** (breakfast, lunch, dinner)
+- **4 recurring activities** (work, workout, dog walk, meditation)
+- **2 active goals** with milestones
+- **Configured sleep schedule** for SleepSync analysis
+
+Explore all features immediately without manual setup.
 
 ---
 
@@ -122,34 +160,49 @@ Sample food logs are automatically seeded on first load. You can:
 ## 📊 Project Structure
 
 ```
-nutriwell/
-├── docs/                          # Business & technical documentation
-│   ├── business-plan.md
-│   ├── legal-disclaimer.md
-│   ├── integration-plan.md
-│   └── content-model.md
+nutriwell-sleepsync-lifeflow/
 ├── src/
 │   ├── components/
-│   │   ├── pages/                 # Main page components
-│   │   │   ├── Dashboard.tsx      # Today's nutrition overview
-│   │   │   ├── LogFood.tsx        # Food logging interface
-│   │   │   ├── Recommendations.tsx # Synergy suggestions & gaps
-│   │   │   ├── Education.tsx      # Educational content cards
-│   │   │   └── Settings.tsx       # User preferences
-│   │   ├── ui/                    # shadcn components (40+ pre-installed)
-│   │   ├── DisclaimerBanner.tsx   # Persistent legal disclaimer
-│   │   └── Navigation.tsx         # Main navigation tabs
+│   │   ├── pages/                      # Main application pages
+│   │   │   ├── LogFood.tsx             # Food logging interface
+│   │   │   ├── MealPlanner.tsx         # Meal templates & planning
+│   │   │   ├── FoodBudget.tsx          # Nutrient budget tracker
+│   │   │   ├── Recommendations.tsx     # Personalized suggestions
+│   │   │   ├── Education.tsx           # Educational content
+│   │   │   ├── Achievements.tsx        # Gamification & streaks
+│   │   │   ├── Settings.tsx            # User preferences
+│   │   │   ├── SleepSync.tsx           # Meal timing optimization
+│   │   │   └── LifeFlow.tsx            # Time-blocked scheduling
+│   │   ├── ui/                         # shadcn components (40+)
+│   │   ├── StressTracker.tsx           # Daily stress input
+│   │   ├── StressHistory.tsx           # 7-day stress trends
+│   │   ├── GBDIDisplay.tsx             # Gut health score
+│   │   ├── GBDIHistory.tsx             # 7-day gut health trends
+│   │   ├── HealthCorrelations.tsx      # Multi-metric analysis
+│   │   ├── AIInsights.tsx              # AI-powered insights
+│   │   ├── AdrenalLoadDisplay.tsx      # Stress load visualization
+│   │   ├── _archived/                  # Future Phase 7k/7j components
+│   │   └── ...
 │   ├── lib/
-│   │   ├── nutritionEngine.ts     # Core analysis logic
-│   │   ├── dailyValues.ts         # DV constants & utilities
-│   │   └── affiliate.ts           # Product matching (stubbed)
+│   │   ├── nutritionEngine.ts          # Core nutrition analysis
+│   │   ├── circadianEngine.ts          # Meal timing calculations
+│   │   ├── mealPatternEngine.ts        # Pattern detection
+│   │   ├── adrenalEngine.ts            # Stress load calculations
+│   │   ├── dailyValues.ts              # DV reference data
+│   │   ├── exerciseEngine.ts           # MET calculations (future)
+│   │   ├── personalizedNutrition.ts    # Profile calculations (future)
+│   │   └── ...
 │   ├── data/
-│   │   └── foods.ts               # 20-food mock database
-│   ├── App.tsx                    # Root component
-│   └── index.css                  # Global styles & theme
-├── PRD.md                         # Product Requirements Document
-├── README.md                      # This file
-└── package.json
+│   │   ├── foods.ts                    # 200+ food database
+│   │   ├── mealTemplates.ts            # Preset meal templates
+│   │   └── wellnessSupplements.ts      # Wellness items
+│   ├── App.tsx                         # Root component
+│   └── index.css                       # Theme & global styles
+├── PRD.md                              # Product Requirements (v3.0)
+├── PRODUCTION-READY.md                 # Deployment readiness
+├── IMPLEMENTATION-STATUS.md            # Feature completion (100%)
+├── NEXT-STEPS.md                       # Future roadmap
+└── README.md                           # This file
 ```
 
 ---
@@ -250,34 +303,59 @@ Tracks user-declared staples:
 
 ## 🚧 Roadmap
 
-### ✅ MVP (Current)
-- [x] Food logging with 20-food database
-- [x] Comprehensive nutrient analysis (25+ nutrients)
-- [x] Gap detection with color coding
-- [x] Synergy suggestions (vitamin C + iron, etc.)
-- [x] Timing conflict detection
-- [x] Gut support score, GBDI, adrenal load
-- [x] Wellness audit dashboard
-- [x] Educational content (9 cards)
-- [x] Persistent local storage (spark.kv)
-- [x] Responsive design (mobile-friendly)
-- [x] Legal disclaimers
+### ✅ MVP Complete (v3.0) - Production Ready
+All features implemented and tested:
+- [x] NutriWell mode with comprehensive tracking
+- [x] SleepSync meal timing optimization
+- [x] LifeFlow time-blocked scheduling
+- [x] Stress tracking & health correlations
+- [x] AI-powered weekly insights
+- [x] 7-day history tracking (gut health, stress)
+- [x] Achievement system & gamification
+- [x] Educational content library
+- [x] Responsive mobile design
+- [x] Seed data for immediate exploration
 
-### 🎯 v1.1 (Months 4-6)
-- [ ] Affiliate product recommendations (with disclaimers)
-- [ ] Expand food database (100+ foods or API integration)
-- [ ] Meal timing optimization
-- [ ] Weekly trends & reports
-- [ ] CSV export
-- [ ] Recipe suggestions for gap-filling
+### 🎯 Future Enhancements (User-Driven)
 
-### 🚀 v2.0 (Months 10-12)
-- [ ] Apple Health / HealthKit integration
-- [ ] Fitbit API sync
-- [ ] HRV-informed recommendations
-- [ ] Activity-adjusted nutrient targets
-- [ ] Premium tier (deeper analysis, unlimited history)
-- [ ] Photo logging (AI food recognition)
+#### Phase 7k: Personalized Nutrition Profiles
+Build only if users request personalized recommendations:
+- Multi-stage profile setup (age, sex, activity level)
+- Dynamic Daily Value calculations
+- BMI and body composition tracking
+- Lifestyle factors (caffeine, medications)
+- 7-day re-evaluation reminders
+
+**Estimated Effort:** 2-3 weeks
+
+#### Phase 7j: Exercise & Fitness Tracking
+Build only if users want fitness integration:
+- Exercise logging with MET-based calorie calculations
+- Workout schedule integration with LifeFlow
+- Exercise-aware nutrient recommendations
+- Progress tracking & history
+
+**Estimated Effort:** 1-2 weeks
+
+#### Phase 8: User Authentication
+Build only when multi-device sync is needed:
+- Secure login & multi-user support
+- Cloud data sync (Supabase)
+- Developer data isolation
+- Data export & account deletion
+
+**Estimated Effort:** 3-4 weeks
+
+#### Phase 8a-e: Advanced UX
+- Interactive onboarding tutorial
+- Daily check-in commitment system
+- Auto-task generation for LifeFlow
+- Enhanced goal progress tracking (quantitative inputs)
+- Cross-mode synergy detection
+
+**Estimated Effort:** 4-6 weeks total
+
+**See [NEXT-STEPS.md](./NEXT-STEPS.md) for detailed implementation plans**
 
 ---
 
@@ -334,6 +412,6 @@ MIT License - See LICENSE file for details
 
 ---
 
-**Built with ❤️ for people who care about what they eat.**
+**Built with ❤️ for people who want to optimize nutrition, sleep, and daily wellness.**
 
-*NutriWell — Know your gaps, close them with food, thrive.*
+*NutriWell, SleepSync & LifeFlow — Complete wellness intelligence in one platform.*
