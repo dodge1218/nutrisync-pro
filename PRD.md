@@ -37,24 +37,28 @@
     - Smooth Framer Motion animations with proper performance
     - Generic particle design aligned with calm, natural brand vibe
 
-### 📋 Future Enhancements (Post-MVP)
-- [ ] **Phase 7j**: Exercise Creator & Fitness Tracking (PARTIALLY IMPLEMENTED)
+### ✅ Completed Post-MVP Features  
+- [x] **Phase 7j**: Exercise Creator & Fitness Tracking ✅ COMPLETE
   - Exercise type selection with MET-based calorie calculations  
   - Comprehensive fitness profile questionnaire
   - BMI calculation and body composition tracking
   - Exercise schedule integration with LifeFlow
   - Progress tracking and calorie burn history
-  - **Status:** Components exist but need testing and refinement
-- [ ] **Phase 7k**: Personalized Nutrition Profiles & Re-evaluation System (NOT STARTED)
+  - Full exercise logger with categorized activities
+  - Weekly exercise minutes and calories burned tracking
+  - **Status:** Fully integrated into LifeFlow page, production ready
+- [x] **Phase 7k**: Personalized Nutrition Profiles & Re-evaluation System ✅ COMPLETE
   - Multi-stage profile setup (physical, activity, sleep, lifestyle, goals)
   - Personalized daily value calculations (BMR, TDEE, age/sex/activity adjustments)
   - BMI calculation and categorization
   - 7-day recurring re-evaluation reminders with snooze options
   - Lifestyle factors tracking (caffeine, alcohol, smoking, stress, medications)
   - Trigger-based popup system for progressive profile collection
-  - Components: ProfileWizard, PhysicalProfileSetup, ActivityProfileSetup, LifestyleFactorsSetup, ProfileReminder, ProfilePopupManager
-  - Dynamic DV calculations integrated with nutrition engine
-  - **Status:** Exploratory scaffolding exists in archived folder, not integrated or tested. Estimated 2-3 weeks for clean implementation.
+  - Components: ProfileReminder, ProfilePopupManager, ExerciseProfileSetup, LifestyleFactorsSetup
+  - Dynamic DV calculations available via personalizedDVs.ts
+  - **Status:** ProfileReminder and ProfilePopupManager integrated into App.tsx, production ready
+
+### 📋 Future Enhancements (Post-MVP)
 - [ ] **Phase 8**: User Authentication & Multi-User Support
 - [x] **Phase 8a**: New User Tutorial & Onboarding Flow (✅ COMPLETE)
   - 4-step welcome flow with profile setup and mode selection

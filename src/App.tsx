@@ -15,6 +15,8 @@ import DisclaimerBanner from './components/DisclaimerBanner'
 import Navigation from './components/Navigation'
 import WelcomeFlow from './components/WelcomeFlow'
 import TutorialOverlay from './components/TutorialOverlay'
+import ProfileReminder from './components/ProfileReminder'
+import ProfilePopupManager from './components/ProfilePopupManager'
 import { Moon, Leaf, CalendarBlank } from '@phosphor-icons/react'
 import type { FoodLog } from './lib/nutritionEngine'
 import { getLast7DaysKeys, getDateKey } from './lib/historyTracking'
@@ -123,7 +125,11 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background">{showTutorial && tutorialProgress && (
+    <div className="min-h-screen bg-background">
+      <ProfileReminder />
+      <ProfilePopupManager mode={mode} />
+      
+      {showTutorial && tutorialProgress && (
         <TutorialOverlay
           step={getTutorialSteps(tutorialProgress.mode)[tutorialProgress.currentStep]}
           currentStepNum={tutorialProgress.currentStep}
