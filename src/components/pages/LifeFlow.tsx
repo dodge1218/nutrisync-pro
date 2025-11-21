@@ -33,6 +33,8 @@ import { analyzeMealPatterns, estimateCookTime, predictFutureMeals, generateCook
 import type { FoodLog } from '../../lib/nutritionEngine'
 import type { MealTemplate } from '../../data/mealTemplates'
 import ExerciseCreator from './ExerciseCreator'
+import DailyCheckIn from '../DailyCheckIn'
+import CheckInHistory from '../CheckInHistory'
 import { toast } from 'sonner'
 
 interface LifeFlowProps {
@@ -424,10 +426,14 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
       </Card>
 
       <Tabs defaultValue="schedule" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="schedule">
             <ClockAfternoon className="w-4 h-4 mr-2" />
             Schedule
+          </TabsTrigger>
+          <TabsTrigger value="checkin">
+            <CheckCircle className="w-4 h-4 mr-2" />
+            Check-In
           </TabsTrigger>
           <TabsTrigger value="activities">
             <ListChecks className="w-4 h-4 mr-2" />
@@ -570,6 +576,16 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        <TabsContent value="checkin" className="space-y-4">
+          <DailyCheckIn
+            foodLogs={foodLogs}
+            activeGoals={activeGoals}
+            nutrientGaps={[]}
+            recentStress={undefined}
+          />
+          <CheckInHistory />
         </TabsContent>
 
         <TabsContent value="activities" className="space-y-4">
