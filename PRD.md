@@ -24,6 +24,22 @@
 - [x] **Phase 7h**: Multi-metric health correlations visualization - COMPLETE
 - [x] **Phase 7i**: AI-powered weekly insights and recommendations - COMPLETE
 
+### 📋 Current Sprint (Phase 7k-7l)
+- [🔄] **Phase 7k**: Personalized nutrition profiles with multi-stage setup
+  - [ ] Stage 1: Essential profile setup (weight, height, age, sex, activity level, primary goal)
+  - [ ] Stage 2: Sleep & timing setup (triggered on first SleepSync use)
+  - [ ] Stage 3: Exercise goals (integrated with Exercise Creator)
+  - [ ] Stage 4: Lifestyle factors pop-up (7 days after account OR 5 logins)
+  - [ ] Stage 5: Goal setting pop-up (after 7 page clicks)
+  - [ ] Periodic 7-day re-evaluation system
+  - [ ] Dynamic DV calculator based on profile
+  - [ ] Profile history and weight tracking
+- [🔄] **Phase 7l**: Gut Health UI improvements and future animation feature
+  - [ ] Rename "GBDI" to "Gut Health" throughout app
+  - [ ] Add calculation explanation tooltip/modal
+  - [ ] Add happy/sad icons on 7-day trend graph
+  - [ ] Document animated gut visualization for future implementation
+
 ### 📋 Future Enhancements (Post-MVP)
 - [ ] **Phase 8**: User Authentication & Multi-User Support
 - [ ] **Phase 8a**: New User Tutorial & Onboarding Flow
@@ -339,13 +355,15 @@ This creates a gap where health-conscious users track religiously but still expe
   - ✅ Rolling window (updates as days pass)
   - ✅ Historical view of past schedules
 
-- **Exercise Creator & Fitness Profile (🔄 NEW - Phase 7j):**
-  - **Comprehensive user profile questionnaire:**
-    - Physical metrics: Weight, height, age, sex
+- **Exercise Creator & Fitness Profile (🔄 IN PROGRESS - Phase 7j):**
+  - **Comprehensive user profile questionnaire (integrated with Phase 7k):**
+    - Physical metrics: Weight, height, age, sex (pulls from main profile if already set)
     - **BMI calculation:** Automatic calculation and classification (underweight, normal, overweight, obese)
     - Body composition goals (maintain, lose weight, gain muscle, general fitness)
     - Current fitness level (sedentary, lightly active, moderately active, very active, extremely active)
     - Exercise preferences and restrictions
+    - **Smart integration:** If user has already completed Stage 1 profile setup (Phase 7k), this questionnaire pre-fills existing data
+    - **Updates both systems:** Changes made here also update main user profile for consistent DV calculations
   
   - **Exercise type selection & customization:**
     - **Cardiovascular activities:**
@@ -731,15 +749,28 @@ This creates a gap where health-conscious users track religiously but still expe
   - 🔴 Red: <50% DV
 - **Gut Support Score:** 0-100 based on fiber, fermented foods, diversity, ultra-processed burden
 
-#### 4.5 GBDI Score & History Tracking (✅ COMPLETE)
-**Status**: Fully implemented with 7-day historical tracking and insights. Composite score system updated.
+#### 4.5 Gut Health Score & History Tracking (✅ COMPLETE - RENAMED FROM GBDI)
+**Status**: Fully implemented with 7-day historical tracking and insights. Composite score system updated. **RENAMED to "Gut Health" for clarity.**
 
 - **Comprehensive gut-brain-digestive health metric (0-100):**
   - Gut microbiome health: fiber intake, fermented foods, plant diversity, polyphenol-rich foods
   - Gut-brain axis: supportive nutrients for neurotransmitter production, stress-reducing compounds
   - Digestive wellness: warm/cooked food ratio, ultra-processed burden, gut stressors (NSAIDs, alcohol)
-- **Higher GBDI is better** — composite score tracking protective factors
+- **Higher score is better** — composite score tracking protective factors
 - **Real-time calculation:** Updated daily based on food logs and dietary patterns
+- **User-facing name:** "Gut Health" (simplified from technical "GBDI" acronym)
+- **Calculation explanation:** 
+  - Displayed to users in simple terms
+  - "Your Gut Health score is based on fiber, fermented foods, plant diversity, and limiting ultra-processed foods"
+  - Detailed breakdown available in tooltip or info panel
+  - Each component weighted and explained:
+    - Fiber intake (25% weight): Target 25-35g/day
+    - Fermented foods (20% weight): Target 2+ servings/day
+    - Plant diversity (20% weight): Target 30+ unique plants/week
+    - Polyphenol-rich foods (15% weight): Berries, olive oil, tea, dark chocolate
+    - Prebiotic foods (10% weight): Garlic, onions, asparagus, Jerusalem artichoke
+    - Ultra-processed burden (10% weight): <10% of daily calories
+    - Gut stressors absent (10% weight): No NSAIDs, excess alcohol, antibiotics
 
 - **Updated Dashboard Visualization (🔄 Phase 7j):**
   - **Composite Score System:**
@@ -766,10 +797,15 @@ This creates a gap where health-conscious users track religiously but still expe
     - Removed individual vitamin toggles to reduce clutter
     - Clean, organized toggle interface with color-coded indicators
 
-- **7-Day Historical Tracking (✅ NEW - Phase 7g):**
-  - ✅ **GBDIHistory component** - Visual timeline of gut health over time
-  - ✅ Line chart showing GBDI trends across 7 days
+- **7-Day Historical Tracking (✅ COMPLETE - Phase 7g):**
+  - ✅ **GutHealthHistory component** (renamed from GBDIHistory) - Visual timeline of gut health over time
+  - ✅ Line chart showing Gut Health trends across 7 days
   - ✅ Daily breakdown cards with individual scores
+  - ✅ **Visual indicators on graph:** 
+    - 😊 **Happy/smiley icon** for days with high gut health score (good food choices)
+    - 😔 **Sad/frown icon** for days with low gut health score (poor food choices, high ultra-processed intake)
+    - Icon displayed directly on the trend line at each data point
+    - Icon color matches score status (green for good, yellow for fair, red for poor)
   - ✅ Component factors display:
     - Fiber intake (grams)
     - Fermented foods count
@@ -794,10 +830,75 @@ This creates a gap where health-conscious users track religiously but still expe
   - Stress-gut connection markers (high cortisol foods vs. gut-calming foods)
 
 - **Dashboard Integration:**
-  - ✅ Current GBDI score displayed prominently
+  - ✅ Current Gut Health score displayed prominently (renamed from "GBDI")
   - ✅ 7-day history chart accessible from dashboard
   - ✅ Quick insights on recent trends
   - ✅ Links to detailed breakdown and recommendations
+  - ✅ Explanation tooltip: "Learn how Gut Health is calculated"
+
+#### 4.9 Animated Gut Visualization (🔄 NEW - Phase 7l - FUTURE FEATURE)
+**Goal:** Fun, engaging visual representation of gut health in real-time
+**Status**: Planned for future implementation - animation-intensive but should aim for simplicity
+
+- **Animated Gut Character:**
+  - Pretty, friendly animated gut illustration
+  - Reacts dynamically as users input foods
+  - Smooth, delightful animations using Framer Motion
+  - Minimalist design to keep performance high
+  
+- **Food Reaction System:**
+  - **Happy foods (gut-supportive):**
+    - Fermented foods (kefir, sauerkraut, kimchi) → gut glows with sparkles ✨
+    - High-fiber foods (vegetables, legumes) → gut shows happy movement
+    - Polyphenol-rich foods (berries, olive oil) → rainbow shimmer effect
+    - Prebiotic foods (garlic, onions) → feeding animation with tiny beneficial bacteria icons
+    - Animation: Gentle pulsing, warm colors (greens, blues), smiling expression
+  
+  - **Evil foods (destructive to gut biome):**
+    - Ultra-processed foods → gut shows distress, darker colors
+    - High sugar foods → warning flash, jittery movement
+    - Gut stressors (NSAIDs, alcohol) → red warning glow
+    - Lack of fiber → sluggish, sad movement
+    - Animation: Choppy movement, muted/gray colors, concerned expression
+  
+- **Real-Time Updates:**
+  - Updates immediately when user logs food
+  - Smooth transitions between states (not jarring)
+  - Cumulative effect: more good food → happier gut throughout the day
+  - Daily reset: gut starts neutral each morning
+  
+- **Interaction Elements:**
+  - Tap gut to see current health score
+  - Hover to see tooltip: "Your gut is happy today! Keep it up!"
+  - Click for detailed breakdown of what's helping/hurting
+  - Optional: Feeding animation when user logs a meal
+  
+- **Visual Design Principles:**
+  - **Simple over complex:** Avoid overwhelming animations
+  - **Fun over clinical:** This should delight, not educate through fear
+  - **Performance-first:** Lightweight SVG animation, no heavy assets
+  - **Accessible:** Works without animation for users with motion sensitivity
+  - **Responsive:** Scales beautifully on mobile and desktop
+  
+- **Technical Considerations:**
+  - Use Framer Motion for smooth, performant animations
+  - SVG-based illustration (scalable, small file size)
+  - State-driven animation (gut.state: 'happy' | 'neutral' | 'struggling')
+  - Preload animation states to prevent lag
+  - Optional: Reduce motion respect (prefers-reduced-motion)
+  
+- **Placement in UI:**
+  - Option 1: Dashboard widget (prominent but not intrusive)
+  - Option 2: Floating widget (available across all pages)
+  - Option 3: Dedicated "My Gut" page with expanded animations
+  - Option 4: Food Budget page integration (reacts to nutrient gaps)
+  
+- **Future Enhancements:**
+  - Seasonal outfits/themes for the gut character
+  - Unlockable gut "skins" via achievements
+  - Sound effects (gentle, optional, can be muted)
+  - Weekly "gut report card" animation
+  - Share gut status as image to social media
 
 #### 4.6 Adrenal Load Score & Stress Tracking (✅ COMPLETE)
 **Status**: Fully implemented with all features
@@ -1930,14 +2031,23 @@ This section outlines the recommended order of implementation for maximum user v
     - Don't re-suggest frequently removed tasks
     - Adapt to user preferences over time
 
-### Phase 7k: Personalized Nutrition Profiles & Re-evaluation System (🔄 NEW - CURRENT)
+### Phase 7k: Personalized Nutrition Profiles & Re-evaluation System (🔄 IN PROGRESS - CURRENT)
 **Goal:** Calculate personalized daily nutrient needs based on individual characteristics
 
 54. **Comprehensive User Profile System**
     - Physical characteristics: weight, height, age, sex
     - Activity level (integrated with exercise tracking)
+    - Sleep schedule: Goal sleep time, wake time (for SleepSync integration)
     - Health goals (weight loss, maintenance, gain, athletic performance)
     - Special conditions (pregnancy, lactation, vegetarian/vegan)
+    - Lifestyle factors:
+      - **Caffeine intake tracking:** Daily caffeine consumption for adrenal load
+      - **Drug/supplement intake:** Other substances affecting health (nicotine, alcohol, medications)
+      - **Stress level baseline:** Used for personalized recommendations
+    - **Exercise goals:** Integrated with exercise creator
+      - Current fitness level
+      - Target activities and frequency
+      - Weight/body composition goals
     
 55. **Personalized Daily Value Calculator**
     - **Calorie needs:** Based on BMR (Basal Metabolic Rate) and activity level
@@ -1956,36 +2066,78 @@ This section outlines the recommended order of implementation for maximum user v
     - **Fiber:** 14g per 1000 calories consumed
     - **Hydration:** 30-35ml per kg body weight, increased for exercise
     
-56. **Profile Setup & Onboarding**
-    - Initial questionnaire during account creation or first use
-    - Collects all necessary data for calculations
-    - Explains why each data point is needed
-    - Optional fields for more accuracy
-    - Privacy-first: data stored locally in user's KV store
+56. **Multi-Stage Profile Setup Strategy** (✅ NEW)
+    - **Stage 1: Initial Setup (During Tutorial/Onboarding)**
+      - Collects ONLY essential data needed immediately:
+        - Weight, height (for BMI/BMR)
+        - Age, sex (for basic RDA calculations)
+        - Activity level (sedentary to very active)
+        - Primary health goal (maintenance, weight loss, muscle gain, general wellness)
+      - Takes <2 minutes to complete
+      - Provides immediate value (personalized DVs calculated)
     
-57. **Periodic Re-evaluation System (✅ NEW)**
-    - **7-day reminder:** If user hasn't updated profile in 7+ days, prompt re-evaluation
+    - **Stage 2: Sleep & Timing Setup (First SleepSync use OR on-demand)**
+      - Goal sleep time and wake time
+      - Current sleep quality (optional)
+      - Eating window preferences
+      - Triggered: When user first switches to SleepSync mode
+      - Dismissible but recommended
+    
+    - **Stage 3: Exercise Goals (First Exercise Creator use OR on-demand)**
+      - Current fitness level
+      - Preferred exercise types
+      - Exercise frequency goals
+      - Body composition targets
+      - Triggered: When user first opens Exercise Creator
+      - Integrated with workout generator
+    
+    - **Stage 4: Lifestyle Factors (Pop-up 7 days after account creation OR 5 logins, whichever is later)**
+      - Caffeine intake (cups/day, timing)
+      - Alcohol consumption (drinks/week)
+      - Smoking/nicotine use
+      - Regular medications/supplements
+      - Stress level (baseline)
+      - Triggered: 7 days after account OR 5 logins (whichever is later)
+      - Helps refine adrenal load calculations and recommendations
+      - Dismissible with "Remind me later" option
+    
+    - **Stage 5: Goal Setting (Pop-up after 7 page clicks)**
+      - "What's one goal you're working toward?"
+      - Quick goal input form
+      - Suggests connecting goal to LifeFlow scheduling
+      - If exercise goals not already added, prompts for exercise goals
+      - Triggered: After 7 distinct page navigation clicks
+      - Encourages active goal pursuit beyond nutrition
+    
+57. **Periodic Re-evaluation System (✅ ENHANCED)**
+    - **7-day recurring reminder:** If user hasn't updated profile in 7+ days, prompt re-evaluation
     - **Quick check-in questions:**
       - "Has your weight changed?"
       - "Has your activity level changed?"
       - "Are you working toward a new fitness goal?"
       - "Any new health considerations?"
-    - **Smart timing:** Show prompt when user opens app, non-intrusive
-    - **Dismissible:** Can skip if nothing changed
+      - "How's your stress level been?" (if previously tracked)
+      - "Have your exercise habits changed?" (if exercise profile exists)
+    - **Smart timing:** Show prompt when user opens app, non-intrusive modal
+    - **Dismissible:** Can skip if nothing changed ("All good, check back in 7 days")
+    - **Snooze options:** "Remind me tomorrow" or "Skip this week"
     - **Tracks last update:** Stores `lastProfileUpdate` timestamp
-    - **Visual indicator:** Subtle notification badge in Settings
+    - **Visual indicator:** Subtle notification badge in Settings when update overdue
     
 58. **Dynamic Daily Values Dashboard**
     - All nutrient percentages calculated against personalized DVs
     - Clear indication that values are personalized
     - "Your daily needs" vs. "General RDA"
     - Recalculates automatically when profile updates
+    - Shows what factors influenced DV calculation (hover tooltip)
     
 59. **Profile History & Trends**
     - Track weight changes over time
     - Monitor BMI progression
     - Adjust recommendations as profile evolves
     - Compare nutrient adequacy before/after profile updates
+    - Historical activity level tracking
+    - Goal progress correlation with nutrition adequacy
 
 ### Phase 8d: Enhanced Goal Progress Tracking (Week 14)
 **Goal:** Input-based milestone tracking beyond checkboxes

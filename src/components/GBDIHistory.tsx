@@ -1,20 +1,21 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
-import { TrendUp, ChartLine } from '@phosphor-icons/react'
+import { TrendUp, ChartLine, Info } from '@phosphor-icons/react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
 import { useKV } from '@github/spark/hooks'
 import { useEffect } from 'react'
 
-interface GBDIHistoryProps {
+interface GutHealthHistoryProps {
   currentGbdi: number
   currentDate: string
 }
 
-interface GBDIHistoryEntry {
+interface GutHealthHistoryEntry {
   date: string
   score: number
 }
 
-export default function GBDIHistory({ currentGbdi, currentDate }: GBDIHistoryProps) {
-  const [history, setHistory] = useKV<GBDIHistoryEntry[]>('gbdi-history', [])
+export default function GutHealthHistory({ currentGbdi, currentDate }: GutHealthHistoryProps) {
+  const [history, setHistory] = useKV<GutHealthHistoryEntry[]>('gbdi-history', [])
 
   useEffect(() => {
     if (currentGbdi > 0) {
@@ -47,10 +48,22 @@ export default function GBDIHistory({ currentGbdi, currentDate }: GBDIHistoryPro
     return chartHeight - ((score - minScore) / (maxScore - minScore)) * chartHeight
   }
 
+  const getEmoji = (score: number) => {
+    if (score >= 70) return '😊'
+    if (score >= 50) return '😐'
+    return '😔'
+  }
+
+  const getEmojiColor = (score: number) => {
+    if (score >= 70) return 'text-green-600'
+    if (score >= 50) return 'text-yellow-600'
+    return 'text-red-600'
+  }
+
   const points = validHistory.map((entry, index) => {
     const x = (index / (validHistory.length - 1)) * 100
     const y = getY(entry.score)
-    return { x: `${x}%`, y, score: entry.score, date: entry.date }
+    return { x: `${x}%`, y, score: entry.score, date: entry.date, emoji: getEmoji(entry.score), emojiColor: getEmojiColor(entry.score) }
   })
 
   const pathData = points.map((point, index) => 
@@ -68,7 +81,28 @@ export default function GBDIHistory({ currentGbdi, currentDate }: GBDIHistoryPro
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ChartLine className="h-5 w-5 text-primary" weight="bold" />
-            <CardTitle>GBDI Trend</CardTitle>
+            <CardTitle>Gut Health Trend</CardTitle>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="text-muted-foreground hover:text-foreground transition-colors">
+                    <Info className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="font-semibold mb-2">How Gut Health is Calculated:</p>
+                  <ul className="text-xs space-y-1">
+                    <li>• <strong>Fiber:</strong> 25-35g/day (25% weight)</li>
+                    <li>• <strong>Fermented foods:</strong> 2+ servings/day (20%)</li>
+                    <li>• <strong>Plant diversity:</strong> 30+ unique plants/week (20%)</li>
+                    <li>• <strong>Polyphenols:</strong> Berries, olive oil, tea (15%)</li>
+                    <li>• <strong>Prebiotics:</strong> Garlic, onions, asparagus (10%)</li>
+                    <li>• <strong>Limit ultra-processed:</strong> &lt;10% of calories (10%)</li>
+                    <li>• <strong>Avoid gut stressors:</strong> NSAIDs, excess alcohol (10%)</li>
+                  </ul>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <div className="flex items-center gap-2">
             <TrendUp className={`h-4 w-4 ${trend >= 0 ? 'text-green-600' : 'text-red-600 rotate-180'}`} weight="bold" />
@@ -118,6 +152,16 @@ export default function GBDIHistory({ currentGbdi, currentDate }: GBDIHistoryPro
                 fill="oklch(0.42 0.19 160)"
                 className="cursor-pointer hover:r-4 transition-all"
               />
+              <text
+                x={point.x}
+                y={point.y}
+                dy="-8"
+                textAnchor="middle"
+                className={`text-lg ${point.emojiColor}`}
+                style={{ fontSize: '16px' }}
+              >
+                {point.emoji}
+              </text>
             </g>
           ))}
         </svg>

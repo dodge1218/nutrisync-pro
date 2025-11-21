@@ -1,10 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Badge } from './ui/badge'
 import { Progress } from './ui/progress'
-import { Trophy, TrendUp, TrendDown, Minus, Sparkle } from '@phosphor-icons/react'
+import { Trophy, TrendUp, TrendDown, Minus, Sparkle, Info } from '@phosphor-icons/react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
 import { motion } from 'framer-motion'
 
-interface GBDIDisplayProps {
+interface GutHealthDisplayProps {
   gbdi: number
   previousGbdi?: number
   fermentedFoodCount: number
@@ -13,15 +14,15 @@ interface GBDIDisplayProps {
   gutStressorPresent: boolean
 }
 
-export default function GBDIDisplay({ 
+export default function GutHealthDisplay({ 
   gbdi, 
   previousGbdi,
   fermentedFoodCount,
   plantDiversityCount,
   ultraProcessedBurden,
   gutStressorPresent
-}: GBDIDisplayProps) {
-  const getGBDIStatus = (score: number) => {
+}: GutHealthDisplayProps) {
+  const getGutHealthStatus = (score: number) => {
     if (score >= 80) return { label: 'Excellent', color: 'text-green-600', bgColor: 'bg-green-100', emoji: '🌟' }
     if (score >= 65) return { label: 'Good', color: 'text-green-500', bgColor: 'bg-green-50', emoji: '✨' }
     if (score >= 50) return { label: 'Fair', color: 'text-yellow-500', bgColor: 'bg-yellow-50', emoji: '⚡' }
@@ -29,7 +30,7 @@ export default function GBDIDisplay({
     return { label: 'Critical', color: 'text-red-600', bgColor: 'bg-red-50', emoji: '🚨' }
   }
 
-  const status = getGBDIStatus(gbdi)
+  const status = getGutHealthStatus(gbdi)
   const trend = previousGbdi ? gbdi - previousGbdi : 0
 
   const getTrendIcon = () => {
@@ -52,7 +53,28 @@ export default function GBDIDisplay({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-primary" weight="fill" />
-            <CardTitle>GBDI Score</CardTitle>
+            <CardTitle>Gut Health Score</CardTitle>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="text-muted-foreground hover:text-foreground transition-colors">
+                    <Info className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="font-semibold mb-2">How Gut Health is Calculated:</p>
+                  <ul className="text-xs space-y-1">
+                    <li>• <strong>Fiber:</strong> 25-35g/day (25% weight)</li>
+                    <li>• <strong>Fermented foods:</strong> 2+ servings/day (20%)</li>
+                    <li>• <strong>Plant diversity:</strong> 30+ unique plants/week (20%)</li>
+                    <li>• <strong>Polyphenols:</strong> Berries, olive oil, tea (15%)</li>
+                    <li>• <strong>Prebiotics:</strong> Garlic, onions, asparagus (10%)</li>
+                    <li>• <strong>Limit ultra-processed:</strong> &lt;10% of calories (10%)</li>
+                    <li>• <strong>Avoid gut stressors:</strong> NSAIDs, excess alcohol (10%)</li>
+                  </ul>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           {previousGbdi !== undefined && (
             <div className="flex items-center gap-1">
@@ -66,7 +88,7 @@ export default function GBDIDisplay({
           )}
         </div>
         <CardDescription>
-          Gut Biome Destruction Index - Lower destruction = Healthier gut
+          Comprehensive gut-brain-digestive wellness metric - Higher is better
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
