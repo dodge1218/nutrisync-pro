@@ -18,48 +18,33 @@
 - [x] **Phase 7b**: Meal pattern analysis and cook time estimation
 - [x] **Phase 7c**: Adrenal load calculation (dietary component)
 - [x] **Phase 7d**: Enhanced stress tracking with user input system, stress history visualization, pattern detection
-- [x] **Phase 7e**: LifeFlow meal autofill with editable templates - COMPLETE
-- [x] **Phase 7f**: Stress-aware personalized recommendations - COMPLETE
-- [x] **Phase 7g**: GBDI history tracking with 7-day trends and insights - COMPLETE
-- [x] **Phase 7h**: Multi-metric health correlations visualization - COMPLETE
-- [x] **Phase 7i**: AI-powered weekly insights and recommendations - COMPLETE
-- [x] **Phase 7l**: Gut Health UI improvements - COMPLETE
+- [x] **Phase 7e**: LifeFlow meal autofill with editable templates
+- [x] **Phase 7f**: Stress-aware personalized recommendations
+- [x] **Phase 7g**: GBDI history tracking with 7-day trends and insights
+- [x] **Phase 7h**: Multi-metric health correlations visualization
+- [x] **Phase 7i**: AI-powered weekly insights and recommendations
+- [x] **Phase 7l**: Gut Health UI improvements
   - ✅ Renamed "GBDI" to "Gut Health" throughout app
   - ✅ Added calculation explanation tooltip/modal
   - ✅ Added happy/sad icons on 7-day trend graph (😊 for good days, 😔 for bad days)
   - ✅ Documented animated gut visualization for future implementation
 
-### 📋 Current Sprint (Phase 7k)
-- [🔄] **Phase 7k**: Personalized nutrition profiles with multi-stage setup - IN PROGRESS
-  - [x] Base components created: ProfileSetup, ProfileReminder, LifestyleFactorsSetup
-  - [x] PersonalizedNutrition library with dynamic DV calculator
-  - [x] 7-day re-evaluation reminder system implemented
-  - [ ] ProfilePopupManager component (created, needs TypeScript fixes)
-  - [ ] Stage 1: Essential profile setup - **Tutorial Integration** (partially done, needs popup trigger)
-  - [ ] Stage 2: Sleep & timing setup - **Triggered on first SleepSync use** (needs implementation)
-  - [ ] Stage 3: Exercise goals - **Integrated with Exercise Creator, BMI calculation** (needs pre-fill logic)
-  - [ ] Stage 4: Lifestyle factors pop-up - **7 days after account creation OR 5 logins, whichever is later** (component exists, needs trigger)
-    - Caffeine intake tracking
-    - Other drug/substance use
-    - Baseline stress level
-  - [ ] Stage 5: Goal setting pop-up - **After 7 page clicks** (needs implementation)
-    - Quick goal input ("What's one goal you're working toward?")
-    - If exercise goals not added, prompt for exercise goals
-  - [x] Profile history and weight tracking (system in place)
-  - [ ] Exercise Creator questionnaire pre-fills from Stage 1 profile data (needs implementation)
-  - [ ] Updates in Exercise Creator sync back to main profile for DV calculations (needs implementation)
-  
-**Next Steps for Phase 7k:**
-1. Fix TypeScript errors in ProfilePopupManager.tsx
-2. Integrate ProfilePopupManager into App.tsx
-3. Implement lifecycle tracking (firstLaunchTimestamp, loginCount, pageClickCount)
-4. Test all stage triggers with proper conditions
-5. Add Exercise Creator pre-fill and sync logic
-6. Test goal creation flow from Stage 5
-
-See NEXT-STEPS.md for detailed implementation guide.
-
 ### 📋 Future Enhancements (Post-MVP)
+- [ ] **Phase 7k**: Personalized Nutrition Profiles (NOT STARTED)
+  - Multi-stage profile setup system with smart triggers
+  - Dynamic daily value calculations based on age, sex, activity level, goals
+  - Exercise profile integration with BMI calculation
+  - Lifestyle factors tracking (caffeine, stress, sleep quality)
+  - 7-day re-evaluation reminders
+  - Bidirectional sync between exercise creator and main profile
+  - **Note:** Partial implementations exist but have errors and are not integrated
+- [ ] **Phase 7j**: Exercise Creator & Fitness Tracking (PARTIALLY IMPLEMENTED)
+  - Exercise type selection with MET-based calorie calculations  
+  - Comprehensive fitness profile questionnaire
+  - BMI calculation and body composition tracking
+  - Exercise schedule integration with LifeFlow
+  - Progress tracking and calorie burn history
+  - **Status:** Components exist but need testing and refinement
 - [ ] **Phase 8**: User Authentication & Multi-User Support
 - [ ] **Phase 8a**: New User Tutorial & Onboarding Flow
 - [ ] **Phase 8b**: Daily Check-In Commitment System with Task History

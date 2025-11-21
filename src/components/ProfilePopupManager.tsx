@@ -82,11 +82,17 @@ export default function ProfilePopupManager({ appMode, onPageClick }: ProfilePop
     if (!popupState) return
 
     if (profile && !popupState.stage1Complete) {
-      setPopupState((current) => ({ ...current, stage1Complete: true }))
+      setPopupState((current) => {
+        if (!current) return current
+        return { ...current, stage1Complete: true }
+      })
     }
 
     if (lifestyleFactors && !popupState.stage4Complete) {
-      setPopupState((current) => ({ ...current, stage4Complete: true }))
+      setPopupState((current) => {
+        if (!current) return current
+        return { ...current, stage4Complete: true }
+      })
     }
   }, [profile, lifestyleFactors, popupState, setPopupState])
 
@@ -113,11 +119,14 @@ export default function ProfilePopupManager({ appMode, onPageClick }: ProfilePop
     if (!state.stage4Triggered && !state.stage4Complete) {
       if (daysSinceFirstLogin >= 7 || loginCount >= 5) {
         if (!state.lastStage4Check || (now - state.lastStage4Check) > 60000) {
-          setPopupState((current) => ({ 
-            ...current, 
-            stage4Triggered: true,
-            lastStage4Check: now
-          }))
+          setPopupState((current) => {
+            if (!current) return current
+            return { 
+              ...current, 
+              stage4Triggered: true,
+              lastStage4Check: now
+            }
+          })
           setActiveStage(4)
           return
         }
@@ -126,11 +135,14 @@ export default function ProfilePopupManager({ appMode, onPageClick }: ProfilePop
 
     if (!state.stage5Triggered && !state.stage5Complete && state.pageClickCount >= 7) {
       if (!state.lastStage5Check || (now - state.lastStage5Check) > 60000) {
-        setPopupState((current) => ({ 
-          ...current, 
-          stage5Triggered: true,
-          lastStage5Check: now
-        }))
+        setPopupState((current) => {
+          if (!current) return current
+          return { 
+            ...current, 
+            stage5Triggered: true,
+            lastStage5Check: now
+          }
+        })
         setActiveStage(5)
         return
       }
@@ -140,10 +152,13 @@ export default function ProfilePopupManager({ appMode, onPageClick }: ProfilePop
   const handlePageClick = () => {
     if (!popupState) return
     
-    setPopupState((current) => ({
-      ...current,
-      pageClickCount: (current.pageClickCount || 0) + 1
-    }))
+    setPopupState((current) => {
+      if (!current) return current
+      return {
+        ...current,
+        pageClickCount: (current.pageClickCount || 0) + 1
+      }
+    })
     
     onPageClick()
   }
@@ -154,22 +169,34 @@ export default function ProfilePopupManager({ appMode, onPageClick }: ProfilePop
   }, [])
 
   const handleStage1Complete = () => {
-    setPopupState((current) => ({ ...current, stage1Complete: true }))
+    setPopupState((current) => {
+      if (!current) return current
+      return { ...current, stage1Complete: true }
+    })
     setActiveStage(null)
   }
 
   const handleStage2Complete = () => {
-    setPopupState((current) => ({ ...current, stage2Complete: true }))
+    setPopupState((current) => {
+      if (!current) return current
+      return { ...current, stage2Complete: true }
+    })
     setActiveStage(null)
   }
 
   const handleStage4Complete = (factors: LifestyleFactors) => {
-    setPopupState((current) => ({ ...current, stage4Complete: true }))
+    setPopupState((current) => {
+      if (!current) return current
+      return { ...current, stage4Complete: true }
+    })
     setActiveStage(null)
   }
 
   const handleStage5Complete = () => {
-    setPopupState((current) => ({ ...current, stage5Complete: true }))
+    setPopupState((current) => {
+      if (!current) return current
+      return { ...current, stage5Complete: true }
+    })
     setActiveStage(null)
   }
 
