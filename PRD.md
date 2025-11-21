@@ -26,6 +26,11 @@
 
 ### 📋 Future Enhancements (Post-MVP)
 - [ ] **Phase 8**: User Authentication & Multi-User Support
+- [ ] **Phase 8a**: New User Tutorial & Onboarding Flow
+- [ ] **Phase 8b**: Daily Check-In Commitment System with Task History
+- [ ] **Phase 8c**: LifeFlow Auto-Task Generation (common daily activities)
+- [ ] **Phase 8d**: Goal Progress Tracking with Input-Based Milestones
+- [ ] **Phase 8e**: Cross-Mode Synergy Detection (NutriWell ↔ SleepSync ↔ LifeFlow)
 - [ ] **Phase 9**: Advanced educational content expansion
 - [ ] **Phase 10**: Enhanced synergy detection with more rules
 - [ ] **Phase 11**: Performance optimization and polish
@@ -241,8 +246,8 @@ This creates a gap where health-conscious users track religiously but still expe
   - Provides SleepSync-specific achievements (7-day early eating streak, etc.)
   - Shows sleep optimization score alongside GBDI on dashboard
 
-#### 1.8 LifeFlow - Time-Blocked Schedule Builder (✅ COMPLETE)
-**Status**: Fully implemented with intelligent meal autofill and goal tracking
+#### 1.8 LifeFlow - Time-Blocked Schedule Builder (🔄 ENHANCED)
+**Status**: Fully implemented with intelligent meal autofill and goal tracking. Additional enhancements planned for Phase 8c-8d.
 
 - **Intelligent scheduling system:** Builds timeblocked todo lists based on food, sleep, and daily activities
   - ✅ Detects awake window from sleep preferences (wake to sleep time)
@@ -308,6 +313,13 @@ This creates a gap where health-conscious users track religiously but still expe
   - ✅ Track milestone completion with checkboxes
   - ✅ Progress bars showing completion percentage
   - ✅ Active/completed/paused status management
+  - 🔄 **Enhanced progress tracking (Phase 8d):**
+    - Input-based milestone progress (not just checkboxes)
+    - Quantitative goals: "Run 5 miles" with input field for actual distance
+    - Frequency goals: "Meditate 5x this week" with counter
+    - Habit tracking: "Drink 8 glasses of water daily" with daily check-ins
+    - Progress charts showing trend over time
+    - Goal completion predictions based on current pace
 
 - **Activity completion tracking:**
   - ✅ Check off activities as completed throughout the day
@@ -332,6 +344,96 @@ This creates a gap where health-conscious users track religiously but still expe
   - ✅ Auto-imports meal times from NutriWell logs
   - ✅ Respects eating window and digestion buffers
   - ✅ Coordinates work, exercise, meals for optimal timing
+  - 🔄 **Enhanced cross-mode synergy (Phase 8e):**
+    - Nutrient-aware activity scheduling (high-protein breakfast → morning workout)
+    - GBDI-informed stress breaks (low gut health day → schedule meditation)
+    - Sleep quality feedback loop (poor sleep → suggest earlier dinner time)
+    - Energy level tracking → reschedule demanding tasks
+    - Bidirectional insights: "Low magnesium days correlate with missed yoga sessions"
+
+- **Auto-Task Generation System (🔄 Phase 8c):**
+  - **Common daily tasks automatically added to schedule:**
+    - Morning routine: "Brush teeth", "Drink 16oz water", "Morning stretch"
+    - Hygiene: "Shower", "Floss teeth", "Skincare routine"
+    - Hydration reminders: "Drink water" blocks every 2-3 hours
+    - Evening routine: "Brush teeth", "Nighttime skincare", "Prep tomorrow"
+    - Pet care (if enabled): "Walk dog", "Feed pet"
+    - Household: "Check email", "Tidy kitchen", "Make bed"
+  - **Smart scheduling logic:**
+    - Morning tasks auto-placed after wake time
+    - Evening tasks auto-placed before sleep time
+    - Hydration reminders distributed throughout awake window
+    - Avoids conflicts with existing activities
+    - User can enable/disable individual auto-tasks
+    - Learns from user deletions (don't re-suggest removed tasks)
+  - **Customization settings:**
+    - Toggle entire auto-task system on/off
+    - Select which categories to auto-generate
+    - Set custom timings for routine tasks
+    - Add personal recurring tasks to auto-generation list
+
+- **Daily Check-In Commitment System (🔄 Phase 8b):**
+  - **Morning/Evening Check-In Sessions:**
+    - User prompted to commit to 3-5 tasks for the day
+    - App suggests tasks based on:
+      - User's active goals (pull from goal system)
+      - Nutrient gaps from NutriWell (e.g., "Add fermented food today")
+      - Recent stress levels (e.g., "Take 10-min walk" if high stress)
+      - Unscheduled free time blocks
+      - Tasks skipped yesterday
+    - **Task Invention Algorithm:**
+      - Analyzes user's goals and breaks them into micro-actions
+      - Suggests wellness tasks: "5-min meditation", "Gratitude journal", "Call a friend"
+      - Recommends habit-building: "Read 10 pages", "No phone before bed", "Morning sunlight"
+      - Health-focused: "Hit protein goal", "Log all meals", "Drink 8 glasses water"
+      - Productivity: "Work on [goal milestone]", "Clear inbox", "Plan tomorrow"
+  - **Task Selection & Commitment:**
+    - User presented with 8-10 suggested tasks
+    - Selects 3-5 to commit to for the day
+    - Can edit task descriptions
+    - Can add custom tasks not in suggestions
+    - Each task gets a checkbox and optional time reminder
+  - **Throughout-Day Tracking:**
+    - Committed tasks displayed prominently in LifeFlow view
+    - Quick-check interface: swipe to complete tasks
+    - Progress indicator: "2/5 tasks complete today"
+    - Option to defer task to tomorrow
+    - Completion timestamps recorded
+  - **Historical Tracking & Insights:**
+    - ✅ Stored in `check-in-history` KV store with structure:
+      ```typescript
+      {
+        date: string,           // YYYY-MM-DD
+        committedTasks: [
+          {
+            id: string,
+            description: string,
+            category: 'goal' | 'wellness' | 'health' | 'habit' | 'custom',
+            completed: boolean,
+            completedAt?: timestamp,
+            source?: 'suggested' | 'user-created'
+          }
+        ],
+        completionRate: number, // 0-100
+        checkInTime: timestamp
+      }
+      ```
+    - **History View Component:**
+      - Calendar view showing check-in completion rates
+      - Weekly summary: "This week you completed 18/25 committed tasks (72%)"
+      - Most frequently committed tasks
+      - Most frequently completed vs. skipped tasks
+      - Streak tracking: consecutive days with 100% completion
+      - Category breakdown: which types of tasks you excel at
+    - **Pattern Detection:**
+      - "You complete wellness tasks 85% of the time but goal tasks only 40%"
+      - "Tasks scheduled before 10am have 90% completion rate"
+      - "You're most consistent on weekdays"
+    - **Accountability Features:**
+      - Review yesterday's incomplete tasks at morning check-in
+      - Option to recommit to incomplete tasks
+      - Celebration animations for perfect days
+      - Achievement unlocks: "7-day perfect commitment streak"
 
 #### 2. Gamification System (NEW)
 - **GBDI Score Display:** Large, animated score card with trend indicators (↑↓) comparing to previous day
@@ -344,6 +446,169 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Progress Visualization:** Animated progress bars, color-coded status cards, satisfying animations
 - **Level System:** Starter → Rising → Champion → Master → Legendary based on streak length
 - **Gut Health Breakdown:** Visual cards showing fermented foods, plant diversity, ultra-processed burden, gut stressors
+
+#### 2.5 New User Onboarding & Tutorial (🔄 Phase 8a)
+**Goal:** Reduce friction for first-time users, teach core concepts, drive early engagement
+
+- **Welcome Flow (First Launch):**
+  - **Screen 1: Welcome**
+    - Friendly introduction to NutriWell suite
+    - Value proposition: "Track nutrition, optimize sleep timing, and schedule your days"
+    - Visual preview of three modes with icons
+    - "Get Started" CTA
+  
+  - **Screen 2: Quick Profile**
+    - Optional: Age, dietary preference (omnivore/vegetarian/vegan)
+    - Goal selection: "What brings you here?"
+      - ☐ Better gut health
+      - ☐ More energy
+      - ☐ Nutrient optimization
+      - ☐ Better sleep
+      - ☐ Productivity & time management
+    - "This helps us personalize your experience"
+    - Skip option available
+  
+  - **Screen 3: Mode Selection**
+    - "Choose your starting point (you can switch anytime):"
+    - **NutriWell** - Nutrition intelligence
+    - **SleepSync** - Meal timing for better sleep
+    - **LifeFlow** - Time-blocked scheduling
+    - Brief description of each
+    - Selected mode determines initial tutorial
+  
+  - **Screen 4: Legal Disclaimer**
+    - Clear, prominent disclaimer
+    - "This is educational, not medical advice"
+    - "Consult healthcare professional before dietary changes"
+    - "I Understand" button (required)
+
+- **Interactive Tutorial System:**
+  
+  - **NutriWell Tutorial (5 steps):**
+    1. **"Log your first meal"**
+       - Overlay highlights Log Food button
+       - Tooltip: "Let's start by logging what you ate today"
+       - Guides user to log a simple meal
+       - Example: "Try typing: 2 eggs, 1 cup oatmeal, 1 banana"
+    
+    2. **"See your nutrient breakdown"**
+       - Dashboard tour highlights nutrient grid
+       - Explains color coding (red/yellow/green)
+       - Shows where gaps appear
+       - "These are your nutrient gaps - we'll help you fill them"
+    
+    3. **"Understanding GBDI Score"**
+       - Highlights GBDI card
+       - Explains gut-brain-digestive health metric
+       - "Higher score = better gut health"
+       - Shows what factors influence score
+    
+    4. **"Get personalized recommendations"**
+       - Navigates to Recommendations page
+       - Shows how suggestions are tailored to their gaps
+       - "We prioritize food-first solutions"
+    
+    5. **"Explore other features"**
+       - Quick overview of Meal Planner, Food Budget, Achievements
+       - "Log daily to unlock achievements and track trends"
+       - "Tutorial complete! 🎉"
+  
+  - **SleepSync Tutorial (3 steps):**
+    1. **"Set your sleep schedule"**
+       - Guides to sleep time settings
+       - "When do you typically sleep and wake?"
+       - Explains why this matters for meal timing
+    
+    2. **"Log meals with times"**
+       - Shows how to add meal times
+       - Explains 3-4 hour digestion buffer
+       - "Eating earlier improves sleep quality"
+    
+    3. **"Check your sleep readiness"**
+       - Shows timeline visualization
+       - Explains sleep readiness score
+       - "Move dinner earlier to improve this score"
+  
+  - **LifeFlow Tutorial (4 steps):**
+    1. **"Add a recurring activity"**
+       - Guides to activity input
+       - "Let's add something you do regularly"
+       - Example: "Work, 9am-5pm, Monday-Friday"
+    
+    2. **"Generate your schedule"**
+       - Shows how schedule auto-generates
+       - Meals auto-import from NutriWell
+       - "We've filled in your meals and activities"
+    
+    3. **"Track completion"**
+       - Shows checkbox system
+       - "Check off tasks as you complete them"
+       - Progress indicators explained
+    
+    4. **"Set a goal"**
+       - Guides to goal creation
+       - "Break big goals into daily milestones"
+       - Shows how free time blocks can be used for goals
+
+- **Tutorial Controls:**
+  - **Progress indicator:** "Step 2 of 5"
+  - **Skip option:** "Skip tutorial" button (persistent)
+  - **Back/Next navigation**
+  - **Tutorial replay:** Accessible from Settings → "Replay Tutorial"
+  - **Help hints:** Question mark icons throughout app link to relevant tutorial steps
+
+- **Contextual Tooltips (Post-Tutorial):**
+  - First time using each feature → brief tooltip appears
+  - Examples:
+    - First time opening Meal Planner: "Save common meals as templates"
+    - First time viewing achievements: "Log consistently to unlock badges"
+    - First time adding supplement: "Track vitamins and minerals separately"
+  - Dismissible with "Got it" or "Don't show again"
+  - Tooltips stored in user preferences to avoid repetition
+
+- **Empty States as Onboarding:**
+  - **No food logs yet:**
+    - Friendly illustration
+    - "Your nutrition journey starts here"
+    - "Log your first meal" CTA with quick-start tips
+  
+  - **No meal templates yet:**
+    - "Create templates for meals you eat often"
+    - "Try AI autofill or browse presets" CTA
+  
+  - **No goals yet:**
+    - "What do you want to accomplish?"
+    - "Create your first goal" CTA with examples
+
+- **Progressive Disclosure:**
+  - Advanced features hidden initially
+  - Unlocked after 3 days of usage or 10 meals logged
+  - Examples: Food Budget trends, GBDI history, AI insights
+  - Unlock notifications: "New feature unlocked: 7-day GBDI trends!"
+
+- **Onboarding Checklist (Optional):**
+  - Persistent checklist in Dashboard (first week only)
+  - ☐ Log your first meal
+  - ☐ Create a meal template
+  - ☐ Check your nutrient gaps
+  - ☐ Set up sleep schedule (SleepSync)
+  - ☐ Add a recurring activity (LifeFlow)
+  - ☐ Complete 3 days in a row
+  - Progress: "4/7 complete"
+  - Dismissible after completion or 7 days
+
+- **Educational Cards Integration:**
+  - During tutorial, show relevant education cards
+  - "Learn more about synergies" link after nutrient overview
+  - Gradually introduce concepts (don't overwhelm)
+  - First week: focus on basics (logging, GBDI, gaps)
+  - Second week: introduce advanced features (synergies, timing)
+
+- **Tutorial Analytics (Future):**
+  - Track where users drop off in tutorial
+  - Which steps cause confusion (high skip rate)
+  - Feature adoption rates post-tutorial
+  - Iterate on tutorial flow based on data
 
 #### 3. Nutrient Analysis Engine
 - **Macronutrients:** Protein, carbs, fat, fiber
@@ -1067,12 +1332,114 @@ UserProfile {
   preferences: { 
     warmFoods: true, 
     showSupplements: false,
-    unitSystem: "imperial" | "metric" | "auto"
+    unitSystem: "imperial" | "metric" | "auto",
+    autoTasksEnabled: boolean,
+    autoTaskCategories: string[],
   },
   demographics: { age, sex, activityLevel },
   sleepSchedule?: { wakeTime, sleepTime, targetLastMeal },
   activeGoals: [{ goalId, milestones: [...] }],
-  recurringActivities: [{ name, category, days, time, duration }]
+  recurringActivities: [{ name, category, days, time, duration }],
+  onboardingComplete: boolean,
+  tutorialProgress: { step: number, mode: string, completed: boolean },
+  dismissedTooltips: string[]
+}
+
+Goal {
+  id: uuid,
+  title: string,
+  description?: string,
+  targetDate?: timestamp,
+  status: "active" | "completed" | "paused",
+  milestones: [
+    {
+      id: uuid,
+      title: string,
+      type: "checkbox" | "numeric" | "frequency" | "habit",
+      target?: number,              // For numeric/frequency goals
+      unit?: string,                // "miles", "minutes", "times", etc.
+      currentProgress?: number,     // Current value for quantitative goals
+      progressHistory?: [           // Historical tracking
+        { date: timestamp, value: number }
+      ],
+      completed: boolean,
+      completedAt?: timestamp
+    }
+  ],
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+
+CheckInSession {
+  id: uuid,
+  date: string,                     // YYYY-MM-DD
+  checkInTime: timestamp,
+  committedTasks: [
+    {
+      id: uuid,
+      description: string,
+      category: "goal" | "wellness" | "health" | "habit" | "productivity" | "custom",
+      source: "suggested" | "user-created",
+      sourceGoalId?: uuid,          // If derived from a goal
+      completed: boolean,
+      completedAt?: timestamp,
+      deferred: boolean,            // Moved to next day
+      reminder?: {
+        time: string,
+        enabled: boolean
+      }
+    }
+  ],
+  completionRate: number,           // 0-100
+  reviewedIncompleteFromYesterday: boolean
+}
+
+CheckInHistory {
+  sessions: CheckInSession[],
+  stats: {
+    totalSessions: number,
+    averageCompletionRate: number,
+    currentStreak: number,          // Consecutive days with 100% completion
+    longestStreak: number,
+    categoryPerformance: {          // Completion rate by category
+      [category: string]: number
+    },
+    mostCommittedTasks: [           // Frequency analysis
+      { description: string, count: number }
+    ],
+    mostCompletedTasks: [
+      { description: string, completionRate: number }
+    ]
+  }
+}
+
+AutoTask {
+  id: string,
+  name: string,
+  category: "morning" | "hygiene" | "hydration" | "evening" | "pet-care" | "household",
+  defaultTime?: string,             // Relative or absolute time
+  duration?: number,                // Minutes
+  frequency: "daily" | "custom",
+  enabled: boolean,
+  customDays?: string[],            // ["monday", "wednesday", ...]
+  userDeleted: boolean,             // Learning flag
+  deletionCount: number             // How many times user removed this
+}
+
+CrossModeInsight {
+  id: uuid,
+  type: "correlation" | "recommendation" | "alert" | "celebration",
+  modes: string[],                  // ["nutriwell", "sleepsync", "lifeflow"]
+  title: string,
+  description: string,
+  metrics: {
+    [metricName: string]: any      // Relevant data points
+  },
+  confidence: number,               // 0-100
+  actionable: boolean,
+  suggestedAction?: string,
+  createdAt: timestamp,
+  dismissed: boolean
 }
 
 SynergyRule {
@@ -1343,6 +1710,178 @@ This section outlines the recommended order of implementation for maximum user v
     - SQL injection prevention (parameterized queries)
     - XSS protection
     - CSRF tokens for sensitive actions
+
+### Phase 8a: New User Onboarding & Tutorial (Week 11)
+**Goal:** Reduce friction for first-time users, drive early engagement
+
+31. **Welcome Flow Implementation**
+    - Create multi-step onboarding wizard
+    - Profile setup (age, goals, dietary preferences)
+    - Mode selection screen
+    - Legal disclaimer acceptance
+    - Persist onboarding completion state
+
+32. **Interactive Tutorial System**
+    - Step-by-step guided tours for each mode
+    - Highlight UI elements with overlays
+    - Tooltip component with positioning logic
+    - Progress tracking (which steps completed)
+    - Skip and replay functionality
+
+33. **Tutorial Content Creation**
+    - Write copy for all tutorial steps
+    - Create tutorial state machine
+    - NutriWell tutorial (5 steps)
+    - SleepSync tutorial (3 steps)
+    - LifeFlow tutorial (4 steps)
+
+34. **Contextual Help System**
+    - Tooltip component for first-time feature use
+    - Help button icons throughout app
+    - Link tooltips to tutorial replay
+    - User preference storage for dismissed tooltips
+
+35. **Empty States & Onboarding Checklist**
+    - Design empty state illustrations/messages
+    - Create onboarding checklist component
+    - Track checklist progress in KV
+    - Auto-dismiss after completion or 7 days
+
+### Phase 8b: Daily Check-In Commitment System (Week 12)
+**Goal:** Daily accountability and task completion tracking
+
+36. **Check-In UI Components**
+    - Morning check-in modal/page
+    - Task suggestion algorithm
+    - Task selection interface (3-5 tasks)
+    - Custom task input
+    - Commitment confirmation screen
+
+37. **Task Invention Algorithm**
+    - Pull from active goals → micro-actions
+    - Analyze nutrient gaps → health tasks
+    - Check stress levels → wellness tasks
+    - Review unscheduled time → productivity tasks
+    - Suggest habit-building tasks
+
+38. **Throughout-Day Tracking**
+    - Quick-check task interface
+    - Swipe-to-complete gesture
+    - Progress indicator widget
+    - Defer to tomorrow option
+    - Completion timestamp recording
+
+39. **Historical Tracking System**
+    - `check-in-history` KV store implementation
+    - Calendar view component
+    - Weekly/monthly completion rate charts
+    - Category breakdown visualization
+    - Pattern detection algorithm
+
+40. **Insights & Accountability**
+    - Review incomplete tasks at next check-in
+    - Recommit option for yesterday's tasks
+    - Streak tracking for perfect days
+    - Achievement integration
+    - Celebration animations
+
+### Phase 8c: LifeFlow Auto-Task Generation (Week 13)
+**Goal:** Automatically populate schedule with common daily activities
+
+41. **Auto-Task Library**
+    - Define common task categories
+    - Morning routine tasks (brush teeth, water, stretch)
+    - Hygiene tasks (shower, floss, skincare)
+    - Hydration reminders (every 2-3 hours)
+    - Evening routine tasks
+    - Pet care tasks (if applicable)
+    - Household tasks
+
+42. **Smart Scheduling Algorithm**
+    - Place morning tasks after wake time
+    - Place evening tasks before sleep time
+    - Distribute hydration throughout day
+    - Avoid conflicts with existing activities
+    - Respect user deletions (learning system)
+
+43. **Auto-Task Settings**
+    - Toggle system on/off
+    - Category selection (which to auto-generate)
+    - Custom timing configuration
+    - Personal task additions to auto-list
+    - Frequency settings per task
+
+44. **Learning System**
+    - Track which auto-tasks user deletes
+    - Store deletion patterns in KV
+    - Don't re-suggest frequently removed tasks
+    - Adapt to user preferences over time
+
+### Phase 8d: Enhanced Goal Progress Tracking (Week 14)
+**Goal:** Input-based milestone tracking beyond checkboxes
+
+45. **Quantitative Goal Types**
+    - Numeric input milestones ("Run 5 miles")
+    - Frequency counters ("Meditate 5x this week")
+    - Daily habits with check-in ("8 glasses water")
+    - Time-based goals (minutes, hours)
+    - Custom units (pages read, pushups, etc.)
+
+46. **Progress Input UI**
+    - Input field for quantitative goals
+    - Increment/decrement buttons
+    - Quick-add presets (e.g., +1, +5, +10)
+    - Voice input option (future)
+    - Historical input log
+
+47. **Progress Visualization**
+    - Line charts showing progress over time
+    - Comparison to target (on track, ahead, behind)
+    - Completion predictions based on pace
+    - Trend analysis (improving, steady, declining)
+    - Milestone celebration animations
+
+48. **Goal Analytics**
+    - Average progress per day/week
+    - Consistency score (regular vs. sporadic)
+    - Correlation with other metrics (nutrient intake, stress, sleep)
+    - Success factors identification
+    - Recommendations for improvement
+
+### Phase 8e: Cross-Mode Synergy Enhancement (Week 15)
+**Goal:** Create intelligent connections between NutriWell, SleepSync, and LifeFlow
+
+49. **Nutrient-Aware Scheduling**
+    - High-protein breakfast → schedule morning workout
+    - Low energy nutrient days → suggest lighter activities
+    - Magnesium intake → correlate with stress/sleep
+    - Caffeine timing → adjust activity scheduling
+
+50. **GBDI-Informed Recommendations**
+    - Low GBDI day → schedule meditation/walk
+    - High ultra-processed intake → suggest cooking time next day
+    - Fermented food gaps → schedule grocery shopping
+    - Plant diversity low → meal planning reminder
+
+51. **Sleep Quality Feedback Loop**
+    - Poor sleep quality → suggest earlier dinner time in SleepSync
+    - Late meals detected → push notifications to LifeFlow
+    - Sleep debt → adjust activity intensity recommendations
+    - Optimal sleep nights → identify what worked (meal timing, activities)
+
+52. **Bidirectional Insights**
+    - "Low magnesium days correlate with missed yoga sessions"
+    - "Best sleep occurs when last meal before 6pm"
+    - "Highest productivity on days with morning exercise"
+    - "Stress spikes on days with <5 plant foods"
+    - Cross-mode insight cards on dashboard
+
+53. **Unified Dashboard Enhancements**
+    - Show cross-mode connections visually
+    - "Your week at a glance" - all three modes
+    - Synergy alerts: "Your schedule supports your nutrition goals"
+    - Conflict warnings: "Late dinner scheduled conflicts with sleep goal"
+    - Unified achievement system across all modes
 
 ### Phase 9: Education Content Expansion (Week 11)
 **Goal:** Educate users, refine UX
