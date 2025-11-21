@@ -1,62 +1,79 @@
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import type { UserPhysicalProfile } from '@/lib/personalizedDVs'
-import { calculateBMI, getBMICategory } from '@/lib/personalizedDVs'
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group'
+import type { UserPhysicalProfile } from '../../lib/personalizedDVs'
+import { calculateBMI, getBMICategory } from '../../lib/personalizedDVs'
 
 interface PhysicalProfileSetupProps {
   initialData?: UserPhysicalProfile
-  onSave: (data: UserPhysicalProfile) => void
+  onSave?: (profile: UserPhysicalProfile) => void
+  onComplete?: (profile: UserPhysicalProfile) => void
   onSkip?: () => void
 }
 
-export default function PhysicalProfileSetup({ initialData, onSave, onSkip }: PhysicalProfileSetupProps) {
-  const [formData, setFormData] = useState<UserPhysicalProfile>(initialData || {
-    weightUnit: 'lbs',
-    heightUnit: 'in'
-  })
-
-  const bmi = calculateBMI(formData)
-  const bmiCategory = bmi ? getBMICategory(bmi) : null
+export default function PhysicalProfileSetup({ initialData, onSave, onComplete, onSkip }: PhysicalProfileSetupProps) {
+  const [weight, setWeight] = useState(initialData?.weight?.toString() || '')
+  const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>(initialData?.weightUnit || 'lbs')
+  const [height, setHeight] = useState(initialData?.height?.toString() || '')
+  const [heightUnit, setHeightUnit] = useState<'cm' | 'in'>(initialData?.heightUnit || 'in')
+  const [age, setAge] = useState(initialData?.age?.toString() || '')
+  const [sex, setSex] = useState<'male' | 'female' | 'other'>(initialData?.sex || 'female')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (formData.weight && formData.height && formData.age && formData.sex) {
-      onSave(formData)
+    
+    const profile: UserPhysicalProfile = {
+      weight: parseFloat(weight) || undefined,
+      weightUnit,
+      height: parseFloat(height) || undefined,
+      heightUnit,
+      age: parseInt(age) || undefined,
+      sex
     }
+    
+    if (onSave) onSave(profile)
+    if (onComplete) onComplete(profile)
   }
 
-  const isValid = formData.weight && formData.height && formData.age && formData.sex
+  const bmi = calculateBMI({
+    weight: parseFloat(weight),
+    weightUnit,
+    height: parseFloat(height),
+    heightUnit
+  })
+
+  const bmiCategory = bmi ? getBMICategory(bmi) : null
+
+  const isValid = weight && height && age && sex
 
   return (
-    <Card className="max-w-2xl mx-auto">
+    <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>Physical Profile</CardTitle>
+        <CardTitle>Physical Profile Setup</CardTitle>
         <CardDescription>
-          Help us calculate your personalized daily nutrient needs
+          Help us personalize your daily nutrient recommendations based on your body metrics
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="weight">Weight</Label>
               <div className="flex gap-2">
                 <Input
                   id="weight"
                   type="number"
-                  value={formData.weight || ''}
-                  onChange={(e) => setFormData({ ...formData, weight: parseFloat(e.target.value) || undefined })}
-                  placeholder="150"
-                  required
+                  placeholder="Enter weight"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  step="0.1"
+                  min="0"
                 />
-                <Select
-                  value={formData.weightUnit}
-                  onValueChange={(value: 'kg' | 'lbs') => setFormData({ ...formData, weightUnit: value })}
-                >
+                <Select value={weightUnit} onValueChange={(val) => setWeightUnit(val as 'kg' | 'lbs')}>
                   <SelectTrigger className="w-24">
                     <SelectValue />
                   </SelectTrigger>
@@ -74,15 +91,13 @@ export default function PhysicalProfileSetup({ initialData, onSave, onSkip }: Ph
                 <Input
                   id="height"
                   type="number"
-                  value={formData.height || ''}
-                  onChange={(e) => setFormData({ ...formData, height: parseFloat(e.target.value) || undefined })}
-                  placeholder="65"
-                  required
+                  placeholder="Enter height"
+                  value={height}
+                  onChange={(e) => setHeight(e.target.value)}
+                  step="0.1"
+                  min="0"
                 />
-                <Select
-                  value={formData.heightUnit}
-                  onValueChange={(value: 'cm' | 'in') => setFormData({ ...formData, heightUnit: value })}
-                >
+                <Select value={heightUnit} onValueChange={(val) => setHeightUnit(val as 'cm' | 'in')}>
                   <SelectTrigger className="w-24">
                     <SelectValue />
                   </SelectTrigger>
@@ -95,53 +110,69 @@ export default function PhysicalProfileSetup({ initialData, onSave, onSkip }: Ph
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="age">Age</Label>
-              <Input
-                id="age"
-                type="number"
-                value={formData.age || ''}
-                onChange={(e) => setFormData({ ...formData, age: parseInt(e.target.value) || undefined })}
-                placeholder="30"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="sex">Sex</Label>
-              <Select
-                value={formData.sex}
-                onValueChange={(value: 'male' | 'female' | 'other') => setFormData({ ...formData, sex: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select sex" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
           {bmi && (
-            <div className="p-4 bg-muted rounded-lg">
-              <div className="text-sm font-medium">BMI: {bmi.toFixed(1)}</div>
-              <div className="text-sm text-muted-foreground">Category: {bmiCategory}</div>
+            <div className="p-4 bg-secondary rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium">Your BMI:</span>
+                <span className="text-lg font-bold">
+                  {bmi.toFixed(1)} - {bmiCategory}
+                </span>
+              </div>
             </div>
           )}
 
-          <div className="flex gap-3 justify-end">
+          <div className="space-y-2">
+            <Label htmlFor="age">Age</Label>
+            <Input
+              id="age"
+              type="number"
+              placeholder="Enter age"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              min="1"
+              max="120"
+            />
+          </div>
+
+          <div className="space-y-3">
+            <Label>Biological Sex</Label>
+            <RadioGroup value={sex} onValueChange={(val) => setSex(val as 'male' | 'female' | 'other')}>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="female" id="female" />
+                <Label htmlFor="female" className="font-normal cursor-pointer">
+                  Female
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="male" id="male" />
+                <Label htmlFor="male" className="font-normal cursor-pointer">
+                  Male
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="other" id="other" />
+                <Label htmlFor="other" className="font-normal cursor-pointer">
+                  Other
+                </Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          <div className="bg-muted p-4 rounded-lg text-sm">
+            <p className="text-muted-foreground">
+              This information helps us calculate personalized daily values for calories, protein, and micronutrients based on your age, sex, and body metrics.
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <Button type="submit" disabled={!isValid} className="flex-1">
+              Continue
+            </Button>
             {onSkip && (
-              <Button type="button" variant="ghost" onClick={onSkip}>
+              <Button type="button" variant="outline" onClick={onSkip}>
                 Skip for now
               </Button>
             )}
-            <Button type="submit" disabled={!isValid}>
-              Save & Continue
-            </Button>
           </div>
         </form>
       </CardContent>
