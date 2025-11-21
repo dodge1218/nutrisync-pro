@@ -73,8 +73,13 @@ export interface Goal {
 export interface GoalMilestone {
   id: string
   title: string
+  type: 'checkbox' | 'numeric' | 'frequency' | 'habit'
   completed: boolean
   completedAt?: string
+  target?: number
+  unit?: string
+  currentProgress?: number
+  progressHistory?: Array<{ date: string; value: number }>
 }
 
 export interface DaySchedule {
@@ -865,6 +870,7 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
                           const milestone: GoalMilestone = {
                             id: Date.now().toString(),
                             title: newMilestone,
+                            type: 'checkbox',
                             completed: false
                           }
                           setNewGoal({
@@ -882,6 +888,7 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
                           const milestone: GoalMilestone = {
                             id: Date.now().toString(),
                             title: newMilestone,
+                            type: 'checkbox',
                             completed: false
                           }
                           setNewGoal({

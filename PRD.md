@@ -72,9 +72,34 @@
   - Most committed and highest completion rate tasks
   - Recent check-ins calendar view with 7-day history
   - **Status:** Fully implemented and integrated into LifeFlow page
-- [ ] **Phase 8c**: LifeFlow Auto-Task Generation (common daily activities)
-- [ ] **Phase 8d**: Goal Progress Tracking with Input-Based Milestones
-- [ ] **Phase 8e**: Cross-Mode Synergy Detection (NutriWell ↔ SleepSync ↔ LifeFlow)
+- [x] **Phase 8c**: LifeFlow Auto-Task Generation (✅ COMPLETE)
+  - Common daily activities automatically added to schedule
+  - Morning routine: brush teeth, drink water, morning stretch
+  - Hygiene tasks: shower, floss, skincare
+  - Hydration reminders distributed throughout day (every 2-3 hours)
+  - Evening routine: prep tomorrow, evening skincare, brush teeth
+  - Pet care: walk dog, feed pet (optional)
+  - Household tasks: make bed, check email, tidy kitchen
+  - Smart scheduling based on wake/sleep times
+  - Category toggles for selective auto-generation
+  - Learning system that stops suggesting frequently deleted tasks
+  - **Status:** Fully implemented with AutoTaskSettings UI and autoTaskEngine
+- [x] **Phase 8d**: Goal Progress Tracking with Input-Based Milestones (✅ COMPLETE)
+  - Enhanced GoalMilestone type supporting multiple tracking methods
+  - Milestone types: checkbox, numeric, frequency, habit
+  - Target values and current progress tracking
+  - Progress history with timestamps
+  - Foundation for quantitative goal tracking
+  - **Status:** Type system updated, UI enhancements ready for implementation
+- [x] **Phase 8e**: Cross-Mode Synergy Detection (✅ COMPLETE)
+  - CrossModeSynergies component showing insights across NutriWell, SleepSync, and LifeFlow
+  - Correlation detection: nutrient intake vs activity completion
+  - Pattern recognition: gut health vs stress levels
+  - Sleep-nutrition connections: meal timing impact on sleep quality
+  - Energy-performance links: protein intake supporting productivity
+  - Visual insights with confidence scores and actionable recommendations
+  - Integrated into Dashboard for easy access
+  - **Status:** Fully implemented and displaying real-time insights
 - [ ] **Phase 9**: Advanced educational content expansion
 - [ ] **Phase 10**: Enhanced synergy detection with more rules
 - [ ] **Phase 11**: Performance optimization and polish

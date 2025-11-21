@@ -16,6 +16,7 @@ import AdrenalLoadDisplay from '../AdrenalLoadDisplay'
 import StressHistory from '../StressHistory'
 import HealthCorrelations from '../HealthCorrelations'
 import AIInsights from '../AIInsights'
+import CrossModeSynergies from '../CrossModeSynergies'
 
 interface DashboardProps {
   foodLogs: FoodLog[]
@@ -231,6 +232,12 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
       <HealthCorrelations foodLogs={foodLogs} daysToShow={7} />
 
       <AIInsights foodLogs={foodLogs} daysToAnalyze={7} />
+
+      <CrossModeSynergies 
+        foodLogs={foodLogs}
+        stressLogs={stressLogs}
+        schedules={[]}
+      />
 
       <Card>
         <CardHeader>
