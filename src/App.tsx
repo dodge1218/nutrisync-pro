@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Toaster } from './components/ui/sonner'
 import { Button } from './components/ui/button'
-import Dashboard from './components/pages/Dashboard'
 import LogFood from './components/pages/LogFood'
 import Recommendations from './components/pages/Recommendations'
 import Education from './components/pages/Education'
@@ -17,11 +16,11 @@ import Navigation from './components/Navigation'
 import { Moon, Leaf, CalendarBlank } from '@phosphor-icons/react'
 import type { FoodLog } from './lib/nutritionEngine'
 
-export type Page = 'dashboard' | 'log-food' | 'meal-planner' | 'food-budget' | 'recommendations' | 'education' | 'achievements' | 'settings' | 'sleepsync' | 'lifeflow'
+export type Page = 'log-food' | 'meal-planner' | 'food-budget' | 'recommendations' | 'education' | 'achievements' | 'settings' | 'sleepsync' | 'lifeflow'
 export type AppMode = 'nutriwell' | 'sleepsync' | 'lifeflow'
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('dashboard')
+  const [currentPage, setCurrentPage] = useState<Page>('food-budget')
   const [appMode, setAppMode] = useKV<AppMode>('app-mode', 'nutriwell')
   const [foodLogs, setFoodLogs] = useKV<FoodLog[]>('food-logs', [])
 
@@ -31,7 +30,7 @@ function App() {
   const switchMode = (targetMode: AppMode) => {
     setAppMode(targetMode)
     if (targetMode === 'nutriwell') {
-      setCurrentPage('dashboard')
+      setCurrentPage('food-budget')
     } else if (targetMode === 'sleepsync') {
       setCurrentPage('sleepsync')
     } else if (targetMode === 'lifeflow') {
@@ -117,8 +116,8 @@ function App() {
             <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
 
             <main className="mt-8">
-              {currentPage === 'dashboard' && (
-                <Dashboard foodLogs={logs} />
+              {currentPage === 'food-budget' && (
+                <FoodBudget foodLogs={logs} />
               )}
               {currentPage === 'log-food' && (
                 <LogFood 
@@ -133,9 +132,6 @@ function App() {
                   setFoodLogs={setFoodLogs}
                   onNavigate={setCurrentPage}
                 />
-              )}
-              {currentPage === 'food-budget' && (
-                <FoodBudget foodLogs={logs} />
               )}
               {currentPage === 'recommendations' && (
                 <Recommendations foodLogs={logs} />

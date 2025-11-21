@@ -1,5 +1,5 @@
 import { Button } from './ui/button'
-import { House, Notepad, CalendarDots, ChartBar, Lightbulb, Book, Trophy, Gear } from '@phosphor-icons/react'
+import { Notepad, CalendarDots, ChartBar, Lightbulb, Book, Trophy, Gear } from '@phosphor-icons/react'
 import type { Page } from '../App'
 
 interface NavigationProps {
@@ -9,10 +9,9 @@ interface NavigationProps {
 
 export default function Navigation({ currentPage, onNavigate }: NavigationProps) {
   const navItems: { page: Page; label: string; icon: React.ReactNode }[] = [
-    { page: 'dashboard', label: 'Dashboard', icon: <House weight="fill" /> },
+    { page: 'food-budget', label: 'Dashboard', icon: <ChartBar weight="fill" /> },
     { page: 'log-food', label: 'Log Food', icon: <Notepad weight="fill" /> },
     { page: 'meal-planner', label: 'Meal Planner', icon: <CalendarDots weight="fill" /> },
-    { page: 'food-budget', label: 'Food Budget', icon: <ChartBar weight="fill" /> },
     { page: 'recommendations', label: 'Insights', icon: <Lightbulb weight="fill" /> },
     { page: 'education', label: 'Learn', icon: <Book weight="fill" /> },
     { page: 'achievements', label: 'Achievements', icon: <Trophy weight="fill" /> },

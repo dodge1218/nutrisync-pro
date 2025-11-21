@@ -439,7 +439,7 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
 
           {todaysLogs.length > 0 && (
             <div className="mt-4 flex justify-end">
-              <Button onClick={() => onNavigate('dashboard')}>
+              <Button onClick={() => onNavigate('food-budget')}>
                 View Analysis →
               </Button>
             </div>
