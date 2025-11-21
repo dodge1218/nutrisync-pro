@@ -191,6 +191,8 @@ export function getLast7DaysKeys(): string[] {
 }
 
 export function getDayLabel(dateKey: string): string {
+  if (!dateKey) return 'Unknown'
+  
   const today = getTodayKey()
   if (dateKey === today) return 'Today'
   
@@ -198,17 +200,23 @@ export function getDayLabel(dateKey: string): string {
   yesterday.setDate(yesterday.getDate() - 1)
   if (dateKey === getDateKey(yesterday)) return 'Yesterday'
   
-  const [year, month, day] = dateKey.split('-')
-  const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const parts = dateKey.split('-')
+  if (parts.length !== 3) return 'Invalid Date'
+  
+  const [year, month, day] = parts
   return dayNames[date.getDay()]
 }
 
+export function getShortDayLabel(dateKey: string): string {
+  if (!dateKey) return 'N/A'
 export function getShortDayLabel(dateKey: string): string {
   const today = getTodayKey()
   if (dateKey === today) return 'Today'
   
   const [year, month, day] = dateKey.split('-')
+  const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+  const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+  const [year, month, day] = parts
   const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
   const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
   return dayNames[date.getDay()]
