@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
 import { Label } from '../ui/label'
+import { Dialog, DialogContent } from '../ui/dialog'
 import { TrendUp, TrendDown, Minus, Lightbulb, Target, ChartBar, Calendar, Flame } from '@phosphor-icons/react'
 import type { FoodLog } from '../../lib/nutritionEngine'
 import { calculateNutrientTotals, detectNutrientGaps, performWellnessAudit } from '../../lib/nutritionEngine'
@@ -14,6 +15,8 @@ import { getNutrientDV, formatNutrientAmount, NUTRIENT_DISPLAY_NAMES, type Nutri
 import GapFiller from '../GapFiller'
 import NutrientTimeline from '../NutrientTimeline'
 import HistoryLineGraph from '../HistoryLineGraph'
+import ProfileReminder from '../ProfileReminder'
+import ProfileSetup from '../ProfileSetup'
 import { 
   updateHistoryData, 
   filterLogsForDate, 
@@ -21,6 +24,7 @@ import {
   type HistoryData 
 } from '../../lib/historyTracking'
 import type { ExerciseLog } from '../../lib/exerciseEngine'
+import type { UserNutritionProfile } from '../../lib/personalizedNutrition'
 
 interface FoodBudgetProps {
   foodLogs: FoodLog[]
@@ -35,7 +39,9 @@ const NUTRIENT_CATEGORIES = {
 export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
   const [historyData, setHistoryData] = useKV<HistoryData | null>('nutrition-history', null)
   const [exerciseLogs] = useKV<ExerciseLog[]>('exercise-logs', [])
+  const [profile] = useKV<UserNutritionProfile | null>('user-nutrition-profile', null)
   const [showNetCalories, setShowNetCalories] = useState(false)
+  const [showProfileDialog, setShowProfileDialog] = useState(false)
 
   useEffect(() => {
     const updatedHistory = updateHistoryData(historyData || null, foodLogs)
@@ -111,13 +117,15 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
   const todayDate = new Date()
   const dateString = todayDate.toLocaleDateString('en-US', { 
     weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
   })
 
   return (
     <div className="space-y-6">
+      <ProfileReminder onUpdateClick={() => setShowProfileDialog(true)} />
+      
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-foreground">Dashboard</h2>
@@ -356,6 +364,16 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
       )}
 
       <GapFiller gaps={gaps} />
+      
+      <Dialog open={showProfileDialog} onOpenChange={setShowProfileDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <ProfileSetup 
+            initialProfile={profile || undefined}
+            isUpdate={!!profile}
+            onComplete={() => setShowProfileDialog(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

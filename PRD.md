@@ -1930,10 +1930,67 @@ This section outlines the recommended order of implementation for maximum user v
     - Don't re-suggest frequently removed tasks
     - Adapt to user preferences over time
 
+### Phase 7k: Personalized Nutrition Profiles & Re-evaluation System (🔄 NEW - CURRENT)
+**Goal:** Calculate personalized daily nutrient needs based on individual characteristics
+
+54. **Comprehensive User Profile System**
+    - Physical characteristics: weight, height, age, sex
+    - Activity level (integrated with exercise tracking)
+    - Health goals (weight loss, maintenance, gain, athletic performance)
+    - Special conditions (pregnancy, lactation, vegetarian/vegan)
+    
+55. **Personalized Daily Value Calculator**
+    - **Calorie needs:** Based on BMR (Basal Metabolic Rate) and activity level
+      - Harris-Benedict equation for BMR calculation
+      - Activity multipliers from exercise profile
+      - Goal adjustments (deficit for weight loss, surplus for gain)
+    - **Protein requirements:** 
+      - Sedentary: 0.8g per kg body weight
+      - Active/Athletes: 1.2-2.0g per kg
+      - Older adults (65+): 1.0-1.2g per kg
+    - **Vitamins & Minerals:** Adjusted for:
+      - Age-specific RDAs (children, adults, elderly)
+      - Sex-specific needs (iron for menstruating females, etc.)
+      - Activity level (increased B-vitamins, magnesium for athletes)
+      - Special conditions (pregnancy, lactation)
+    - **Fiber:** 14g per 1000 calories consumed
+    - **Hydration:** 30-35ml per kg body weight, increased for exercise
+    
+56. **Profile Setup & Onboarding**
+    - Initial questionnaire during account creation or first use
+    - Collects all necessary data for calculations
+    - Explains why each data point is needed
+    - Optional fields for more accuracy
+    - Privacy-first: data stored locally in user's KV store
+    
+57. **Periodic Re-evaluation System (✅ NEW)**
+    - **7-day reminder:** If user hasn't updated profile in 7+ days, prompt re-evaluation
+    - **Quick check-in questions:**
+      - "Has your weight changed?"
+      - "Has your activity level changed?"
+      - "Are you working toward a new fitness goal?"
+      - "Any new health considerations?"
+    - **Smart timing:** Show prompt when user opens app, non-intrusive
+    - **Dismissible:** Can skip if nothing changed
+    - **Tracks last update:** Stores `lastProfileUpdate` timestamp
+    - **Visual indicator:** Subtle notification badge in Settings
+    
+58. **Dynamic Daily Values Dashboard**
+    - All nutrient percentages calculated against personalized DVs
+    - Clear indication that values are personalized
+    - "Your daily needs" vs. "General RDA"
+    - Recalculates automatically when profile updates
+    
+59. **Profile History & Trends**
+    - Track weight changes over time
+    - Monitor BMI progression
+    - Adjust recommendations as profile evolves
+    - Compare nutrient adequacy before/after profile updates
+
 ### Phase 8d: Enhanced Goal Progress Tracking (Week 14)
 **Goal:** Input-based milestone tracking beyond checkboxes
 
-45. **Quantitative Goal Types**
+60. **Quantitative Goal Types**
     - Numeric input milestones ("Run 5 miles")
     - Frequency counters ("Meditate 5x this week")
     - Daily habits with check-in ("8 glasses water")
