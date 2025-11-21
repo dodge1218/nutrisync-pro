@@ -204,18 +204,24 @@ export function getDayLabel(dateKey: string): string {
   if (parts.length !== 3) return 'Invalid Date'
   
   const [year, month, day] = parts
+  const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   return dayNames[date.getDay()]
 }
 
 export function getShortDayLabel(dateKey: string): string {
   if (!dateKey) return 'N/A'
-export function getShortDayLabel(dateKey: string): string {
+  
   const today = getTodayKey()
   if (dateKey === today) return 'Today'
   
-  const [year, month, day] = dateKey.split('-')
-  const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-  const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
+  if (dateKey === getDateKey(yesterday)) return 'Yesterday'
+  
+  const parts = dateKey.split('-')
+  if (parts.length !== 3) return 'N/A'
+  
   const [year, month, day] = parts
   const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
   const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
