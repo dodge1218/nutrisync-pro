@@ -17,6 +17,7 @@ import NutrientTimeline from '../NutrientTimeline'
 import HistoryLineGraph from '../HistoryLineGraph'
 import ProfileReminder from '../ProfileReminder'
 import ProfileSetup from '../ProfileSetup'
+import AnimatedGut from '../AnimatedGut'
 import { 
   updateHistoryData, 
   filterLogsForDate, 
@@ -42,11 +43,35 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
   const [profile] = useKV<UserNutritionProfile | null>('user-nutrition-profile', null)
   const [showNetCalories, setShowNetCalories] = useState(false)
   const [showProfileDialog, setShowProfileDialog] = useState(false)
+  const [lastFoodType, setLastFoodType] = useState<'good' | 'neutral' | 'bad' | undefined>(undefined)
 
   useEffect(() => {
     const updatedHistory = updateHistoryData(historyData || null, foodLogs)
     setHistoryData(updatedHistory)
   }, [foodLogs, setHistoryData])
+
+  useEffect(() => {
+    if (foodLogs.length === 0) return
+    
+    const lastLog = foodLogs[foodLogs.length - 1]
+    const lastLogTime = new Date(lastLog.timestamp).getTime()
+    const now = Date.now()
+    
+    if (now - lastLogTime < 5000) {
+      const totalsForLog = calculateNutrientTotals([lastLog])
+      const wellnessForLog = performWellnessAudit([lastLog], totalsForLog)
+      
+      if (wellnessForLog.ultraProcessedBurden > 0.5 || wellnessForLog.gutStressorPresent) {
+        setLastFoodType('bad')
+      } else if (wellnessForLog.fermentedFoodCount > 0 || totalsForLog.fiber > 5) {
+        setLastFoodType('good')
+      } else {
+        setLastFoodType('neutral')
+      }
+      
+      setTimeout(() => setLastFoodType(undefined), 3000)
+    }
+  }, [foodLogs])
 
   const today = getTodayKey()
   const todayLogs = filterLogsForDate(foodLogs, today)
@@ -224,6 +249,12 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
           </CardContent>
         </Card>
       </div>
+
+      <AnimatedGut 
+        gutHealthScore={wellness.gbdi}
+        recentFoodType={lastFoodType}
+        showDetails={true}
+      />
 
       {historyData && historyData.dailySnapshots.length > 0 && (
         <HistoryLineGraph snapshots={historyData.dailySnapshots} />
