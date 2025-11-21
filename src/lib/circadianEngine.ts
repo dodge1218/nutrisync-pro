@@ -46,11 +46,18 @@ const FAIR_DIGESTION_BUFFER = 120
 const CAFFEINE_CLEARANCE_TIME = 480
 
 export function parseTimeString(timeStr: string): { hours: number; minutes: number; totalMinutes: number } {
+  if (!timeStr || !timeStr.includes(':')) {
+    return {
+      hours: 0,
+      minutes: 0,
+      totalMinutes: 0
+    }
+  }
   const [hours, minutes] = timeStr.split(':').map(Number)
   return {
-    hours,
-    minutes,
-    totalMinutes: hours * 60 + minutes
+    hours: isNaN(hours) ? 0 : hours,
+    minutes: isNaN(minutes) ? 0 : minutes,
+    totalMinutes: (isNaN(hours) ? 0 : hours) * 60 + (isNaN(minutes) ? 0 : minutes)
   }
 }
 

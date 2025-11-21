@@ -56,8 +56,10 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
     const finalQuantity = selectedPortion * quantityNum
 
     const now = new Date()
-    const [hours, minutes] = mealTime.split(':').map(Number)
-    now.setHours(hours, minutes, 0, 0)
+    if (mealTime && mealTime.includes(':')) {
+      const [hours, minutes] = mealTime.split(':').map(Number)
+      now.setHours(hours, minutes, 0, 0)
+    }
 
     const newLog: FoodLog = {
       id: `${Date.now()}-${Math.random()}`,
@@ -81,8 +83,10 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
     if (!food) return
 
     const now = new Date()
-    const [hours, minutes] = mealTime.split(':').map(Number)
-    now.setHours(hours, minutes, 0, 0)
+    if (mealTime && mealTime.includes(':')) {
+      const [hours, minutes] = mealTime.split(':').map(Number)
+      now.setHours(hours, minutes, 0, 0)
+    }
 
     const newLog: FoodLog = {
       id: `${Date.now()}-${Math.random()}`,
@@ -104,8 +108,10 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
 
   const handleLogMealTemplate = (template: MealTemplate) => {
     const now = new Date()
-    const [hours, minutes] = mealTime.split(':').map(Number)
-    now.setHours(hours, minutes, 0, 0)
+    if (mealTime && mealTime.includes(':')) {
+      const [hours, minutes] = mealTime.split(':').map(Number)
+      now.setHours(hours, minutes, 0, 0)
+    }
 
     const newLogs: FoodLog[] = template.ingredients.map(ingredient => {
       const food = FOODS_DATABASE.find(f => f.id === ingredient.foodId)
