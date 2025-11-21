@@ -2,18 +2,19 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { Sparkle } from '@phosphor-icons/react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { Sparkle, ChartLine, ChartBar } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
 import type { DailySnapshot } from '../lib/historyTracking'
-import { getShortDayLabel } from '../lib/historyTracking'
+import { getShortDayLabel, calculateMicronutrientComposite, calculateVitaminComposite } from '../lib/historyTracking'
 import { NUTRIENT_DISPLAY_NAMES, type NutrientKey } from '../lib/dailyValues'
 
 interface HistoryLineGraphProps {
   snapshots: DailySnapshot[]
 }
 
-type MetricType = 'composite' | 'gbdi' | 'calories' | 'protein' | 'fiber' | 'vitaminC' | 'vitaminD' | 'calcium' | 'iron' | 'magnesium' | 'zinc'
+type MetricType = 'composite' | 'gbdi' | 'protein' | 'fiber' | 'calories' | 'micronutrientComposite' | 'vitaminComposite'
 
 interface MetricConfig {
   key: MetricType
@@ -39,13 +40,6 @@ const METRICS: MetricConfig[] = [
     unit: '%'
   },
   {
-    key: 'calories',
-    label: 'Calories',
-    color: '#f59e0b',
-    dataKey: (s) => Math.round(s.calories),
-    unit: 'kcal'
-  },
-  {
     key: 'protein',
     label: 'Protein',
     color: '#ef4444',
@@ -60,53 +54,33 @@ const METRICS: MetricConfig[] = [
     unit: '%'
   },
   {
-    key: 'vitaminC',
-    label: 'Vitamin C',
-    color: '#ec4899',
-    dataKey: (s) => Math.round(s.percentages.vitaminC || 0),
-    unit: '%'
+    key: 'calories',
+    label: 'Calories',
+    color: '#f59e0b',
+    dataKey: (s) => Math.round(s.calories / 20),
+    unit: ' (÷20)'
   },
   {
-    key: 'vitaminD',
-    label: 'Vitamin D',
-    color: '#f97316',
-    dataKey: (s) => Math.round(s.percentages.vitaminD || 0),
-    unit: '%'
-  },
-  {
-    key: 'calcium',
-    label: 'Calcium',
+    key: 'micronutrientComposite',
+    label: 'Minerals Avg',
     color: '#14b8a6',
-    dataKey: (s) => Math.round(s.percentages.calcium || 0),
+    dataKey: (s) => Math.round(calculateMicronutrientComposite(s.totals)),
     unit: '%'
   },
   {
-    key: 'iron',
-    label: 'Iron',
-    color: '#64748b',
-    dataKey: (s) => Math.round(s.percentages.iron || 0),
-    unit: '%'
-  },
-  {
-    key: 'magnesium',
-    label: 'Magnesium',
-    color: '#a855f7',
-    dataKey: (s) => Math.round(s.percentages.magnesium || 0),
-    unit: '%'
-  },
-  {
-    key: 'zinc',
-    label: 'Zinc',
-    color: '#84cc16',
-    dataKey: (s) => Math.round(s.percentages.zinc || 0),
+    key: 'vitaminComposite',
+    label: 'Vitamins Avg',
+    color: '#ec4899',
+    dataKey: (s) => Math.round(calculateVitaminComposite(s.totals)),
     unit: '%'
   }
 ]
 
 export default function HistoryLineGraph({ snapshots }: HistoryLineGraphProps) {
   const [activeMetrics, setActiveMetrics] = useState<Set<MetricType>>(
-    new Set(['composite', 'gbdi', 'calories'])
+    new Set(['composite', 'protein', 'fiber'])
   )
+  const [chartType, setChartType] = useState<'line' | 'bar'>('line')
 
   if (!snapshots || snapshots.length === 0) {
     return (
@@ -193,6 +167,22 @@ export default function HistoryLineGraph({ snapshots }: HistoryLineGraphProps) {
               Average composite score: <span className="font-semibold text-foreground">{averageComposite}%</span>
             </CardDescription>
           </div>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant={chartType === 'line' ? 'default' : 'outline'}
+              onClick={() => setChartType('line')}
+            >
+              <ChartLine className="w-4 h-4" />
+            </Button>
+            <Button
+              size="sm"
+              variant={chartType === 'bar' ? 'default' : 'outline'}
+              onClick={() => setChartType('bar')}
+            >
+              <ChartBar className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
 
@@ -224,53 +214,100 @@ export default function HistoryLineGraph({ snapshots }: HistoryLineGraphProps) {
         </div>
 
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-            <XAxis
-              dataKey="name"
-              tick={{ fontSize: 12 }}
-              stroke="var(--color-muted-foreground)"
-            />
-            <YAxis
-              tick={{ fontSize: 12 }}
-              stroke="var(--color-muted-foreground)"
-              domain={[0, 150]}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'var(--color-card)',
-                border: '1px solid var(--color-border)',
-                borderRadius: '0.5rem',
-                padding: '0.75rem'
-              }}
-              formatter={(value: number, name: string) => {
-                const metric = METRICS.find(m => m.key === name)
-                return [
-                  `${value}${metric?.unit || ''}`,
-                  metric?.label || name
-                ]
-              }}
-            />
-            <Legend
-              wrapperStyle={{ fontSize: '12px' }}
-              formatter={(value) => {
-                const metric = METRICS.find(m => m.key === value)
-                return metric?.label || value
-              }}
-            />
-            {METRICS.filter(m => activeMetrics.has(m.key)).map(metric => (
-              <Line
-                key={metric.key}
-                type="monotone"
-                dataKey={metric.key}
-                stroke={metric.color}
-                strokeWidth={2}
-                dot={{ fill: metric.color, r: 4 }}
-                activeDot={{ r: 6 }}
-                name={metric.key}
+          {chartType === 'line' ? (
+            <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+              <XAxis
+                dataKey="name"
+                tick={{ fontSize: 12 }}
+                stroke="var(--color-muted-foreground)"
               />
-            ))}
-          </LineChart>
+              <YAxis
+                tick={{ fontSize: 12 }}
+                stroke="var(--color-muted-foreground)"
+                domain={[0, 150]}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'var(--color-card)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '0.5rem',
+                  padding: '0.75rem'
+                }}
+                formatter={(value: number, name: string) => {
+                  const metric = METRICS.find(m => m.key === name)
+                  return [
+                    `${value}${metric?.unit || ''}`,
+                    metric?.label || name
+                  ]
+                }}
+              />
+              <Legend
+                wrapperStyle={{ fontSize: '12px' }}
+                formatter={(value) => {
+                  const metric = METRICS.find(m => m.key === value)
+                  return metric?.label || value
+                }}
+              />
+              {METRICS.filter(m => activeMetrics.has(m.key)).map(metric => (
+                <Line
+                  key={metric.key}
+                  type="monotone"
+                  dataKey={metric.key}
+                  stroke={metric.color}
+                  strokeWidth={2}
+                  dot={{ fill: metric.color, r: 4 }}
+                  activeDot={{ r: 6 }}
+                  name={metric.key}
+                />
+              ))}
+            </LineChart>
+          ) : (
+            <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+              <XAxis
+                dataKey="name"
+                tick={{ fontSize: 12 }}
+                stroke="var(--color-muted-foreground)"
+              />
+              <YAxis
+                tick={{ fontSize: 12 }}
+                stroke="var(--color-muted-foreground)"
+                domain={[0, 150]}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'var(--color-card)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '0.5rem',
+                  padding: '0.75rem'
+                }}
+                formatter={(value: number, name: string) => {
+                  const metric = METRICS.find(m => m.key === name)
+                  return [
+                    `${value}${metric?.unit || ''}`,
+                    metric?.label || name
+                  ]
+                }}
+              />
+              <Legend
+                wrapperStyle={{ fontSize: '12px' }}
+                formatter={(value) => {
+                  const metric = METRICS.find(m => m.key === value)
+                  return metric?.label || value
+                }}
+              />
+              {METRICS.filter(m => activeMetrics.has(m.key)).map(metric => (
+                <Bar
+                  key={metric.key}
+                  dataKey={metric.key}
+                  fill={metric.color}
+                  name={metric.key}
+                  radius={[4, 4, 0, 0]}
+                />
+              ))}
+            </BarChart>
+          )}
         </ResponsiveContainer>
 
         {hasExcellentPerformance && (

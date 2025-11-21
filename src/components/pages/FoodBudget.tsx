@@ -1,11 +1,13 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
 import { Progress } from '../ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ScrollArea } from '../ui/scroll-area'
-import { TrendUp, TrendDown, Minus, Lightbulb, Target, ChartBar, Calendar } from '@phosphor-icons/react'
+import { Switch } from '../ui/switch'
+import { Label } from '../ui/label'
+import { TrendUp, TrendDown, Minus, Lightbulb, Target, ChartBar, Calendar, Flame } from '@phosphor-icons/react'
 import type { FoodLog } from '../../lib/nutritionEngine'
 import { calculateNutrientTotals, detectNutrientGaps, performWellnessAudit } from '../../lib/nutritionEngine'
 import { getNutrientDV, formatNutrientAmount, NUTRIENT_DISPLAY_NAMES, type NutrientKey } from '../../lib/dailyValues'
@@ -18,6 +20,7 @@ import {
   getTodayKey,
   type HistoryData 
 } from '../../lib/historyTracking'
+import type { ExerciseLog } from '../../lib/exerciseEngine'
 
 interface FoodBudgetProps {
   foodLogs: FoodLog[]
@@ -31,6 +34,8 @@ const NUTRIENT_CATEGORIES = {
 
 export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
   const [historyData, setHistoryData] = useKV<HistoryData | null>('nutrition-history', null)
+  const [exerciseLogs] = useKV<ExerciseLog[]>('exercise-logs', [])
+  const [showNetCalories, setShowNetCalories] = useState(false)
 
   useEffect(() => {
     const updatedHistory = updateHistoryData(historyData || null, foodLogs)
@@ -99,6 +104,10 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
   const criticalGaps = gaps.filter(g => g.severity === 'critical' && g.nutrient !== 'sodium')
   const moderateGaps = gaps.filter(g => g.severity === 'moderate' && g.nutrient !== 'sodium')
 
+  const todayExerciseLogs = (exerciseLogs || []).filter(log => log.date === today)
+  const todayCaloriesBurned = todayExerciseLogs.reduce((sum, log) => sum + log.caloriesBurned, 0)
+  const netCalories = totals.calories - todayCaloriesBurned
+
   const todayDate = new Date()
   const dateString = todayDate.toLocaleDateString('en-US', { 
     weekday: 'long', 
@@ -119,7 +128,49 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium">Calories</CardTitle>
+              {todayCaloriesBurned > 0 && (
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="net-calories" className="text-xs cursor-pointer">Net</Label>
+                  <Switch 
+                    id="net-calories"
+                    checked={showNetCalories}
+                    onCheckedChange={setShowNetCalories}
+                  />
+                </div>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex items-baseline gap-2">
+                <div className="text-3xl font-bold">
+                  {showNetCalories && todayCaloriesBurned > 0 
+                    ? Math.round(netCalories).toLocaleString() 
+                    : Math.round(totals.calories).toLocaleString()
+                  }
+                </div>
+                <span className="text-sm text-muted-foreground">kcal</span>
+              </div>
+              {todayCaloriesBurned > 0 && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Flame className="w-3 h-3 text-orange-600" />
+                  <span>
+                    {showNetCalories 
+                      ? `${Math.round(totals.calories)} - ${todayCaloriesBurned} burned`
+                      : `${todayCaloriesBurned} burned from exercise`
+                    }
+                  </span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium">GBDI Score</CardTitle>

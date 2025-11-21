@@ -41,30 +41,80 @@ export function filterLogsForDate(logs: FoodLog[], dateKey: string): FoodLog[] {
 }
 
 export function calculateCompositeScore(totals: NutrientTotals, gbdi: number): number {
-  const nutrientKeys: NutrientKey[] = [
-    'protein', 'carbs', 'fat', 'fiber',
+  const macroKeys: NutrientKey[] = ['protein', 'fiber']
+  const vitaminKeys: NutrientKey[] = [
     'vitaminA', 'vitaminC', 'vitaminD', 'vitaminE', 'vitaminK',
-    'vitaminB1', 'vitaminB2', 'vitaminB3', 'vitaminB6', 'vitaminB9', 'vitaminB12',
+    'vitaminB1', 'vitaminB2', 'vitaminB3', 'vitaminB6', 'vitaminB9', 'vitaminB12'
+  ]
+  const mineralKeys: NutrientKey[] = [
     'calcium', 'iron', 'magnesium', 'zinc', 'selenium', 'copper', 'manganese', 'potassium'
   ]
 
-  let totalPercentage = 0
-  let count = 0
+  const calculateAverage = (keys: NutrientKey[]) => {
+    let total = 0
+    let count = 0
+    for (const key of keys) {
+      const value = totals[key] || 0
+      const dv = getNutrientDV(key)
+      if (dv > 0) {
+        const percentage = Math.min((value / dv) * 100, 150)
+        total += percentage
+        count++
+      }
+    }
+    return count > 0 ? total / count : 0
+  }
 
-  for (const key of nutrientKeys) {
+  const macroScore = calculateAverage(macroKeys)
+  const vitaminScore = calculateAverage(vitaminKeys)
+  const mineralScore = calculateAverage(mineralKeys)
+
+  const composite = (gbdi * 0.30) + (macroScore * 0.25) + (vitaminScore * 0.25) + (mineralScore * 0.20)
+  
+  return Math.min(composite, 100)
+}
+
+export function calculateMicronutrientComposite(totals: NutrientTotals): number {
+  const mineralKeys: NutrientKey[] = [
+    'calcium', 'iron', 'magnesium', 'zinc', 'selenium', 'copper', 'manganese', 'potassium'
+  ]
+  
+  let total = 0
+  let count = 0
+  
+  for (const key of mineralKeys) {
     const value = totals[key] || 0
     const dv = getNutrientDV(key)
     if (dv > 0) {
       const percentage = Math.min((value / dv) * 100, 150)
-      totalPercentage += percentage
+      total += percentage
       count++
     }
   }
-
-  const averageNutrientPercentage = count > 0 ? totalPercentage / count : 0
-  const composite = (averageNutrientPercentage * 0.7) + (gbdi * 0.3)
   
-  return Math.min(composite, 100)
+  return count > 0 ? total / count : 0
+}
+
+export function calculateVitaminComposite(totals: NutrientTotals): number {
+  const vitaminKeys: NutrientKey[] = [
+    'vitaminA', 'vitaminC', 'vitaminD', 'vitaminE', 'vitaminK',
+    'vitaminB1', 'vitaminB2', 'vitaminB3', 'vitaminB6', 'vitaminB9', 'vitaminB12'
+  ]
+  
+  let total = 0
+  let count = 0
+  
+  for (const key of vitaminKeys) {
+    const value = totals[key] || 0
+    const dv = getNutrientDV(key)
+    if (dv > 0) {
+      const percentage = Math.min((value / dv) * 100, 150)
+      total += percentage
+      count++
+    }
+  }
+  
+  return count > 0 ? total / count : 0
 }
 
 export function createDailySnapshot(logs: FoodLog[], date: string): DailySnapshot {

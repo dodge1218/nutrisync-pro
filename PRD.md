@@ -247,7 +247,7 @@ This creates a gap where health-conscious users track religiously but still expe
   - Shows sleep optimization score alongside GBDI on dashboard
 
 #### 1.8 LifeFlow - Time-Blocked Schedule Builder (🔄 ENHANCED)
-**Status**: Fully implemented with intelligent meal autofill and goal tracking. Additional enhancements planned for Phase 8c-8d.
+**Status**: Fully implemented with intelligent meal autofill and goal tracking. Exercise creator with BMI calculation in progress. Additional enhancements planned for Phase 8c-8d.
 
 - **Intelligent scheduling system:** Builds timeblocked todo lists based on food, sleep, and daily activities
   - ✅ Detects awake window from sleep preferences (wake to sleep time)
@@ -338,6 +338,94 @@ This creates a gap where health-conscious users track religiously but still expe
   - ✅ Options for 5-day and 7-day views
   - ✅ Rolling window (updates as days pass)
   - ✅ Historical view of past schedules
+
+- **Exercise Creator & Fitness Profile (🔄 NEW - Phase 7j):**
+  - **Comprehensive user profile questionnaire:**
+    - Physical metrics: Weight, height, age, sex
+    - **BMI calculation:** Automatic calculation and classification (underweight, normal, overweight, obese)
+    - Body composition goals (maintain, lose weight, gain muscle, general fitness)
+    - Current fitness level (sedentary, lightly active, moderately active, very active, extremely active)
+    - Exercise preferences and restrictions
+  
+  - **Exercise type selection & customization:**
+    - **Cardiovascular activities:**
+      - Walking (speed selection: casual/brisk/power walking)
+      - Running (pace selection: jogging/moderate/fast)
+      - Cycling (intensity: leisure/moderate/vigorous)
+      - Swimming (stroke type and intensity)
+      - Rowing machine, elliptical, stair climber
+    - **Strength training:**
+      - Gym lifting (intensity: beginner/intermediate/advanced)
+      - Bodyweight exercises (push-ups, pull-ups, squats)
+      - Resistance bands
+      - Free weights vs. machines
+    - **Sports & recreational:**
+      - Boxing, kickboxing, martial arts (intensity levels)
+      - Football, soccer, basketball (casual vs. competitive)
+      - Tennis, racquetball, badminton
+      - Rock climbing, hiking
+      - Dance (various styles and intensity)
+      - Yoga (gentle/moderate/power yoga)
+      - Pilates
+    - **Other activities:**
+      - User-defined activities with custom intensity descriptions
+      - Manual calorie burn rate input option
+      - Duration-based vs. distance-based tracking
+  
+  - **Intelligent calorie burn calculation:**
+    - **MET (Metabolic Equivalent of Task) based calculations:**
+      - Walking 3.5 mph = 4.3 METs, 4.5 mph = 5.0 METs
+      - Running 5 mph = 8.3 METs, 6 mph = 9.8 METs, 8 mph = 11.8 METs
+      - Gym lifting: light = 3.0 METs, moderate = 5.0 METs, vigorous = 6.0 METs
+      - Boxing: general = 7.8 METs, sparring = 9.0 METs
+      - Swimming: light = 5.8 METs, moderate = 7.0 METs, vigorous = 9.8 METs
+      - Cycling: leisure (10-12 mph) = 6.8 METs, moderate (12-14 mph) = 8.0 METs, vigorous (14-16 mph) = 10.0 METs
+      - Yoga: gentle = 2.5 METs, moderate = 3.0 METs, power = 4.0 METs
+      - Football: casual = 6.0 METs, competitive = 8.0 METs
+    - **Formula:** Calories burned = MET × weight (kg) × duration (hours)
+    - Adjustments for fitness level and intensity
+    - Real-time calorie burn estimates during activity logging
+    - Historical tracking of total calories burned per day/week
+  
+  - **Exercise schedule integration:**
+    - Add exercise sessions to LifeFlow schedule
+    - Auto-populate with recommended workout times
+    - Track exercise completion and actual duration
+    - Adjust calorie burn if duration differs from planned
+    - Recovery time suggestions between intense workouts
+  
+  - **Exercise library & presets:**
+    - Common workout templates: "30-min morning run", "45-min gym session", "15-min HIIT"
+    - Customizable workout routines (circuit training, supersets, intervals)
+    - Video/text descriptions for proper form (future)
+    - Equipment needed tags (bodyweight, dumbbells, full gym, etc.)
+  
+  - **Progress tracking:**
+    - Total weekly exercise minutes
+    - Total calories burned tracking
+    - Exercise consistency streaks
+    - Fitness goal progress (weight loss, endurance improvement, strength gains)
+    - Before/after metrics comparison
+
+- **NutriWell Integration - Exercise Calorie Toggle (🔄 NEW - Phase 7j):**
+  - **Calorie burn adjustment in Food Budget:**
+    - Toggle to display "Net Calories" = Food intake - Exercise burn
+    - Shows both gross calories consumed and net after exercise
+    - Helps users in caloric deficit/surplus planning
+    - Visual indicator: "You burned 450 calories today from exercise"
+  
+  - **Exercise-aware nutrient recommendations:**
+    - Post-workout nutrition timing suggestions
+    - Increased protein recommendations on strength training days
+    - Electrolyte replenishment after cardio (>45 min)
+    - Carbohydrate timing for endurance activities
+    - Recovery meal suggestions based on workout intensity
+  
+  - **Activity level auto-adjustment:**
+    - Daily calorie target dynamically adjusts based on logged exercise
+    - Protein requirements scale with strength training frequency
+    - Micronutrient needs increase with high activity (iron, magnesium, B-vitamins)
+    - Hydration recommendations based on workout duration and intensity
 
 - **Integration with other modes:**
   - ✅ Uses sleep schedule from SleepSync
@@ -644,7 +732,7 @@ This creates a gap where health-conscious users track religiously but still expe
 - **Gut Support Score:** 0-100 based on fiber, fermented foods, diversity, ultra-processed burden
 
 #### 4.5 GBDI Score & History Tracking (✅ COMPLETE)
-**Status**: Fully implemented with 7-day historical tracking and insights
+**Status**: Fully implemented with 7-day historical tracking and insights. Composite score system updated.
 
 - **Comprehensive gut-brain-digestive health metric (0-100):**
   - Gut microbiome health: fiber intake, fermented foods, plant diversity, polyphenol-rich foods
@@ -652,6 +740,31 @@ This creates a gap where health-conscious users track religiously but still expe
   - Digestive wellness: warm/cooked food ratio, ultra-processed burden, gut stressors (NSAIDs, alcohol)
 - **Higher GBDI is better** — composite score tracking protective factors
 - **Real-time calculation:** Updated daily based on food logs and dietary patterns
+
+- **Updated Dashboard Visualization (🔄 Phase 7j):**
+  - **Composite Score System:**
+    - Primary metric combining GBDI + micronutrients + macronutrients + vitamins
+    - Weighted average: 30% GBDI, 25% macros (protein, fiber emphasis), 25% vitamins, 20% minerals
+    - Displayed as main trend line on dashboard
+    - Shows holistic nutritional wellness, not just gut health
+  
+  - **Improved Graph Types:**
+    - **Bar chart option:** Better for comparing daily values without calorie distortion
+    - **Hybrid chart:** Bars for composite/GBDI, lines for nutrients
+    - **Normalized scaling:** All metrics shown as % of daily value for fair comparison
+    - Toggle between line graph and bar chart views
+    - Grouped bar chart for side-by-side metric comparison
+  
+  - **Toggle System Redesign:**
+    - **Composite Score (always visible):** Main nutritional wellness indicator
+    - **GBDI (toggle):** Gut health specific metric
+    - **Protein (toggle):** Individual macro tracking
+    - **Fiber (toggle):** Individual macro tracking
+    - **Calories (toggle):** Energy intake (option to show net after exercise)
+    - **Micronutrient composite (toggle):** Average of key vitamins/minerals
+    - **Vitamin composite (toggle):** Average of all vitamins
+    - Removed individual vitamin toggles to reduce clutter
+    - Clean, organized toggle interface with color-coded indicators
 
 - **7-Day Historical Tracking (✅ NEW - Phase 7g):**
   - ✅ **GBDIHistory component** - Visual timeline of gut health over time

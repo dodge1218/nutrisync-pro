@@ -32,6 +32,7 @@ import { parseTimeString, type UserSleepPreferences } from '../../lib/circadianE
 import { analyzeMealPatterns, estimateCookTime, predictFutureMeals, generateCookingSchedule } from '../../lib/mealPatternEngine'
 import type { FoodLog } from '../../lib/nutritionEngine'
 import type { MealTemplate } from '../../data/mealTemplates'
+import ExerciseCreator from './ExerciseCreator'
 import { toast } from 'sonner'
 
 interface LifeFlowProps {
@@ -423,7 +424,7 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
       </Card>
 
       <Tabs defaultValue="schedule" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="schedule">
             <ClockAfternoon className="w-4 h-4 mr-2" />
             Schedule
@@ -435,6 +436,10 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
           <TabsTrigger value="goals">
             <Target className="w-4 h-4 mr-2" />
             Goals
+          </TabsTrigger>
+          <TabsTrigger value="exercise">
+            <Barbell className="w-4 h-4 mr-2" />
+            Exercise
           </TabsTrigger>
         </TabsList>
 
@@ -917,6 +922,10 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
               </Card>
             )}
           </div>
+        </TabsContent>
+
+        <TabsContent value="exercise" className="space-y-4">
+          <ExerciseCreator />
         </TabsContent>
       </Tabs>
     </div>
