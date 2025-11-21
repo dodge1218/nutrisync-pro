@@ -13,9 +13,13 @@ import SleepSync from './components/pages/SleepSync'
 import LifeFlow from './components/pages/LifeFlow'
 import DisclaimerBanner from './components/DisclaimerBanner'
 import Navigation from './components/Navigation'
+import WelcomeFlow from './components/WelcomeFlow'
+import TutorialOverlay from './components/TutorialOverlay'
 import { Moon, Leaf, CalendarBlank } from '@phosphor-icons/react'
 import type { FoodLog } from './lib/nutritionEngine'
 import { getLast7DaysKeys, getDateKey } from './lib/historyTracking'
+import type { UserOnboardingProfile, TutorialProgress } from './lib/onboardingEngine'
+import { getTutorialSteps } from './lib/onboardingEngine'
 
 export type Page = 'log-food' | 'meal-planner' | 'food-budget' | 'recommendations' | 'education' | 'achievements' | 'settings' | 'sleepsync' | 'lifeflow'
 export type AppMode = 'nutriwell' | 'sleepsync' | 'lifeflow'
@@ -24,6 +28,9 @@ function App() {
   const [currentPage, setCurrentPage] = useState<Page>('food-budget')
   const [appMode, setAppMode] = useKV<AppMode>('app-mode', 'nutriwell')
   const [foodLogs, setFoodLogs] = useKV<FoodLog[]>('food-logs', [])
+  const [onboardingProfile, setOnboardingProfile] = useKV<UserOnboardingProfile | null>('onboarding-profile', null)
+  const [tutorialProgress, setTutorialProgress] = useKV<TutorialProgress | null>('tutorial-progress', null)
+  const [showTutorial, setShowTutorial] = useState(false)
 
   const logs = foodLogs || []
   const mode = appMode || 'nutriwell'
@@ -57,8 +64,77 @@ function App() {
     }
   }
 
+  const handleOnboardingComplete = (profile: UserOnboardingProfile) => {
+    setOnboardingProfile(profile)
+    setAppMode(profile.startingMode)
+    if (profile.startingMode === 'nutriwell') {
+      setCurrentPage('food-budget')
+      setTutorialProgress({ mode: 'nutriwell', currentStep: 0, completed: false, skipped: false })
+      setShowTutorial(true)
+    } else if (profile.startingMode === 'sleepsync') {
+      setCurrentPage('sleepsync')
+    } else if (profile.startingMode === 'lifeflow') {
+      setCurrentPage('lifeflow')
+    }
+  }
+
+  const handleTutorialNext = () => {
+    if (!tutorialProgress) return
+    const steps = getTutorialSteps(tutorialProgress.mode)
+    if (tutorialProgress.currentStep < steps.length - 1) {
+      setTutorialProgress({
+        ...tutorialProgress,
+        currentStep: tutorialProgress.currentStep + 1,
+      })
+    } else {
+      setTutorialProgress({
+        ...tutorialProgress,
+        completed: true,
+      })
+      setShowTutorial(false)
+    }
+  }
+
+  const handleTutorialPrevious = () => {
+    if (!tutorialProgress) return
+    if (tutorialProgress.currentStep > 0) {
+      setTutorialProgress({
+        ...tutorialProgress,
+        currentStep: tutorialProgress.currentStep - 1,
+      })
+    }
+  }
+
+  const handleTutorialSkip = () => {
+    if (!tutorialProgress) return
+    setTutorialProgress({
+      ...tutorialProgress,
+      skipped: true,
+    })
+    setShowTutorial(false)
+  }
+
+  const handleTutorialClose = () => {
+    setShowTutorial(false)
+  }
+
+  if (!onboardingProfile) {
+    return <WelcomeFlow onComplete={handleOnboardingComplete} />
+  }
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">{showTutorial && tutorialProgress && (
+        <TutorialOverlay
+          step={getTutorialSteps(tutorialProgress.mode)[tutorialProgress.currentStep]}
+          currentStepNum={tutorialProgress.currentStep}
+          totalSteps={getTutorialSteps(tutorialProgress.mode).length}
+          onNext={handleTutorialNext}
+          onPrevious={handleTutorialPrevious}
+          onSkip={handleTutorialSkip}
+          onClose={handleTutorialClose}
+        />
+      )}
+      
       <DisclaimerBanner />
       
       <div className="container mx-auto px-4 py-6 max-w-7xl">
