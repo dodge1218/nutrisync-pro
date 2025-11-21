@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../ui/button'
@@ -30,11 +30,21 @@ import {
 } from '@phosphor-icons/react'
 import { parseTimeString, type UserSleepPreferences } from '../../lib/circadianEngine'
 import { analyzeMealPatterns, estimateCookTime, predictFutureMeals, generateCookingSchedule } from '../../lib/mealPatternEngine'
+import { 
+  initializeAutoTasks, 
+  getDefaultAutoTaskConfig, 
+  generateAutoTaskActivities,
+  markAutoTaskDeleted,
+  toggleAutoTaskEnabled,
+  type AutoTask,
+  type AutoTaskConfig
+} from '../../lib/autoTaskEngine'
 import type { FoodLog } from '../../lib/nutritionEngine'
 import type { MealTemplate } from '../../data/mealTemplates'
 import ExerciseCreator from './ExerciseCreator'
 import DailyCheckIn from '../DailyCheckIn'
 import CheckInHistory from '../CheckInHistory'
+import AutoTaskSettings from '../AutoTaskSettings'
 import { toast } from 'sonner'
 
 interface LifeFlowProps {
@@ -113,6 +123,8 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
   })
 
   const [recurringActivities, setRecurringActivities] = useKV<RecurringActivity[]>('lifeflow-recurring', [])
+  const [autoTasks, setAutoTasks] = useKV<AutoTask[]>('lifeflow-auto-tasks', initializeAutoTasks())
+  const [autoTaskConfig, setAutoTaskConfig] = useKV<AutoTaskConfig>('lifeflow-auto-config', getDefaultAutoTaskConfig())
   const [schedules, setSchedules] = useKV<DaySchedule[]>('lifeflow-schedules', [])
   const [goals, setGoals] = useKV<Goal[]>('lifeflow-goals', [])
   const [mealTemplates] = useKV<MealTemplate[]>('meal-templates', [])
@@ -272,6 +284,30 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
             startTime: mealTime,
             endTime,
             category: 'meal',
+            isCompleted: false,
+            isRecurring: false
+          })
+        })
+      }
+
+      if (autoTaskConfig && autoTaskConfig.enabled && autoTasks && sleepPreferences) {
+        const existingActivityNames = activities.map(a => a.name)
+        const generatedAutoTasks = generateAutoTaskActivities(
+          autoTasks,
+          autoTaskConfig,
+          sleepPreferences.targetWakeTime,
+          sleepPreferences.targetSleepTime,
+          dayName,
+          existingActivityNames
+        )
+
+        generatedAutoTasks.forEach((autoTask, idx) => {
+          activities.push({
+            id: `${dateStr}-auto-${autoTask.autoTaskId}-${idx}`,
+            name: autoTask.name,
+            startTime: autoTask.startTime,
+            endTime: autoTask.endTime,
+            category: autoTask.category,
             isCompleted: false,
             isRecurring: false
           })
@@ -589,6 +625,17 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
         </TabsContent>
 
         <TabsContent value="activities" className="space-y-4">
+          <AutoTaskSettings
+            config={autoTaskConfig || getDefaultAutoTaskConfig()}
+            autoTasks={autoTasks || []}
+            onConfigChange={(newConfig) => setAutoTaskConfig(newConfig)}
+            onTaskToggle={(taskId) => {
+              if (autoTasks) {
+                setAutoTasks((currentTasks) => toggleAutoTaskEnabled(currentTasks || [], taskId))
+              }
+            }}
+          />
+
           <div className="flex justify-between items-center">
             <div>
               <h3 className="text-lg font-semibold">Recurring Activities</h3>
