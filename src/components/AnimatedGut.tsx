@@ -19,7 +19,7 @@ interface AnimatedGutProps {
 }
 
 type GutState = 'happy' | 'neutral' | 'struggling'
-type ParticleEffect = 'sparkles' | 'shimmer' | 'warning' | 'none'
+type ParticleEffect = 'positive' | 'warning' | 'none'
 
 const getGutState = (score: number): GutState => {
   if (score >= 70) return 'happy'
@@ -29,7 +29,7 @@ const getGutState = (score: number): GutState => {
 
 const getParticleEffect = (foodType?: 'good' | 'neutral' | 'bad'): ParticleEffect => {
   if (!foodType) return 'none'
-  if (foodType === 'good') return 'sparkles'
+  if (foodType === 'good') return 'positive'
   if (foodType === 'bad') return 'warning'
   return 'none'
 }
@@ -59,32 +59,32 @@ const getGutMessage = (state: GutState): string => {
 const Particle = ({ type, index }: { type: ParticleEffect; index: number }) => {
   if (type === 'none') return null
 
-  const randomX = (Math.random() - 0.5) * 100
-  const randomY = (Math.random() - 0.5) * 100
+  const randomX = (Math.random() - 0.5) * 80
   const randomDelay = Math.random() * 0.5
 
-  if (type === 'sparkles') {
+  if (type === 'positive') {
     return (
       <motion.div
-        key={`sparkle-${index}`}
+        key={`positive-${index}`}
         className="absolute w-2 h-2 rounded-full"
         style={{
-          background: 'linear-gradient(45deg, oklch(0.85 0.15 150), oklch(0.75 0.20 180))',
+          background: 'oklch(0.70 0.15 150)',
           left: '50%',
           top: '50%',
         }}
         initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
         animate={{
-          opacity: [0, 1, 0],
-          scale: [0, 1, 0],
+          opacity: [0, 0.6, 0],
+          scale: [0, 1, 0.5],
           x: randomX,
-          y: randomY,
+          y: [-40, -80, -120],
         }}
         transition={{
-          duration: 1.5,
+          duration: 2,
           delay: randomDelay,
           repeat: Infinity,
-          repeatDelay: 2,
+          repeatDelay: 1.5,
+          ease: "easeOut"
         }}
       />
     )
@@ -178,8 +178,8 @@ export default function AnimatedGut({
                       <strong>The animated gut reacts to your food choices:</strong>
                     </p>
                     <ul className="list-disc pl-5 space-y-2">
-                      <li>✨ <strong>Sparkles:</strong> Gut-supportive foods (fermented, high-fiber, polyphenols)</li>
-                      <li>🔴 <strong>Warning:</strong> Gut stressors (ultra-processed, low-fiber)</li>
+                      <li>🟢 <strong>Positive particles:</strong> Gut-supportive foods (fermented, high-fiber, polyphenols)</li>
+                      <li>🔴 <strong>Warning particles:</strong> Gut stressors (ultra-processed, low-fiber)</li>
                       <li>😊 <strong>Happy state:</strong> Score 70+ (thriving gut)</li>
                       <li>😐 <strong>Neutral state:</strong> Score 40-69 (needs improvement)</li>
                       <li>😔 <strong>Struggling state:</strong> Score below 40 (needs attention)</li>

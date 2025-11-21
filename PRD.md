@@ -39,11 +39,12 @@
   - ✅ Implemented animated gut visualization component
     - Interactive gut character that reacts to food choices
     - Happy state (score 70+), neutral state (40-69), struggling state (<40)
-    - Particle effects: sparkles for gut-healthy foods, warning for ultra-processed
+    - Particle effects: simple upward-floating particles for gut-healthy foods, warning particles for ultra-processed
     - Real-time reactions when logging foods (3-second animation)
     - Integrated into Food Budget page with GBDI score
     - Info modal explaining how gut health scoring works
     - Smooth Framer Motion animations with proper performance
+    - Generic particle design aligned with calm, natural brand vibe
 
 ### 📋 Future Enhancements (Post-MVP)
 - [ ] **Phase 7j**: Exercise Creator & Fitness Tracking (PARTIALLY IMPLEMENTED)
@@ -875,8 +876,8 @@ This creates a gap where health-conscious users track religiously but still expe
   
 - **Food Reaction System:**
   - ✅ **Happy foods (gut-supportive):**
-    - Fermented foods, high-fiber foods → sparkles ✨ effect
-    - Polyphenol-rich foods → shimmer animation
+    - Fermented foods, high-fiber foods → simple upward-floating particles
+    - Polyphenol-rich foods → gentle circular particle animation
     - Real-time detection when logging meals
     - Positive reinforcement with green glow
   
@@ -903,12 +904,13 @@ This creates a gap where health-conscious users track religiously but still expe
   - ✅ Performance-first: Optimized animations, no heavy assets
   - ✅ Accessible: Motion works smoothly across devices
   - ✅ Responsive: Scales beautifully on mobile and desktop
+  - ✅ Generic particle design: Simple circular particles aligned with calm, natural brand aesthetic (no sparkles)
   
 - **Technical Implementation:**
   - ✅ Framer Motion for smooth, performant animations
   - ✅ SVG-based illustration (scalable, small file size)
   - ✅ State-driven animation (happy, neutral, struggling)
-  - ✅ Particle system for visual effects
+  - ✅ Particle system for visual effects (positive/warning)
   - ✅ Real-time food type detection logic
   
 - **Placement in UI:**
@@ -916,7 +918,7 @@ This creates a gap where health-conscious users track religiously but still expe
   - ✅ Displays below summary cards, above history chart
   - ✅ Reacts to recent food logs automatically
   
-**Implementation Complete**: AnimatedGut component fully functional and integrated.
+**Implementation Complete**: AnimatedGut component fully functional and integrated with brand-appropriate particle effects.
 
 #### 4.6 Adrenal Load Score & Stress Tracking (✅ COMPLETE)
 **Status**: Fully implemented with all features
