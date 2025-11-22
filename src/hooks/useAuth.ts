@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase, supabaseConfigured } from '@/lib/supabase'
 import type { User } from '@supabase/supabase-js'
 
 export function useAuth() {
@@ -7,6 +7,21 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!supabaseConfigured) {
+      const mockUser: User = {
+        id: 'local-user',
+        email: 'local@example.com',
+        created_at: new Date().toISOString(),
+        aud: 'authenticated',
+        role: 'authenticated',
+        app_metadata: {},
+        user_metadata: {},
+      }
+      setUser(mockUser)
+      setLoading(false)
+      return
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setLoading(false)
@@ -22,6 +37,9 @@ export function useAuth() {
   }, [])
 
   const signUp = async (email: string, password: string) => {
+    if (!supabaseConfigured) {
+      return { data: null, error: new Error('Supabase not configured') }
+    }
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -30,6 +48,9 @@ export function useAuth() {
   }
 
   const signIn = async (email: string, password: string) => {
+    if (!supabaseConfigured) {
+      return { data: null, error: new Error('Supabase not configured') }
+    }
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -38,6 +59,9 @@ export function useAuth() {
   }
 
   const signOut = async () => {
+    if (!supabaseConfigured) {
+      return { error: null }
+    }
     const { error } = await supabase.auth.signOut()
     return { error }
   }

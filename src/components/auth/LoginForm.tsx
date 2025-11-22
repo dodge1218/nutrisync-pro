@@ -5,6 +5,9 @@ import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { useAuth } from '@/hooks/useAuth'
 import { AuthLayout } from './AuthLayout'
+import { supabaseConfigured } from '@/lib/supabase'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Info } from '@phosphor-icons/react'
 
 export function LoginForm() {
   const [isLogin, setIsLogin] = useState(true)
@@ -45,6 +48,14 @@ export function LoginForm() {
       title={isLogin ? 'Welcome Back' : 'Create Account'}
       subtitle={isLogin ? 'Sign in to continue your wellness journey' : 'Start tracking your nutrition today'}
     >
+      {!supabaseConfigured && (
+        <Alert className="mb-6">
+          <Info className="h-4 w-4" />
+          <AlertDescription>
+            Supabase authentication is not configured. Please add your Supabase credentials to enable sign-in. See USER-TODO-SUPABASE-SETUP.md for instructions.
+          </AlertDescription>
+        </Alert>
+      )}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <Label htmlFor="email">Email</Label>
