@@ -19,7 +19,7 @@ import {
   getYesterdayIncompleteTasks,
 } from '@/lib/checkInEngine'
 import { FoodLog } from '@/lib/nutritionEngine'
-import { ulid } from 'ulid'
+import { v4 as uuidv4 } from 'uuid'
 
 interface DailyCheckInProps {
   foodLogs: FoodLog[]
@@ -98,11 +98,11 @@ export default function DailyCheckIn({
     if (selectedTasks.length === 0) return
 
     const newSession: CheckInSession = {
-      id: ulid(),
+      id: uuidv4(),
       date: new Date().toISOString().split('T')[0],
       checkInTime: Date.now(),
       committedTasks: selectedTasks.map((task) => ({
-        id: ulid(),
+        id: uuidv4(),
         description: task.description,
         category: task.category,
         source: task.reason === 'Custom task' ? 'user-created' : 'suggested',
