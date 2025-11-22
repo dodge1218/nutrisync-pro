@@ -1,5 +1,16 @@
 # 🔑 How to Get Your Supabase Anon Key
 
+## 🎯 TL;DR - Quick Answer
+
+**In your Supabase dashboard:**
+1. Settings (left sidebar) → API
+2. Click **"API Keys"** (in the left menu, below "Data API")
+3. Copy the **"anon public"** key (starts with `eyJ`)
+
+**That's it!** That long `eyJ...` token is what you need.
+
+---
+
 ## The Issue
 
 You're seeing authentication errors (401 Unauthorized) because the Supabase client needs the correct **anon (public) API key**, which is a JWT token.
@@ -17,14 +28,24 @@ From your Supabase project dashboard, you need:
 
 Navigate to: https://app.supabase.com/project/adpyzjdujbtobhxxdfgh
 
-### 2. Open API Settings
+### 2. Navigate to API Keys
 
+**IMPORTANT:** There are TWO sections in Settings → API:
+1. **"Data API"** - This shows API settings (exposed schemas, etc.) - ❌ NOT HERE
+2. **"API Keys"** - This shows your actual keys - ✅ GO HERE!
+
+**Step-by-step:**
 1. Click the **Settings** icon (⚙️) in the left sidebar
-2. Click **API** in the settings menu
+2. You'll see "API" section expand showing:
+   - Data API
+   - **API Keys** ← Click this one!
+   - JWT Keys
+   - Log Drains
+   - Add Ons
 
-### 3. Find Your Keys
+### 3. Find Your Keys (on the API Keys page)
 
-On the API settings page, you'll see several keys:
+On the **API Keys** page, you'll see:
 
 - **Project URL**: `https://adpyzjdujbtobhxxdfgh.supabase.co` ✅
 - **anon public**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` ← **THIS IS WHAT YOU NEED**

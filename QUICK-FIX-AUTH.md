@@ -1,5 +1,16 @@
 # 🚨 QUICK FIX: Supabase Authentication Errors
 
+## 🎯 QUICK ANSWER: Where is the anon key?
+
+**You're on the right page in Supabase, but in the wrong section!**
+
+**RIGHT NOW:** You're viewing "API Settings" (showing Data API config)  
+**YOU NEED:** Click **"API Keys"** in the LEFT SIDEBAR (below "Data API")
+
+That's where you'll find the `eyJ...` anon public key!
+
+---
+
 ## Current Problem
 
 You're seeing these errors:
@@ -16,11 +27,28 @@ The Supabase client is missing the correct **anon public API key**. The keys you
 
 ### Step 1: Get Your Anon Key from Supabase
 
-1. Go to: https://app.supabase.com/project/adpyzjdujbtobhxxdfgh/settings/api
-2. Find the section labeled **Project API keys**
-3. Copy the **anon public** key (NOT service_role)
-   - It's a long JWT token starting with `eyJ`
-   - Example: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcHl6amR1amJ0b2JoeHhkZmdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MjAxNTc4MzIwMH0.xxxx...`
+**VISUAL GUIDE - FOLLOW THESE EXACT STEPS:**
+
+1. **You're already on the right page!** You're at Settings → API
+2. **Look at the LEFT SIDEBAR** - You should see these menu items:
+   - ✅ Data API (you're here now - showing "API Settings")
+   - 👉 **API Keys** ← CLICK THIS ONE!
+   - JWT Keys
+   - Log Drains
+   - Add Ons
+
+3. **Click "API Keys"** in the left sidebar (under Data API)
+
+4. **You'll see a new page with "Project API keys"** section
+
+5. **Find and copy the "anon public" key**:
+   - It's labeled **"anon public"** or **"anon"**
+   - It's a LONG token starting with `eyJ`
+   - About 200+ characters
+   - Has dots (.) separating three parts
+   - Example start: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcHl6amR1amJ0b2JoeHhkZmdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MjAxNTc4MzIwMH0.xxxx...`
+
+6. **Click the copy button** next to the anon key (NOT the service_role key below it)
 
 ### Step 2: Update Your .env File
 
@@ -88,7 +116,15 @@ The anon key should:
 
 ## 📸 What to Look For in Supabase Dashboard
 
-When you go to Settings → API, you should see:
+### CURRENT LOCATION (Where you are now):
+You're at: **Settings → Data API → (showing API Settings page)**
+- This shows "Enable Data API", "Exposed schemas", etc.
+- ❌ This is NOT where the keys are!
+
+### WHERE YOU NEED TO GO:
+Click **"API Keys"** in the left sidebar (just below "Data API")
+
+### WHAT YOU'LL SEE on the API Keys page:
 
 ```
 Project API keys
@@ -97,13 +133,18 @@ URL
 https://adpyzjdujbtobhxxdfgh.supabase.co
 
 anon public
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcHl6amR1amJ0b2JoeHhkZmdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2...  [COPY THIS ONE]
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcHl6amR1amJ0b2JoeHhkZmdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2...  
+[Copy button] ← COPY THIS ONE!
 
 service_role
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcHl6amR1amJ0b2JoeHhkZmdoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6M...  [DON'T USE THIS ONE]
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkcHl6amR1amJ0b2JoeHhkZmdoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6M...  
+[Copy button] ← DON'T USE THIS ONE!
 ```
 
-Copy the **anon public** key!
+**The anon public key:**
+- Starts with `eyJ`
+- Is very long (200+ characters)
+- This is what you need!
 
 ---
 
