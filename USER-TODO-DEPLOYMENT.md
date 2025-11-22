@@ -194,6 +194,11 @@ Vercel should auto-detect these, but verify in your project settings:
 **Node.js Version:**
 - Use Node.js 18.x or higher (Vercel default is fine)
 
+**Routing Configuration:**
+- A `vercel.json` file is included in the project root to handle SPA routing
+- This ensures all routes properly redirect to `index.html` for client-side routing
+- No additional configuration needed - Vercel will automatically use this file
+
 ---
 
 ## 🔐 Security Best Practices
