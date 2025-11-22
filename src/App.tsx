@@ -17,16 +17,20 @@ import WelcomeFlow from './components/WelcomeFlow'
 import TutorialOverlay from './components/TutorialOverlay'
 import ProfileReminder from './components/ProfileReminder'
 import ProfilePopupManager from './components/ProfilePopupManager'
-import { Moon, Leaf, CalendarBlank } from '@phosphor-icons/react'
+import { LoginForm } from './components/auth/LoginForm'
+import { useAuth } from './hooks/useAuth'
+import { Moon, Leaf, CalendarBlank, SignOut } from '@phosphor-icons/react'
 import type { FoodLog } from './lib/nutritionEngine'
 import { getLast7DaysKeys, getDateKey } from './lib/historyTracking'
 import type { UserOnboardingProfile, TutorialProgress } from './lib/onboardingEngine'
 import { getTutorialSteps } from './lib/onboardingEngine'
+import { toast } from 'sonner'
 
 export type Page = 'log-food' | 'meal-planner' | 'food-budget' | 'recommendations' | 'education' | 'achievements' | 'settings' | 'sleepsync' | 'lifeflow'
 export type AppMode = 'nutriwell' | 'sleepsync' | 'lifeflow'
 
 function App() {
+  const { user, loading, signOut } = useAuth()
   const [currentPage, setCurrentPage] = useState<Page>('food-budget')
   const [appMode, setAppMode] = useKV<AppMode>('app-mode', 'nutriwell')
   const [foodLogs, setFoodLogs] = useKV<FoodLog[]>('food-logs', [])
@@ -120,6 +124,30 @@ function App() {
     setShowTutorial(false)
   }
 
+  const handleSignOut = async () => {
+    const { error } = await signOut()
+    if (error) {
+      toast.error('Failed to sign out')
+    } else {
+      toast.success('Signed out successfully')
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Leaf className="w-16 h-16 text-primary mx-auto mb-4 animate-pulse" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <LoginForm />
+  }
+
   if (!onboardingProfile) {
     return <WelcomeFlow onComplete={handleOnboardingComplete} />
   }
@@ -174,7 +202,7 @@ function App() {
                 }
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               {mode !== 'nutriwell' && (
                 <Button
                   variant="outline"
@@ -208,6 +236,15 @@ function App() {
                   LifeFlow
                 </Button>
               )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSignOut}
+                className="flex items-center gap-2"
+                title="Sign Out"
+              >
+                <SignOut className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </header>
