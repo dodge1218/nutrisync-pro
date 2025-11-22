@@ -6,22 +6,6 @@ A comprehensive nutrition tracking and analysis platform that helps users identi
 
 ---
 
-## 🚨 IMPORTANT: Authentication Setup Required
-
-**Are you seeing 401 errors or authentication issues?**
-
-This app requires Supabase authentication. You need to complete the setup:
-
-### Quick Fix (3 Steps):
-
-1. **Get your Supabase anon key** from: [Settings → API](https://app.supabase.com/project/adpyzjdujbtobhxxdfgh/settings/api)
-2. **Add it to `.env`** in your project root (see `.env.example`)
-3. **Run the SQL setup** from `supabase-setup.sql` in your Supabase SQL editor
-
-📖 **Read the full fix guide:** [`QUICK-FIX-AUTH.md`](./QUICK-FIX-AUTH.md)
-
----
-
 ## 🌟 Key Features
 
 ### Core Functionality
