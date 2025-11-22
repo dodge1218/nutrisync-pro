@@ -41,7 +41,7 @@ Before you begin, make sure you have:
 2. Click **"New query"**
 3. Copy and paste this SQL script:
 
-```sql
+``` sql
 -- Create users table (extends Supabase auth.users)
 CREATE TABLE public.user_profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
