@@ -76,9 +76,12 @@
   - ✅ JSONB storage for flexible data structures
   - ✅ Automatic indexing for fast queries
   - ✅ Error handling with graceful fallback to local storage
-- [ ] **Data Export/Deletion** - GDPR compliance features
-  - Export to JSON/CSV
-  - Account deletion with cascade delete
+- [x] **Data Export/Deletion** - ✅ COMPLETE - GDPR compliance features (January 2025)
+  - ✅ Export to JSON (complete data backup)
+  - ✅ Export to CSV (food logs, stress logs, meal templates, exercise logs)
+  - ✅ Account deletion with cascade delete
+  - ✅ Confirmation dialog with type-to-confirm safety
+  - ✅ Automatic sign out after deletion
   
 **Priority 2: Engagement & Retention**
 - [x] **Activate Personalized DVs** - ✅ COMPLETE - Calculator integrated with toggle in Settings

@@ -5,6 +5,7 @@ import { Switch } from '../ui/switch'
 import { BellRinging, FileText, User } from '@phosphor-icons/react'
 import ProfileDashboard from '../profile/ProfileDashboard'
 import CloudSyncSettings from '../CloudSyncSettings'
+import DataManagement from '../DataManagement'
 import { usePersonalizedDVs } from '../../hooks/usePersonalizedDVs'
 
 export default function Settings() {
@@ -139,6 +140,8 @@ export default function Settings() {
           </div>
         </CardContent>
       </Card>
+
+      <DataManagement />
     </div>
   )
 }
