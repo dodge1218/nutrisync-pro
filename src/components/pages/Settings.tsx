@@ -1,10 +1,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
 import { Separator } from '../ui/separator'
-import { BellRinging, FileText } from '@phosphor-icons/react'
+import { Switch } from '../ui/switch'
+import { BellRinging, FileText, User } from '@phosphor-icons/react'
 import ProfileDashboard from '../profile/ProfileDashboard'
+import { usePersonalizedDVs } from '../../hooks/usePersonalizedDVs'
 
 export default function Settings() {
+  const { enabled, isPersonalized, toggle } = usePersonalizedDVs()
+
   return (
     <div className="space-y-6">
       <Card>
@@ -19,6 +23,42 @@ export default function Settings() {
       </Card>
       
       <ProfileDashboard />
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <User weight="fill" />
+            Nutrition Calculations
+          </CardTitle>
+          <CardDescription>
+            Customize how nutrient recommendations are calculated for you
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <div className="font-medium">Use Personalized Daily Values</div>
+              <div className="text-sm text-muted-foreground">
+                Calculate nutrient targets based on your age, weight, activity level, and goals
+              </div>
+            </div>
+            <Switch 
+              checked={enabled} 
+              onCheckedChange={toggle}
+            />
+          </div>
+          {enabled && (
+            <div className="bg-muted/50 p-3 rounded-lg text-sm text-muted-foreground">
+              ✓ Using your profile data to calculate personalized nutrient targets. Keep your profile updated in the section above.
+            </div>
+          )}
+          {!usePersonalizedDVs && (
+            <div className="bg-muted/50 p-3 rounded-lg text-sm text-muted-foreground">
+              Currently using standard daily values (RDA). Enable personalized DVs for recommendations tailored to your needs.
+            </div>
+          )}
+        </CardContent>
+      </Card>
       
       <Card>
         <CardHeader>

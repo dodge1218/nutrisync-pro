@@ -1,14 +1,14 @@
 # Product Requirements Document: NutriWell & Wellness Suite
 
-**Status**: ✅ 100% Production Ready - All Core Features Complete  
+**Status**: ✅ Production Ready + Phase 9 Complete (Personalized DVs)  
 **Last Updated**: January 2025  
-**Version**: 3.1
+**Version**: 3.2
 
 ---
 
 ## 🎯 Implementation Status Summary
 
-### ✅ ALL CORE FEATURES COMPLETE (Phases 1-8e)
+### ✅ ALL CORE FEATURES COMPLETE (Phases 1-8e + Phase 9)
 
 **NutriWell Mode** - Smart Nutrition Intelligence
 - ✅ Food logging with intelligent unit conversion
@@ -46,6 +46,7 @@
 - ✅ New user onboarding with 4-step welcome flow
 - ✅ Interactive tutorials for all three modes
 - ✅ Personalized nutrition profile system
+- ✅ Personalized daily values (Phase 9) - Toggle in Settings to use custom nutrient targets
 - ✅ 7-day re-evaluation reminders with snooze
 - ✅ Cross-mode synergy detection & insights
 - ✅ Legal disclaimer banner (persistent)
@@ -68,7 +69,7 @@
   - Account deletion with cascade delete
   
 **Priority 2: Engagement & Retention**
-- [ ] **Activate Personalized DVs** - Calculator built, needs integration into nutrition engine
+- [x] **Activate Personalized DVs** - ✅ COMPLETE - Calculator integrated with toggle in Settings
 - [ ] **Exercise-Nutrition Integration** - Net calorie tracking, post-workout meal suggestions
 - [ ] **Profile History Tracking** - Weight/BMI trends, nutrient adequacy over time
 - [ ] **Advanced Educational Content** - Library expansion with more synergy cards
@@ -113,7 +114,7 @@
 | Profile Reminders | ✅ Complete | App-wide |
 | **User Authentication** | ✅ Complete | Email/password with Supabase |
 | **Cloud Data Sync** | ❌ Not Built | Data stored locally (browser only) |
-| **Personalized DVs Active** | ❌ Not Built | Calculator ready, not integrated |
+| **Personalized DVs Active** | ✅ Complete | Settings → Use Personalized Daily Values toggle |
 | **Net Calorie Tracking** | ❌ Not Built | Food Budget enhancement |
 | **Wearable Sync** | ❌ Not Built | Future integration |
 | **Photo Logging** | ❌ Not Built | AI/API partnership needed |
@@ -1575,6 +1576,80 @@ StressLog {
 - **Returning users:** Log in → see their historical data
 - **Guest mode (optional):** Try app without account (data not saved)
 - **Multi-device:** Log in on phone, tablet, desktop → data syncs automatically
+
+---
+
+### Phase 9: Personalized Nutrition Integration ✅ COMPLETE
+**Goal:** Activate personalized daily values based on user profile  
+**Status:** Fully implemented (January 2025)  
+**Location:** Settings page
+
+**Overview:**
+Users can now enable personalized daily nutrient values calculated from their age, weight, height, sex, activity level, and health goals. This transforms the one-size-fits-all RDA approach into truly personalized nutrition guidance.
+
+#### Implementation Details
+
+**9a. Personalized Daily Value Toggle** ✅
+  - Settings page integration with Switch component
+  - Hook-based architecture (`usePersonalizedDVs`)
+  - Automatic calculation based on user profile
+  - Falls back to standard RDA when disabled or no profile exists
+  - Clear UI feedback showing when personalization is active
+  - Graceful degradation when profile incomplete
+
+**9b. Dynamic DV Calculation Engine** ✅
+  - Integrates with existing `personalizedDVs.ts` calculator
+  - Uses CompleteUserProfile data from KV storage (`complete-user-profile` key)
+  - Calculates personalized values for all major nutrients:
+    - **Calories**: TDEE based on Harris-Benedict BMR + activity multiplier + goal adjustment
+    - **Protein**: 0.8-1.6g per kg body weight (scales with activity level)
+    - **Fiber**: 14g per 1000 calories consumed
+    - **Iron**: Sex-specific (18mg for menstruating females, 8mg for males/post-menopausal)
+    - **B-vitamins**: Increased for high activity levels
+    - **Magnesium**: Boosted for high stress or intense exercise
+    - **Potassium**: Activity-adjusted
+    - All other micronutrients with age/sex/activity adjustments
+
+**9c. User Experience** ✅
+  - **Location**: Settings → Nutrition Calculations section
+  - **Toggle control**: "Use Personalized Daily Values"
+  - **Descriptive text**: Explains benefits clearly
+  - **Status indicators**:
+    - When ON: "✓ Using your profile data to calculate personalized nutrient targets"
+    - When OFF: "Currently using standard daily values (RDA)"
+  - **Profile dependency**: Encourages keeping profile updated
+  - **Seamless integration**: Works with existing Food Budget, gap detection, recommendations
+
+**9d. Technical Architecture** ✅
+  - **Hook**: `/hooks/usePersonalizedDVs.ts`
+    - Clean, reusable API
+    - Returns: `{ dvs: PersonalizedDailyValues, isPersonalized: boolean, enabled: boolean, toggle: () => void }`
+    - Type-safe with full TypeScript support
+  - **Calculator**: `/lib/personalizedDVs.ts` (already existed, now activated)
+    - `calculatePersonalizedDVs(profile: CompleteUserProfile): PersonalizedDailyValues`
+    - `calculateBMR()`, `calculateTDEE()`, `calculateBMI()` utilities
+  - **Storage**:
+    - Feature flag: `use-personalized-dvs` (boolean) in spark.kv
+    - Profile data: `complete-user-profile` (CompleteUserProfile) in spark.kv
+  - **Efficient computation**: Only calculates when both profile exists AND feature enabled
+
+**9e. Future Integration Opportunities** 📋
+The foundation is now ready for deeper integration:
+  - [ ] Food Budget page: Display personalized targets instead of fixed DVs
+  - [ ] Nutrient gap detection: Use personal thresholds (e.g., "You need 120g protein based on your weight and activity")
+  - [ ] Recommendations engine: Tailor suggestions to personal needs
+  - [ ] AI weekly insights: Factor in personal targets
+  - [ ] Progress tracking: Show improvement toward personalized goals
+  - [ ] Achievement system: Unlock badges for meeting personal targets
+
+**Impact:**
+This feature transforms NutriWell from a generic tracking tool into a truly personalized nutrition coach. Users with high activity levels now see appropriate protein targets. Older adults see age-adjusted recommendations. Athletes get performance-optimized nutrient goals.
+
+**Implementation Files:**
+- ✅ `/hooks/usePersonalizedDVs.ts` - Main hook (NEW)
+- ✅ `/lib/personalizedDVs.ts` - Calculator (existed, now activated)
+- ✅ `/components/pages/Settings.tsx` - UI toggle (modified)
+- 📋 Future: Integrate hook into Food Budget, Recommendations, Dashboard
 
 ---
 
