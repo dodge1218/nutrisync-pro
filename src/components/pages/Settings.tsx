@@ -4,6 +4,7 @@ import { Separator } from '../ui/separator'
 import { Switch } from '../ui/switch'
 import { BellRinging, FileText, User } from '@phosphor-icons/react'
 import ProfileDashboard from '../profile/ProfileDashboard'
+import CloudSyncSettings from '../CloudSyncSettings'
 import { usePersonalizedDVs } from '../../hooks/usePersonalizedDVs'
 
 export default function Settings() {
@@ -23,6 +24,8 @@ export default function Settings() {
       </Card>
       
       <ProfileDashboard />
+      
+      <CloudSyncSettings />
       
       <Card>
         <CardHeader>

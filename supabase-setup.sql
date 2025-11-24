@@ -63,5 +63,70 @@ CREATE TRIGGER on_auth_user_created
 -- SET is_developer = true 
 -- WHERE email = 'your-email@example.com';
 
+-- ============================================================
+-- CLOUD DATA SYNC TABLES
+-- ============================================================
+
+-- User Data Storage Table (stores all KV pairs)
+CREATE TABLE IF NOT EXISTS public.user_data (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  key TEXT NOT NULL,
+  value JSONB NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, key)
+);
+
+-- Enable RLS
+ALTER TABLE public.user_data ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view own data" ON public.user_data;
+DROP POLICY IF EXISTS "Users can insert own data" ON public.user_data;
+DROP POLICY IF EXISTS "Users can update own data" ON public.user_data;
+DROP POLICY IF EXISTS "Users can delete own data" ON public.user_data;
+
+-- Create policies
+CREATE POLICY "Users can view own data" 
+  ON public.user_data 
+  FOR SELECT 
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own data" 
+  ON public.user_data 
+  FOR INSERT 
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own data" 
+  ON public.user_data 
+  FOR UPDATE 
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own data" 
+  ON public.user_data 
+  FOR DELETE 
+  USING (auth.uid() = user_id);
+
+-- Create index for faster lookups
+CREATE INDEX IF NOT EXISTS idx_user_data_user_id ON public.user_data(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_data_key ON public.user_data(user_id, key);
+
+-- Function to update the updated_at timestamp
+CREATE OR REPLACE FUNCTION public.update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to automatically update updated_at
+DROP TRIGGER IF EXISTS update_user_data_updated_at ON public.user_data;
+CREATE TRIGGER update_user_data_updated_at
+  BEFORE UPDATE ON public.user_data
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at_column();
+
 -- Success message
-SELECT 'Database setup complete! ✓' as status;
+SELECT 'Database setup complete with cloud sync! ✓' as status;

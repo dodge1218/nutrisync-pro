@@ -43,6 +43,7 @@
 
 **System-Wide Features**
 - ✅ User authentication (email/password with Supabase)
+- ✅ Cloud data sync with multi-device support
 - ✅ New user onboarding with 4-step welcome flow
 - ✅ Interactive tutorials for all three modes
 - ✅ Personalized nutrition profile system
@@ -50,8 +51,8 @@
 - ✅ 7-day re-evaluation reminders with snooze
 - ✅ Cross-mode synergy detection & insights
 - ✅ Legal disclaimer banner (persistent)
+- ✅ Net calorie tracking (consumed - exercise burned)
 - ✅ Responsive design (mobile & desktop)
-- ⚠️ **Note:** User data currently stored locally (browser). Cloud sync not yet implemented.
 
 ---
 
@@ -59,18 +60,24 @@
 
 **Priority 1: Critical for Scale**
 - [x] **User Authentication** - ✅ Email/password auth with Supabase (COMPLETE)
-- [ ] **Cloud Data Storage & Sync** - Migrate from local storage to database
-  - Multi-device sync (data currently local per browser)
-  - Real-time cloud backup
-  - Offline-first architecture with conflict resolution
-  - Migration tool for existing local data
+- [x] **Cloud Data Storage & Sync** - ✅ COMPLETE - Full cloud sync implemented
+  - ✅ Multi-device sync with automatic 2-second debounce
+  - ✅ Real-time cloud backup to Supabase
+  - ✅ Manual Push/Pull controls for data management
+  - ✅ Smart migration tool for existing local data
+  - ✅ Enable/disable toggle in Settings
+  - ✅ Sync status indicators and error handling
 - [ ] **Data Export/Deletion** - GDPR compliance features
   - Export to JSON/CSV
   - Account deletion with cascade delete
   
 **Priority 2: Engagement & Retention**
 - [x] **Activate Personalized DVs** - ✅ COMPLETE - Calculator integrated with toggle in Settings
-- [ ] **Exercise-Nutrition Integration** - Net calorie tracking, post-workout meal suggestions
+- [x] **Exercise-Nutrition Integration** - ✅ Net calorie tracking COMPLETE
+  - ✅ Net calorie display (consumed - burned)
+  - ✅ Toggle switch on Dashboard to view net vs gross calories
+  - ✅ Exercise calorie burn integration from LifeFlow
+  - [ ] Post-workout meal suggestions (planned)
 - [ ] **Profile History Tracking** - Weight/BMI trends, nutrient adequacy over time
 - [ ] **Advanced Educational Content** - Library expansion with more synergy cards
 - [ ] **Enhanced Synergy Detection** - More sophisticated nutrient interaction rules
