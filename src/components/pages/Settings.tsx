@@ -6,6 +6,7 @@ import { BellRinging, FileText, User } from '@phosphor-icons/react'
 import ProfileDashboard from '../profile/ProfileDashboard'
 import CloudSyncSettings from '../CloudSyncSettings'
 import DataManagement from '../DataManagement'
+import ProfileHistory from '../ProfileHistory'
 import { usePersonalizedDVs } from '../../hooks/usePersonalizedDVs'
 
 export default function Settings() {
@@ -97,6 +98,8 @@ export default function Settings() {
           </div>
         </CardContent>
       </Card>
+      
+      <ProfileHistory />
 
       <Card>
         <CardHeader>

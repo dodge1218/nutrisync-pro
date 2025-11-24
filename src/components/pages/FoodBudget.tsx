@@ -18,6 +18,7 @@ import HistoryLineGraph from '../HistoryLineGraph'
 import ProfileReminder from '../ProfileReminder'
 import ProfileSetup from '../ProfileSetup'
 import AnimatedGut from '../AnimatedGut'
+import PostWorkoutNutrition from '../PostWorkoutNutrition'
 import { 
   updateHistoryData, 
   filterLogsForDate, 
@@ -291,6 +292,8 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
           </CardContent>
         </Card>
       )}
+
+      <PostWorkoutNutrition foodLogs={todayLogs} />
 
       <Tabs defaultValue="macros">
         <TabsList className="grid grid-cols-4 w-full max-w-2xl">
