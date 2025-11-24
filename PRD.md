@@ -2956,3 +2956,1499 @@ Given the critical importance of accurate nutritional calculations, especially w
 **Document Version:** 1.0  
 **Last Updated:** 2024  
 **Owner:** Product Team
+
+// User profile (nutrition preferences)
+UserProfile {
+  user_id: uuid (foreign key → User.id),
+  age?: number,
+  sex?: string,
+  activity_level?: string,
+  dietary_pattern?: string,
+  staples?: json,
+  preferences?: json,
+  created_at: timestamp,
+  updated_at: timestamp
+}
+
+// Food logs (user-specific)
+FoodLog {
+  id: uuid,
+  user_id: uuid (foreign key → User.id),
+  timestamp: timestamp,
+  food_id: string,
+  quantity: number,
+  meal_type: string,
+  meal_time?: string,
+  notes?: string,
+  RLS: WHERE user_id = auth.uid() // Row Level Security
+}
+
+// Meal templates (user-specific)
+MealTemplate {
+  id: uuid,
+  user_id: uuid (foreign key → User.id),
+  name: string,
+  meal_type: string,
+  ingredients: json,
+  supplements: json,
+  is_public: boolean, // For future community sharing
+  created_at: timestamp,
+  RLS: WHERE user_id = auth.uid()
+}
+
+// Stress logs (user-specific, private)
+StressLog {
+  id: uuid,
+  user_id: uuid (foreign key → User.id),
+  date: date,
+  stress_level: number,
+  sleep_quality: number,
+  energy_level: number,
+  physical_symptoms: string[],
+  mental_symptoms: string[],
+  notes?: string,
+  RLS: WHERE user_id = auth.uid()
+}
+
+// Developer data exclusion
+// All analytics queries MUST include:
+// WHERE is_developer = FALSE
+// This ensures developer's personal health data never appears in:
+// - User statistics
+// - Aggregate metrics
+// - Public leaderboards (future)
+// - Research data exports (future)
+```
+
+**Privacy & Security Requirements:**
+1. **Row Level Security (RLS):**
+   - Each user can ONLY access their own food logs, stress data, meal templates
+   - Developers cannot access other users' private health data
+   - Admin queries explicitly exclude developer accounts from aggregates
+
+2. **Data Encryption:**
+   - All data encrypted at rest (database level)
+   - All API calls over HTTPS/TLS
+   - Sensitive fields (stress logs, notes) encrypted in database
+
+3. **Developer Data Isolation:**
+   - Developer accounts flagged with `is_developer: true`
+   - Developer food logs excluded from:
+     - Global statistics ("X users logged Y meals this week")
+     - Recommendation algorithms (if trained on aggregate data)
+     - Public sharing features (future community features)
+   - Separate test database for development (optional but recommended)
+
+4. **Data Export & Deletion:**
+   - Users can export their data (JSON, CSV)
+   - Users can delete their accounts (GDPR/CCPA compliance)
+   - Cascade delete: User deletion removes ALL associated logs, templates, profiles
+
+5. **Session Management:**
+   - JWT tokens with expiration (24 hours default)
+   - Refresh token rotation
+   - Logout invalidates tokens
+   - Multi-device support with per-device sessions
+
+**Migration Path from Current spark.kv:**
+- Current local data stored in `spark.kv` (browser local storage)
+- Upon implementing auth:
+  - Prompt existing users to create account
+  - One-time migration: upload local data to cloud database
+  - Post-migration: spark.kv used as offline cache only
+  - Sync logic: local changes pushed to cloud when online
+
+**Implementation Steps (Phase 8):**
+1. Set up Supabase project (or alternative)
+2. Create database schema with RLS policies
+3. Implement authentication UI (login, signup, forgot password)
+4. Migrate spark.kv hooks to Supabase queries
+5. Add offline sync logic (local-first, cloud backup)
+6. Test developer data isolation
+7. Implement data export/deletion features
+
+**User Experience:**
+- **First-time users:** Sign up → start logging immediately
+- **Returning users:** Log in → see their historical data
+- **Guest mode (optional):** Try app without account (data not saved)
+- **Multi-device:** Log in on phone, tablet, desktop → data syncs automatically
+
+---
+
+### Phase 9: Personalized Nutrition Integration ✅ COMPLETE
+**Goal:** Activate personalized daily values based on user profile  
+**Status:** Fully implemented (January 2025)  
+**Location:** Settings page
+
+**Overview:**
+Users can now enable personalized daily nutrient values calculated from their age, weight, height, sex, activity level, and health goals. This transforms the one-size-fits-all RDA approach into truly personalized nutrition guidance.
+
+#### Implementation Details
+
+**9a. Personalized Daily Value Toggle** ✅
+  - Settings page integration with Switch component
+  - Hook-based architecture (`usePersonalizedDVs`)
+  - Automatic calculation based on user profile
+  - Falls back to standard RDA when disabled or no profile exists
+  - Clear UI feedback showing when personalization is active
+  - Graceful degradation when profile incomplete
+
+**9b. Dynamic DV Calculation Engine** ✅
+  - Integrates with existing `personalizedDVs.ts` calculator
+  - Uses CompleteUserProfile data from KV storage (`complete-user-profile` key)
+  - Calculates personalized values for all major nutrients:
+    - **Calories**: TDEE based on Harris-Benedict BMR + activity multiplier + goal adjustment
+    - **Protein**: 0.8-1.6g per kg body weight (scales with activity level)
+    - **Fiber**: 14g per 1000 calories consumed
+    - **Iron**: Sex-specific (18mg for menstruating females, 8mg for males/post-menopausal)
+    - **B-vitamins**: Increased for high activity levels
+    - **Magnesium**: Boosted for high stress or intense exercise
+    - **Potassium**: Activity-adjusted
+    - All other micronutrients with age/sex/activity adjustments
+
+**9c. User Experience** ✅
+  - **Location**: Settings → Nutrition Calculations section
+  - **Toggle control**: "Use Personalized Daily Values"
+  - **Descriptive text**: Explains benefits clearly
+  - **Status indicators**:
+    - When ON: "✓ Using your profile data to calculate personalized nutrient targets"
+    - When OFF: "Currently using standard daily values (RDA)"
+  - **Profile dependency**: Encourages keeping profile updated
+  - **Seamless integration**: Works with existing Food Budget, gap detection, recommendations
+
+**9d. Technical Architecture** ✅
+  - **Hook**: `/hooks/usePersonalizedDVs.ts`
+    - Clean, reusable API
+    - Returns: `{ dvs: PersonalizedDailyValues, isPersonalized: boolean, enabled: boolean, toggle: () => void }`
+    - Type-safe with full TypeScript support
+  - **Calculator**: `/lib/personalizedDVs.ts` (already existed, now activated)
+    - `calculatePersonalizedDVs(profile: CompleteUserProfile): PersonalizedDailyValues`
+    - `calculateBMR()`, `calculateTDEE()`, `calculateBMI()` utilities
+  - **Storage**:
+    - Feature flag: `use-personalized-dvs` (boolean) in spark.kv
+    - Profile data: `complete-user-profile` (CompleteUserProfile) in spark.kv
+  - **Efficient computation**: Only calculates when both profile exists AND feature enabled
+
+**9e. Future Integration Opportunities** 📋
+The foundation is now ready for deeper integration:
+  - [ ] Food Budget page: Display personalized targets instead of fixed DVs
+  - [ ] Nutrient gap detection: Use personal thresholds (e.g., "You need 120g protein based on your weight and activity")
+  - [ ] Recommendations engine: Tailor suggestions to personal needs
+  - [ ] AI weekly insights: Factor in personal targets
+  - [ ] Progress tracking: Show improvement toward personalized goals
+  - [ ] Achievement system: Unlock badges for meeting personal targets
+
+**Impact:**
+This feature transforms NutriWell from a generic tracking tool into a truly personalized nutrition coach. Users with high activity levels now see appropriate protein targets. Older adults see age-adjusted recommendations. Athletes get performance-optimized nutrient goals.
+
+**Implementation Files:**
+- ✅ `/hooks/usePersonalizedDVs.ts` - Main hook (NEW)
+- ✅ `/lib/personalizedDVs.ts` - Calculator (existed, now activated)
+- ✅ `/components/pages/Settings.tsx` - UI toggle (modified)
+- 📋 Future: Integrate hook into Food Budget, Recommendations, Dashboard
+
+---
+
+### Version 1.1 ❌ NOT YET IMPLEMENTED — Monetization & Depth
+**Goal:** Validate affiliate model, add premium tier  
+**Status:** Planned for future release
+
+#### New Features:
+1. **Affiliate Product Catalog**
+   - Map nutrient gaps → recommended products
+   - Categories: probiotics, fiber supplements, electrolytes, vitamin D, magnesium, omega-3
+   - Clear labeling: "This may contain affiliate links"
+   
+2. **Premium Tier ($7-12/month)**
+   - Deeper analysis: meal timing optimization, weekly trends
+   - Wearable data integration (Apple Health, Fitbit)
+   - Custom DV targets based on activity
+   - Export reports (CSV, PDF)
+
+3. **Recipe Suggestions**
+   - "Here's a 300-calorie gut-friendly snack idea to close today's gaps"
+   - Pre-built meal ideas: "High-Iron Warm Bowl", "Gut Reset Smoothie"
+
+4. **Weekly Reports**
+   - Trend: "You've improved fiber intake by 40% this week"
+   - Streak tracking: "7-day logging streak 🔥"
+
+---
+
+### Version 2.0 ❌ NOT YET IMPLEMENTED — Intelligence & Automation
+**Goal:** Reduce friction to near-zero, integrate biometrics  
+**Status:** Planned for future release
+
+#### New Features:
+1. **Wearable Integration (Apple Watch, Fitbit, Whoop)**
+   - Auto-pull: activity level, heart rate variability, sleep quality
+   - Refine recommendations: "Low HRV today → suggest magnesium-rich, adaptogenic foods"
+   
+2. **Photo Logging (Future)**
+   - Snap a photo → AI estimates nutrients (partner with API)
+
+3. **Voice Logging**
+   - "Hey NutriWell, I just ate 2 eggs and a cup of oatmeal"
+
+4. **Smart Timing Suggestions**
+   - "Based on your sleep data, try moving protein to breakfast"
+   - "Coffee at 7am, iron-rich lunch at 1pm — good spacing ✓"
+
+5. **Community Features**
+   - Share meal templates
+   - "What other users with gut-sensitive profiles eat"
+
+---
+
+### Version 3.0 ❌ NOT YET IMPLEMENTED — Advanced Intelligence & Personalization
+**Goal:** Deep personalization, predictive intelligence, comprehensive tracking  
+**Status:** Long-term roadmap - ideal features for future releases
+
+#### Ideal Features for Long-Term Roadmap:
+
+1. **Supplement Auto-Detection & Management**
+   - **Amazon order history integration:** Automatically detect supplement purchases
+   - Parse product names to identify vitamins, minerals, probiotics, adaptogens
+   - Track dosing schedules and adherence
+   - Restocking alerts based on serving size and purchase date
+   - Price tracking: notify when supplements on sale
+   - Brand comparison: suggest alternatives based on value/quality
+   - Interaction warnings: flag potential supplement-supplement or supplement-medication conflicts
+
+2. **Advanced Synergy Intelligence**
+   - **Real-time bioavailability optimization:** 
+     - Detects when user logs iron-rich food → prompts "Add vitamin C source to this meal?"
+     - Tracks fat intake with fat-soluble vitamins (A, D, E, K) → suggests adding healthy fat if missing
+     - Monitors black pepper consumption with turmeric for curcumin absorption
+   - **Spice & garnish tracking for enhanced benefits:**
+     - Garlic + allicin formation timing (crush and wait 10 min before cooking)
+     - Ginger + anti-inflammatory compounds
+     - Cinnamon + blood sugar regulation
+     - Herbs (basil, oregano, rosemary) + antioxidant compounds
+   - **Meal sequence optimization:**
+     - Vinegar or lemon before carb-heavy meals (blood sugar management)
+     - Protein distribution across meals for muscle synthesis
+     - Pre-meal rituals: apple cider vinegar, bitters, digestive enzymes
+   - **Anti-nutrient management:**
+     - Phytic acid in grains/legumes → soaking recommendations
+     - Oxalates in spinach → pairing advice or cooking methods
+     - Lectins in beans → proper cooking guidance
+     - Tannins in tea → spacing from iron-rich meals
+
+3. **Personalized Lab Integration**
+   - Import blood work results (CBC, CMP, vitamin levels, hormones)
+   - Map nutrient intake to biomarkers over time
+   - Identify if dietary changes correlate with lab improvements
+   - Specific recommendations based on actual deficiencies (not just DV)
+   - Track ferritin, B12, vitamin D, magnesium RBC, homocysteine, etc.
+
+4. **Genetic Nutrition (Nutrigenomics)**
+   - Upload 23andMe/AncestryDNA raw data
+   - Screen for SNPs affecting nutrient needs:
+     - MTHFR (folate metabolism) → methylfolate recommendations
+     - VDR (vitamin D receptor) → personalized D3 dosing
+     - FTO (fat metabolism) → macronutrient ratio guidance
+     - COMT (dopamine) → protein timing, coffee sensitivity
+     - DAO (histamine) → fermented food tolerance
+   - Personalize DV targets based on genetic predispositions
+
+5. **Microbiome Integration**
+   - Import gut microbiome test results (Viome, Thorne, DayTwo, etc.)
+   - Map beneficial/pathogenic bacteria to food recommendations
+   - Track prebiotic/probiotic intake against microbiome composition
+   - Suggest foods that feed beneficial strains
+   - Identify trigger foods based on microbiome profile
+   - Monitor diversity score improvements over time
+
+6. **Meal Timing Circadian Optimization**
+   - Advanced circadian rhythm tracking beyond SleepSync
+   - Optimal protein timing (morning for muscle synthesis)
+   - Carb timing for performance (pre-workout) vs. sleep (low at dinner)
+   - Chronotype-based eating windows (early bird vs. night owl)
+   - Shift worker special protocols
+   - Jet lag nutritional support
+
+7. **Symptom Tracking & Pattern Detection**
+   - Log symptoms: bloating, energy dips, headaches, skin issues, mood
+   - AI pattern detection: "You report bloating 2-3 hours after dairy"
+   - Elimination diet guidance and reintroduction protocols
+   - Food sensitivity probability scores
+   - Correlate symptoms with specific ingredients, meal timing, combinations
+
+8. **Budget-Conscious Shopping Assistant**
+   - Price tracking for staple foods at local stores
+   - Generate shopping lists from meal plans with cost estimates
+   - Suggest budget-friendly swaps (frozen vs. fresh, seasonal produce)
+   - Bulk buying recommendations for shelf-stable items
+   - Compare cost-per-nutrient across foods (best iron per dollar, etc.)
+   - Coupon integration and sales alerts
+
+9. **Restaurant & Travel Mode**
+   - Restaurant database integration (MenuStat, Nutritionix)
+   - Quick-log common restaurant meals
+   - Travel-friendly meal suggestions (airport, hotel, convenience stores)
+   - Maintain streaks while traveling with flexible logging
+   - International food database (when traveling abroad)
+
+10. **Social Accountability & Challenges**
+    - Friend groups for shared goals
+    - Weekly challenges: "Eat 30 plants this week", "7-day fermented food streak"
+    - Leaderboards (optional, privacy-first)
+    - Share achievements and meal templates
+    - Cooking challenges and recipe swaps
+
+11. **Menstrual Cycle Nutrition**
+    - Track cycle phase (follicular, ovulatory, luteal, menstrual)
+    - Phase-specific nutrient recommendations:
+      - Follicular: Iron-rich foods post-period
+      - Ovulatory: Antioxidants, fiber for estrogen metabolism
+      - Luteal: Magnesium, B6 for PMS
+      - Menstrual: Iron, vitamin C, anti-inflammatory foods
+    - Craving management with nutrient-dense alternatives
+
+12. **Performance & Athletic Optimization**
+    - Training load integration (from Strava, Garmin, Whoop)
+    - Periodized nutrition (base, build, peak, recovery phases)
+    - Electrolyte optimization for endurance activities
+    - Glycogen loading protocols for events
+    - Recovery nutrition timing and macros
+    - Hydration tracking with sweat loss estimates
+
+13. **Longevity & Healthspan Focus**
+    - Track longevity markers: polyphenol intake, omega-3:6 ratio, glycemic load
+    - mTOR modulation: protein cycling, fasting protocols
+    - Autophagy support: fasting windows, polyphenols, spermidine-rich foods
+    - Senolytic food compounds (quercetin, fisetin)
+    - NAD+ boosting foods (niacin, NMN precursors)
+    - Telomere-supporting nutrients (folate, B12, omega-3)
+
+14. **AI Meal Generation**
+    - "Generate a 500-calorie, high-iron, gut-friendly dinner"
+    - Respects dietary restrictions, preferences, available ingredients
+    - Adapts to seasonal produce
+    - Learns from user ratings and frequency of logged meals
+    - Generates shopping lists automatically
+
+15. **Family & Household Management**
+    - Multiple user profiles (different DV targets)
+    - Shared meal planning for families
+    - Kid-friendly nutrient tracking (age-appropriate DVs)
+    - Batch cooking suggestions for meal prep
+    - Allergen management across family members
+
+---
+
+## Non-Goals (Out of Scope)
+
+1. **Medical diagnosis or treatment** — This is educational, not clinical
+2. **Prescription-level recommendations** — No dosing, no disease management
+3. **Replacement for RD/MD** — Always encourage professional consultation
+4. **Complex meal planning** — Focus on gap-filling, not full meal plans (v1)
+5. **Social network** — No feeds, likes, comments (v1)
+6. **Calorie restriction focus** — This is about nutrient sufficiency, not weight loss
+7. **Restaurant database** — Use simple manual entry (v1)
+
+---
+
+## Technical Architecture (High-Level)
+
+### Stack
+- **Frontend:** React + TypeScript (Spark/Vite template)
+- **Styling:** Tailwind CSS + shadcn/ui components
+- **State:** React state + spark.kv for persistence
+- **Data:** In-memory food database (JSON), user data in spark.kv
+- **Future:** API integrations (wearables, affiliate tracking)
+
+### Key Modules
+- **/lib/nutritionEngine.ts** — Core analysis logic with unit conversion system
+- **/lib/dailyValues.ts** — Reference DV constants
+- **/lib/synergies.ts** — Nutrient pairing rules with bioavailability calculations
+- **/lib/affiliate.ts** — Product matching logic
+- **/lib/unitConverter.ts** — (NEW) Intelligent unit conversion system
+  - Handles metric ↔ imperial conversions (g ↔ oz, ml ↔ fl oz, kg ↔ lb)
+  - Distinguishes weight vs. volume measurements
+  - Context-aware: "100g chicken" (weight) vs "20oz water" (volume)
+  - Validation: prevents nonsensical conversions (e.g., converting fluid volume to weight without density)
+  - Standardized internal storage format (grams for solids, ml for liquids)
+  - Display format respects user preference or regional standards
+- **/data/foods.ts** — Comprehensive food database with 200+ items including:
+  - **Proteins:** meats (chicken, beef, pork, turkey, lamb), fish (salmon, tuna, sardines, cod), eggs, plant proteins (tofu, tempeh, seitan, legumes)
+  - **Vegetables:** leafy greens (spinach, kale, arugula, chard), cruciferous (broccoli, cauliflower, brussels sprouts), starchy (sweet potato, potato), nightshades (tomato, bell pepper, eggplant), root vegetables (carrot, beet, turnip)
+  - **Fruits:** berries (blueberry, strawberry, raspberry, blackberry), tropical (mango, pineapple, papaya), citrus (orange, lemon, lime, grapefruit), stone fruits (peach, plum, cherry), apples, pears, bananas
+  - **Grains & Starches:** whole grains (quinoa, brown rice, oats, barley, farro, buckwheat), bread (sourdough, whole wheat, rye), pasta (whole wheat, regular, rice noodles), tortillas
+  - **Dairy & Alternatives:** yogurt (Greek, regular, Icelandic), kefir (plain, flavored), cheese (cheddar, mozzarella, feta, parmesan, cottage), milk (whole, 2%, skim, almond, oat, coconut)
+  - **Fermented Foods:** sauerkraut, kimchi, kombucha, miso, tempeh, natto, pickles, fermented vegetables
+  - **Oils & Fats:** olive oil (EVOO, regular), coconut oil, avocado oil, butter, ghee, sesame oil, grapeseed oil, flaxseed oil, MCT oil
+  - **Nuts & Seeds:** almonds, walnuts, cashews, pecans, pumpkin seeds, sunflower seeds, chia seeds, flaxseeds, hemp seeds, sesame seeds
+  - **Legumes:** lentils (red, green, brown), chickpeas, black beans, kidney beans, pinto beans, navy beans, split peas, edamame
+  - **Spices & Seasonings:** turmeric, garlic, ginger, cinnamon, cumin, paprika, oregano, basil, thyme, rosemary, parsley, cilantro, dill, mint, black pepper, sea salt, pink salt, cayenne, curry powder, nutritional yeast
+  - **Condiments & Sauces:** hot sauce, mustard (yellow, dijon, whole grain), vinegar (apple cider, balsamic, white, rice), soy sauce, tamari, coconut aminos, tahini, hummus, salsa, pesto
+  - **Processed foods:** protein bars, granola, chips, crackers, cookies, protein powder, meal replacement shakes
+  - **Beverages:** coffee (black, with cream), tea (green, black, herbal, matcha), water, sparkling water, coconut water, juices (orange, apple, vegetable), bone broth, protein shakes
+  - **Sweeteners:** honey, maple syrup, agave, stevia, monk fruit, dates, coconut sugar
+  - **Supplements:** 
+    - Vitamins: D3, B12, B-complex, C, A, E, K2
+    - Minerals: magnesium (glycinate, citrate, threonate), zinc, iron, calcium, selenium, iodine
+    - Probiotics: multi-strain, specific strains (L. reuteri, L. plantarum, etc.)
+    - Omega-3: fish oil, algae oil, krill oil
+    - Specialty: collagen, creatine, ashwagandha, rhodiola, lion's mane, cordyceps, chlorella, spirulina
+    - Digestive: betaine HCL, digestive enzymes, l-glutamine, psyllium husk
+
+### Data Model
+```typescript
+Food {
+  id, name, servingSize, servingUnit (g/ml/oz/fl oz/cup/etc),
+  calories,
+  protein, carbs, fat, fiber,
+  vitamins: { C, D, A, E, K, B12, B6, folate, thiamin, riboflavin, niacin, ... },
+  minerals: { iron, zinc, calcium, magnesium, potassium, selenium, copper, manganese, ... },
+  electrolytes: { sodium, potassium, magnesium },
+  phytonutrients: { polyphenols, carotenoids, flavonoids, ... },
+  tags: ["fermented", "polyphenol-rich", "ultra-processed", "warm-suitable", "prebiotic"],
+  gutStressors: boolean,
+  measurementType: "weight" | "volume" | "count"
+}
+
+Supplement {
+  id, name, brand?, 
+  type: "vitamin" | "mineral" | "probiotic" | "omega3" | "adaptogen" | "digestive" | "other",
+  dosage: { amount: number, unit: "mg" | "mcg" | "IU" | "g" | "billion CFU" },
+  nutrients: { ... }, // Similar to Food but supplement-specific
+  timing: "morning" | "with-food" | "before-bed" | "empty-stomach",
+  tags: ["daily", "as-needed"],
+  amazonASIN?: string, // For future Amazon integration
+  purchaseDate?: timestamp,
+  servingsRemaining?: number
+}
+
+UserLog {
+  timestamp, 
+  food?, 
+  supplement?,
+  quantity, 
+  mealType: "breakfast" | "lunch" | "dinner" | "snack",
+  mealTime?: string, // For SleepSync timing analysis
+  notes?: string
+}
+
+MealTemplate {
+  id, name, mealType,
+  ingredients: [{ foodId, quantity, unit }],
+  supplements: [{ supplementId, quantity }],
+  totalNutrition: { ... }, // Pre-calculated for speed
+  tags: ["quick", "gut-friendly", "high-protein", "warm"],
+  createdBy: "user" | "preset"
+}
+
+UserProfile {
+  staples: { liver: "2-3x/week", culturedDairy: "2x/week", pumpkinSeeds: "daily" },
+  preferences: { 
+    warmFoods: true, 
+    showSupplements: false,
+    unitSystem: "imperial" | "metric" | "auto",
+    autoTasksEnabled: boolean,
+    autoTaskCategories: string[],
+  },
+  demographics: { age, sex, activityLevel },
+  sleepSchedule?: { wakeTime, sleepTime, targetLastMeal },
+  activeGoals: [{ goalId, milestones: [...] }],
+  recurringActivities: [{ name, category, days, time, duration }],
+  onboardingComplete: boolean,
+  tutorialProgress: { step: number, mode: string, completed: boolean },
+  dismissedTooltips: string[]
+}
+
+Goal {
+  id: uuid,
+  title: string,
+  description?: string,
+  targetDate?: timestamp,
+  status: "active" | "completed" | "paused",
+  milestones: [
+    {
+      id: uuid,
+      title: string,
+      type: "checkbox" | "numeric" | "frequency" | "habit",
+      target?: number,              // For numeric/frequency goals
+      unit?: string,                // "miles", "minutes", "times", etc.
+      currentProgress?: number,     // Current value for quantitative goals
+      progressHistory?: [           // Historical tracking
+        { date: timestamp, value: number }
+      ],
+      completed: boolean,
+      completedAt?: timestamp
+    }
+  ],
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+
+CheckInSession {
+  id: uuid,
+  date: string,                     // YYYY-MM-DD
+  checkInTime: timestamp,
+  committedTasks: [
+    {
+      id: uuid,
+      description: string,
+      category: "goal" | "wellness" | "health" | "habit" | "productivity" | "custom",
+      source: "suggested" | "user-created",
+      sourceGoalId?: uuid,          // If derived from a goal
+      completed: boolean,
+      completedAt?: timestamp,
+      deferred: boolean,            // Moved to next day
+      reminder?: {
+        time: string,
+        enabled: boolean
+      }
+    }
+  ],
+  completionRate: number,           // 0-100
+  reviewedIncompleteFromYesterday: boolean
+}
+
+CheckInHistory {
+  sessions: CheckInSession[],
+  stats: {
+    totalSessions: number,
+    averageCompletionRate: number,
+    currentStreak: number,          // Consecutive days with 100% completion
+    longestStreak: number,
+    categoryPerformance: {          // Completion rate by category
+      [category: string]: number
+    },
+    mostCommittedTasks: [           // Frequency analysis
+      { description: string, count: number }
+    ],
+    mostCompletedTasks: [
+      { description: string, completionRate: number }
+    ]
+  }
+}
+
+AutoTask {
+  id: string,
+  name: string,
+  category: "morning" | "hygiene" | "hydration" | "evening" | "pet-care" | "household",
+  defaultTime?: string,             // Relative or absolute time
+  duration?: number,                // Minutes
+  frequency: "daily" | "custom",
+  enabled: boolean,
+  customDays?: string[],            // ["monday", "wednesday", ...]
+  userDeleted: boolean,             // Learning flag
+  deletionCount: number             // How many times user removed this
+}
+
+CrossModeInsight {
+  id: uuid,
+  type: "correlation" | "recommendation" | "alert" | "celebration",
+  modes: string[],                  // ["nutriwell", "sleepsync", "lifeflow"]
+  title: string,
+  description: string,
+  metrics: {
+    [metricName: string]: any      // Relevant data points
+  },
+  confidence: number,               // 0-100
+  actionable: boolean,
+  suggestedAction?: string,
+  createdAt: timestamp,
+  dismissed: boolean
+}
+
+SynergyRule {
+  type: "positive" | "negative",
+  nutrients: [nutrientA, nutrientB],
+  effect: "enhances-absorption" | "reduces-absorption" | "requires-together",
+  magnitude: "high" | "medium" | "low",
+  explanation: string,
+  timeWindow?: number // minutes between meals for timing conflicts
+}
+```
+
+---
+
+## Legal & Compliance
+
+### Disclaimers (Required)
+1. **Main Banner (persistent):**
+   > "This application is for informational and educational purposes only. This is not medical advice. Consult a qualified healthcare professional before making dietary changes."
+
+2. **Supplement Page:**
+   > "These are general suggestions based on nutrient gaps. We may earn affiliate commissions. This is not medical advice."
+
+3. **Footer Links:**
+   - Full Legal Disclaimer (separate page)
+   - Privacy Policy (basic: data stored locally, no third-party sharing in v1)
+   - Terms of Service
+
+### Data Privacy
+- All user data stored locally (spark.kv) in MVP
+- No server-side storage in v1
+- Future: clearly communicate any cloud sync (premium tier)
+
+---
+
+## Open Questions & Decisions Needed
+
+1. **DV Customization:** Should MVP customize DVs by age/sex, or use RDA baseline for all?
+   - **Decision:** Start with single baseline (adult RDA), add customization in v1.1
+
+2. **Food Database:** Build custom, or integrate API (e.g., USDA, Nutritionix)?
+   - **Decision:** Start with curated 200-food mock database with comprehensive coverage, migrate to API in v1.1
+
+3. **Affiliate Partners:** Which brands to partner with?
+   - **Decision:** Start with Amazon Associates (broad), add specialized brands (Thorne, Garden of Life) in v1.1
+
+4. **Freemium Limits:** How much to give away free?
+   - **Decision:** Free = 7-day lookback, 3 gap suggestions/day. Premium = unlimited history, full suggestions, wearables.
+
+5. **Unit System Default:** Imperial (oz, lb) vs Metric (g, kg)?
+   - **Decision:** Default to imperial for US users, metric for international. Allow toggle in settings. Backend calculations standardized to metric for accuracy.
+
+6. **Supplement Tracking Depth:** How detailed should supplement tracking be in MVP?
+   - **Decision:** MVP = basic supplement logging with name, dose, timing. v1.1 = Amazon integration. v2.0+ = interaction warnings, restocking alerts.
+
+7. **User Authentication & Database:** When to implement login system?
+   - **Decision:** Phase 8 (post-MVP). Current version uses local storage (spark.kv). 
+   - **Implementation needs:** Supabase credentials (project URL, anon key) OR alternative database config
+   - **Critical requirement:** Developer health data MUST be isolated from user analytics and statistics
+   - **Benefits:** Multi-device sync, data backup, user accounts, social features (future)
+   - **Migration path:** One-time upload of local data to cloud database upon first login
+
+8. **GBDI Scoring Logic:** Should GBDI be a "destruction index" (lower = better) or health score (higher = better)?
+   - **Decision:** GBDI is a **Gut Biome Destruction Index** where lower scores indicate better health
+   - **Rationale:** Focuses on measuring harmful factors (ultra-processed foods, gut stressors, inflammatory compounds)
+   - **Includes:** Gut-brain axis components (omega-3s, neurotransmitter precursors, vagus nerve support)
+   - **Display:** Inverse visualization where green = low destruction, red = high destruction
+
+---
+
+## Implementation Priority Guide
+
+This section outlines the recommended order of implementation for maximum user value with minimal complexity.
+
+### Phase 1: Core Functionality (Weeks 1-2)
+**Goal:** Users can log food, see basic analysis, understand gaps
+
+1. **Food Database Foundation**
+   - Build comprehensive 200+ item food database
+   - Include all basic foods: proteins, vegetables, fruits, grains, dairy, oils, spices
+   - Add processed foods and common packaged items
+   - Implement basic supplements as "food" items initially
+
+2. **Unit Conversion System** ⚠️ CRITICAL
+   - Build `/lib/unitConverter.ts` with robust conversion logic
+   - Weight vs. volume detection ("100g chicken" vs "20oz water")
+   - Standardize backend storage (grams for solids, ml for liquids)
+   - Test edge cases: "6oz chicken" (weight), "20 fl oz water" (volume)
+   - Validation to prevent user errors
+
+3. **Logging Interface (Log Food page)**
+   - Text input with smart parsing
+   - Manual search and add ingredients
+   - Meal type selection (breakfast, lunch, dinner, snack)
+   - Display logged foods with portions
+
+4. **Nutrition Analysis Engine**
+   - Calculate daily totals for macros and micros
+   - Compare against Daily Values (DV)
+   - Color-coded status (red/yellow/green)
+
+5. **Basic Dashboard**
+   - Today's summary
+   - Nutrient grid with %DV
+   - Top 3 nutrient gaps
+
+### Phase 2: Gamification & Engagement (Week 3)
+**Goal:** Users return daily, feel progress, discover patterns
+
+6. **GBDI Score System**
+   - Calculate gut health score based on fiber, fermented foods, diversity
+   - Animated hero card on Dashboard
+   - Trend indicators (↑↓ vs yesterday)
+
+7. **Streak Tracker**
+   - Count consecutive logging days
+   - Visual calendar (last 7 days)
+   - Milestone celebrations
+
+8. **Achievement System**
+   - Define 15-20 achievements across rarity tiers
+   - Unlock logic based on logs
+   - Achievements panel with progress bars
+
+### Phase 3: Meal Planning & Templates (Week 4)
+**Goal:** Reduce friction, enable meal prep, build habits
+
+9. **Preset Meal Templates**
+   - 20-30 pre-built healthy meal templates
+   - Organized by meal type
+   - One-click logging from templates
+
+10. **Custom Meal Templates**
+    - Create template from current logs
+    - Manual ingredient builder
+    - Name and save for reuse
+
+11. **AI Autofill (optional for MVP)**
+    - User types meal description
+    - AI suggests ingredients using spark.llm
+    - Validate suggestions against food database
+    - Allow manual override
+
+12. **Weekly Meal Planner**
+    - Assign templates to days/meals
+    - Drag-and-drop interface
+    - Copy meals across days
+
+### Phase 4: Budget Tracker & Deep Analysis (Week 5)
+**Goal:** Users understand patterns over time
+
+13. **Food Budget Page**
+    - Time period selector (today, 7d, 30d)
+    - Nutrient "spending" vs "budget" (DV)
+    - Critical gap alerts (<50% DV)
+    - Trend indicators
+
+14. **Nutrient Timeline**
+    - Visual charts showing intake over days
+    - Identify deficiency patterns
+
+### Phase 5: Supplements & Synergies (Week 6)
+**Goal:** Track supplements, understand interactions
+
+15. **Supplement Data Model**
+    - Separate supplement type from food
+    - Dosing units (mg, mcg, IU)
+    - Timing preferences
+
+16. **Supplements UI**
+    - "Add Supplement" button on Log Food and Meal Planner
+    - Supplement-specific input form
+    - Display supplements separately in logs
+
+17. **Basic Synergy Detection**
+    - Build `/lib/synergies.ts` with rule engine
+    - Detect positive synergies (vitamin C + iron)
+    - Detect antagonisms (calcium + iron in same meal)
+    - Display warnings/suggestions in Dashboard
+
+### Phase 6: SleepSync Mode (Week 7)
+**Goal:** Optimize meal timing for sleep
+
+18. **Meal Time Tracking**
+    - Add time input to food logging
+    - Default times by meal type
+    - Store timestamps in logs
+
+19. **SleepSync Dashboard**
+    - Visual timeline of meals
+    - Last meal to sleep time calculation
+    - Sleep readiness score
+    - Recommendations for earlier eating
+
+20. **Sleep Schedule Configuration**
+    - User sets typical wake/sleep times
+    - Calculate optimal eating window
+    - Adjust recommendations accordingly
+
+### Phase 7: LifeFlow Mode (Week 8)
+**Goal:** Time-block scheduling with goals
+
+21. **Recurring Activities**
+    - Input form: name, category, days, time, duration
+    - Minutes/hours toggle for duration input
+    - Visual icon and color per category
+
+22. **Schedule Generation**
+    - Auto-generate 3-7 day schedule
+    - Pull in meals from NutriWell logs
+    - Detect conflicts and gaps
+    - Completion tracking
+
+23. **Goal System**
+    - Create goals with milestones
+    - Track progress with checkboxes
+    - Suggest goal tasks during free time blocks
+
+### Phase 8: User Authentication & Multi-User Support (Week 9-10)
+**Goal:** Enable secure login, protect privacy, allow multi-device access
+
+24. **Database Setup**
+    - Set up Supabase project (or alternative database)
+    - Create tables: users, user_profiles, food_logs, meal_templates, stress_logs
+    - Implement Row Level Security (RLS) policies
+    - Configure developer account exclusion from analytics
+
+25. **Authentication UI**
+    - Sign up page (email/password or magic link)
+    - Login page with "remember me" option
+    - Forgot password flow
+    - Account verification (email confirmation)
+    - Logout functionality
+
+26. **Data Migration System**
+    - Detect existing spark.kv data on first login
+    - Prompt user: "Upload local data to cloud?"
+    - One-time migration: push all local logs to database
+    - Post-migration: mark local data as synced
+    - Keep spark.kv as offline cache
+
+27. **Multi-Device Sync**
+    - Replace spark.kv hooks with database queries
+    - Implement optimistic UI updates (local-first)
+    - Background sync when online
+    - Conflict resolution (last-write-wins for MVP)
+    - Offline mode: queue changes, sync when reconnected
+
+28. **Developer Data Isolation**
+    - Flag developer accounts with `is_developer: true`
+    - Exclude developer data from:
+      - User count statistics
+      - Aggregate nutrient averages
+      - Public leaderboards (future)
+      - Recommendation training data (future)
+    - Test isolation with queries
+    - Document data privacy practices
+
+29. **Data Export & Deletion**
+    - Export data to JSON (all user data)
+    - Export to CSV (food logs, stress logs)
+    - Account deletion with cascade delete
+    - GDPR/CCPA compliance documentation
+
+30. **Security Hardening**
+    - Implement JWT token refresh
+    - Rate limiting on auth endpoints
+    - SQL injection prevention (parameterized queries)
+    - XSS protection
+    - CSRF tokens for sensitive actions
+
+### Phase 8a: New User Onboarding & Tutorial (Week 11)
+**Goal:** Reduce friction for first-time users, drive early engagement
+
+31. **Welcome Flow Implementation**
+    - Create multi-step onboarding wizard
+    - Profile setup (age, goals, dietary preferences)
+    - Mode selection screen
+    - Legal disclaimer acceptance
+    - Persist onboarding completion state
+
+32. **Interactive Tutorial System**
+    - Step-by-step guided tours for each mode
+    - Highlight UI elements with overlays
+    - Tooltip component with positioning logic
+    - Progress tracking (which steps completed)
+    - Skip and replay functionality
+
+33. **Tutorial Content Creation**
+    - Write copy for all tutorial steps
+    - Create tutorial state machine
+    - NutriWell tutorial (5 steps)
+    - SleepSync tutorial (3 steps)
+    - LifeFlow tutorial (4 steps)
+
+34. **Contextual Help System**
+    - Tooltip component for first-time feature use
+    - Help button icons throughout app
+    - Link tooltips to tutorial replay
+    - User preference storage for dismissed tooltips
+
+35. **Empty States & Onboarding Checklist**
+    - Design empty state illustrations/messages
+    - Create onboarding checklist component
+    - Track checklist progress in KV
+    - Auto-dismiss after completion or 7 days
+
+### Phase 8b: Daily Check-In Commitment System (Week 12)
+**Goal:** Daily accountability and task completion tracking
+
+36. **Check-In UI Components**
+    - Morning check-in modal/page
+    - Task suggestion algorithm
+    - Task selection interface (3-5 tasks)
+    - Custom task input
+    - Commitment confirmation screen
+
+37. **Task Invention Algorithm**
+    - Pull from active goals → micro-actions
+    - Analyze nutrient gaps → health tasks
+    - Check stress levels → wellness tasks
+    - Review unscheduled time → productivity tasks
+    - Suggest habit-building tasks
+
+38. **Throughout-Day Tracking**
+    - Quick-check task interface
+    - Swipe-to-complete gesture
+    - Progress indicator widget
+    - Defer to tomorrow option
+    - Completion timestamp recording
+
+39. **Historical Tracking System**
+    - `check-in-history` KV store implementation
+    - Calendar view component
+    - Weekly/monthly completion rate charts
+    - Category breakdown visualization
+    - Pattern detection algorithm
+
+40. **Insights & Accountability**
+    - Review incomplete tasks at next check-in
+    - Recommit option for yesterday's tasks
+    - Streak tracking for perfect days
+    - Achievement integration
+    - Celebration animations
+
+### Phase 8c: LifeFlow Auto-Task Generation (Week 13)
+**Goal:** Automatically populate schedule with common daily activities
+
+41. **Auto-Task Library**
+    - Define common task categories
+    - Morning routine tasks (brush teeth, water, stretch)
+    - Hygiene tasks (shower, floss, skincare)
+    - Hydration reminders (every 2-3 hours)
+    - Evening routine tasks
+    - Pet care tasks (if applicable)
+    - Household tasks
+
+42. **Smart Scheduling Algorithm**
+    - Place morning tasks after wake time
+    - Place evening tasks before sleep time
+    - Distribute hydration throughout day
+    - Avoid conflicts with existing activities
+    - Respect user deletions (learning system)
+
+43. **Auto-Task Settings**
+    - Toggle system on/off
+    - Category selection (which to auto-generate)
+    - Custom timing configuration
+    - Personal task additions to auto-list
+    - Frequency settings per task
+
+44. **Learning System**
+    - Track which auto-tasks user deletes
+    - Store deletion patterns in KV
+    - Don't re-suggest frequently removed tasks
+    - Adapt to user preferences over time
+
+### Phase 7k: Personalized Nutrition Profiles & Re-evaluation System ✅ COMPLETE
+**Goal:** Calculate personalized daily nutrient needs based on individual characteristics  
+**Status:** Core profile system and reminders fully integrated. Personalized DV calculations ready but not yet activated in nutrition engine.
+
+54. **Comprehensive User Profile System** ✅ IMPLEMENTED
+    - Physical characteristics: weight, height, age, sex ✅ Implemented in ExerciseProfileSetup.tsx
+    - Activity level integrated with exercise tracking ✅ Implemented
+    - Sleep schedule: Goal sleep time, wake time for SleepSync integration ✅ Implemented
+    - Health goals (weight loss, maintenance, gain, athletic performance) ✅ Implemented
+    - Special conditions support (pregnancy, lactation, vegetarian/vegan) ✅ Implemented
+    - Lifestyle factors: ✅ Implemented in LifestyleFactorsSetup.tsx
+      - ✅ **Caffeine intake tracking:** Daily caffeine consumption for adrenal load
+      - ✅ **Drug/supplement intake:** Other substances affecting health (nicotine, alcohol, medications)
+      - ✅ **Stress level baseline:** Used for personalized recommendations
+    - **Exercise goals:** ✅ Integrated with exercise creator
+      - Current fitness level
+      - Target activities and frequency
+      - Weight/body composition goals
+    
+55. **Personalized Daily Value Calculator** 📋 READY BUT NOT ACTIVE
+    - **Status:** Calculator fully implemented in `/lib/personalizedDVs.ts` but not yet integrated into nutrition engine
+    - **Calorie needs:** Based on BMR (Basal Metabolic Rate) and activity level ✅ Calculations ready
+      - Harris-Benedict equation for BMR calculation (`calculateBMR()`)
+      - Activity multipliers from exercise profile
+      - Goal adjustments (deficit for weight loss, surplus for gain)
+    - **Protein requirements:** 
+      - Sedentary: 0.8g per kg body weight
+      - Active/Athletes: 1.2-2.0g per kg
+      - Older adults (65+): 1.0-1.2g per kg
+    - **Vitamins & Minerals:** Adjusted for:
+      - Age-specific RDAs (children, adults, elderly)
+      - Sex-specific needs (iron for menstruating females, etc.)
+      - Activity level (increased B-vitamins, magnesium for athletes)
+      - Special conditions (pregnancy, lactation)
+    - **Fiber:** 14g per 1000 calories consumed
+    - **Hydration:** 30-35ml per kg body weight, increased for exercise
+    - Implementation: `/lib/personalizedDVs.ts` ✅ exists and functional, not yet used in nutrition engine
+    
+56. **Multi-Stage Profile Setup Strategy** ✅ FULLY IMPLEMENTED
+    - **Stage 1: Initial Setup (During Tutorial/Onboarding)** ✅ Implemented via WelcomeFlow
+      - Collects ONLY essential data needed immediately:
+        - Weight, height (for BMI/BMR)
+        - Age, sex (for basic RDA calculations)
+        - Activity level (sedentary to very active)
+        - Primary health goal (maintenance, weight loss, muscle gain, general wellness)
+      - Takes <2 minutes to complete
+      - Provides immediate value (personalized DVs calculated)
+      - Implementation: WelcomeFlow.tsx ✅ Integrated
+    
+    - **Stage 2: Sleep & Timing Setup** ✅ Available via ProfilePopupManager
+      - Goal sleep time and wake time
+      - Current sleep quality (optional)
+      - Eating window preferences
+      - Triggered: When user first switches to SleepSync mode
+      - Dismissible but recommended
+      - Implementation: ProfilePopupManager.tsx ✅ Integrated
+    
+    - **Stage 3: Exercise Goals** ✅ Implemented in ExerciseProfileSetup
+      - Current fitness level
+      - Preferred exercise types
+      - Exercise frequency goals
+      - Body composition targets
+      - Triggered: When user first opens Exercise Creator
+      - Integrated with workout generator
+      - Implementation: ExerciseProfileSetup.tsx ✅ Integrated
+    
+    - **Stage 4: Lifestyle Factors** ✅ Implemented in LifestyleFactorsSetup
+      - Caffeine intake (cups/day, timing)
+      - Alcohol consumption (drinks/week)
+      - Smoking/nicotine use
+      - Regular medications/supplements
+      - Stress level (baseline)
+      - Triggered: 7 days after account OR 5 logins (whichever is later)
+      - Helps refine adrenal load calculations and recommendations
+      - Dismissible with "Remind me later" option
+      - Implementation: LifestyleFactorsSetup.tsx ✅ Integrated via ProfilePopupManager
+    
+    - **Stage 5: Goal Setting** ❌ Planned (not yet triggered automatically)
+      - "What's one goal you're working toward?"
+      - Quick goal input form
+      - Suggests connecting goal to LifeFlow scheduling
+      - If exercise goals not already added, prompts for exercise goals
+      - Triggered: After 7 distinct page navigation clicks (framework ready, not yet active)
+      - Encourages active goal pursuit beyond nutrition
+      - Implementation: ProfilePopupManager.tsx has framework, trigger not yet active
+    
+57. **Periodic Re-evaluation System** ✅ FULLY IMPLEMENTED
+    - **7-day recurring reminder:** ✅ If user hasn't updated profile in 7+ days, prompt re-evaluation
+    - **Quick check-in questions:** ✅ All implemented
+      - "Has your weight changed?"
+      - "Has your activity level changed?"
+      - "Are you working toward a new fitness goal?"
+      - "Any new health considerations?"
+      - "How's your stress level been?" (if previously tracked)
+      - "Have your exercise habits changed?" (if exercise profile exists)
+    - **Smart timing:** ✅ Show prompt when user opens app, non-intrusive modal
+    - **Dismissible:** ✅ Can skip if nothing changed ("All good, check back in 7 days")
+    - **Snooze options:** ✅ "Remind me tomorrow" or "Skip this week"
+    - **Tracks last update:** ✅ Stores `lastProfileUpdate` timestamp
+    - **Visual indicator:** ✅ Subtle notification badge in Settings when update overdue
+    - Implementation: ProfileReminder.tsx ✅ Integrated into App.tsx
+    
+58. **Dynamic Daily Values Dashboard** 📋 READY BUT NOT ACTIVE
+    - All nutrient percentages calculated against personalized DVs (calculator ready, not yet active)
+    - Clear indication that values are personalized (UI enhancement planned)
+    - "Your daily needs" vs. "General RDA" (not yet displayed)
+    - Recalculates automatically when profile updates (logic ready)
+    - Shows what factors influenced DV calculation (hover tooltip planned)
+    - Integration: calculatePersonalizedDVs() exists in `/lib/personalizedDVs.ts`, not yet used in nutrition engine
+    
+59. **Profile History & Trends** ❌ NOT YET IMPLEMENTED
+    - Track weight changes over time (future enhancement)
+    - Monitor BMI progression (future enhancement)
+    - Adjust recommendations as profile evolves (future enhancement)
+    - Compare nutrient adequacy before/after profile updates (future enhancement)
+    - Historical activity level tracking (future enhancement)
+    - Goal progress correlation with nutrition adequacy (future enhancement)
+    - Implementation: NOT BUILT
+
+**SUMMARY - Phase 7k Status:**
+- ✅ Profile reminder system: COMPLETE and integrated
+- ✅ Profile popup manager: COMPLETE and integrated
+- ✅ Exercise profile: COMPLETE and integrated
+- ✅ Lifestyle factors: COMPLETE and integrated
+- ✅ BMR/TDEE calculations: COMPLETE and ready
+- 📋 Personalized DV calculator: COMPLETE but not yet active in nutrition engine
+- ❌ Profile history tracking: NOT YET IMPLEMENTED
+
+**Next Step for Full Activation:** Integrate `calculatePersonalizedDVs()` from `/lib/personalizedDVs.ts` into nutrition engine to replace standard RDA values.
+
+### Phase 8d: Enhanced Goal Progress Tracking ✅ COMPLETE (Week 14)
+**Goal:** Input-based milestone tracking beyond checkboxes  
+**Status:** Type system and data structures fully implemented
+
+60. **Quantitative Goal Types** ✅ Implemented
+    - Numeric input milestones ("Run 5 miles")
+    - Frequency counters ("Meditate 5x this week")
+    - Daily habits with check-in ("8 glasses water")
+    - Time-based goals (minutes, hours)
+    - Custom units (pages read, pushups, etc.)
+
+46. **Progress Input UI** 📋 Data structures ready, UI enhancement planned
+    - Input field for quantitative goals
+    - Increment/decrement buttons
+    - Quick-add presets (e.g., +1, +5, +10)
+    - Voice input option (future)
+    - Historical input log
+
+47. **Progress Visualization** 📋 Data structures ready, UI enhancement planned
+    - Line charts showing progress over time
+    - Comparison to target (on track, ahead, behind)
+    - Completion predictions based on pace
+    - Trend analysis (improving, steady, declining)
+    - Milestone celebration animations
+
+48. **Goal Analytics** 📋 Data structures ready, UI enhancement planned
+    - Average progress per day/week
+    - Consistency score (regular vs. sporadic)
+    - Correlation with other metrics (nutrient intake, stress, sleep)
+    - Success factors identification
+    - Recommendations for improvement
+
+### Phase 8e: Cross-Mode Synergy Enhancement (Week 15)
+**Goal:** Create intelligent connections between NutriWell, SleepSync, and LifeFlow
+
+49. **Nutrient-Aware Scheduling**
+    - High-protein breakfast → schedule morning workout
+    - Low energy nutrient days → suggest lighter activities
+    - Magnesium intake → correlate with stress/sleep
+    - Caffeine timing → adjust activity scheduling
+
+50. **GBDI-Informed Recommendations**
+    - Low GBDI day → schedule meditation/walk
+    - High ultra-processed intake → suggest cooking time next day
+    - Fermented food gaps → schedule grocery shopping
+    - Plant diversity low → meal planning reminder
+
+51. **Sleep Quality Feedback Loop**
+    - Poor sleep quality → suggest earlier dinner time in SleepSync
+    - Late meals detected → push notifications to LifeFlow
+    - Sleep debt → adjust activity intensity recommendations
+    - Optimal sleep nights → identify what worked (meal timing, activities)
+
+52. **Bidirectional Insights**
+    - "Low magnesium days correlate with missed yoga sessions"
+    - "Best sleep occurs when last meal before 6pm"
+    - "Highest productivity on days with morning exercise"
+    - "Stress spikes on days with <5 plant foods"
+    - Cross-mode insight cards on dashboard
+
+53. **Unified Dashboard Enhancements**
+    - Show cross-mode connections visually
+    - "Your week at a glance" - all three modes
+    - Synergy alerts: "Your schedule supports your nutrition goals"
+    - Conflict warnings: "Late dinner scheduled conflicts with sleep goal"
+    - Unified achievement system across all modes
+
+### Phase 9: Education Content Expansion (Week 11)
+**Goal:** Educate users, refine UX
+
+31. **Education Content Library**
+    - 10-15 educational cards
+    - Topics: synergies, gut health, meal timing
+    - Searchable by nutrient/topic
+
+32. **Recommendations Page**
+    - Personalized suggestions based on gaps
+    - Food-first recommendations
+    - Synergy-aware suggestions
+
+33. **Settings & Preferences**
+    - Dietary pattern selection
+    - Unit system toggle
+    - Supplement visibility toggle
+
+### Phase 10: Polish & Testing (Week 12)
+**Goal:** Production-ready quality
+
+34. **Error Handling**
+    - Graceful failures for invalid inputs
+    - Toast notifications for user actions
+    - Loading states
+
+35. **Performance Optimization**
+    - Lazy load historical data
+    - Memoize expensive calculations
+    - Optimize re-renders
+
+36. **User Testing**
+    - Beta test with 10-20 users (diverse dietary patterns)
+    - Gather feedback on friction points
+    - Iterate on confusing UI elements
+
+37. **Legal & Compliance**
+    - Finalize disclaimer language
+    - Persistent banner on all pages
+    - Privacy policy and ToS pages
+    - GDPR/CCPA compliance review
+
+---
+
+## Design Principles
+
+1. **Calm, Not Chaotic:** Soft colors, generous spacing, no alarm bells
+2. **Food First, Products Second:** Always prioritize whole food solutions
+3. **Warm & Digestible:** Default to cooked/room-temp suggestions
+4. **Educate, Don't Nag:** Explain *why* (synergy), not just *what* (eat more X)
+5. **Respect User Rituals:** Honor staples like liver, cultured dairy, pumpkin seeds
+6. **Transparency:** Clear disclaimers, honest about limitations, visible affiliate links
+7. **Data Accuracy:** Precise unit conversions and calculations are non-negotiable for user trust
+8. **Privacy First:** User health data is sacred - protect it rigorously, isolate developer data
+
+---
+
+## UI/UX Design Guidelines
+
+### Visual Design System
+
+**Color Palette:**
+- **Primary Green (oklch(0.42 0.19 160)):** Health, growth, nature - used for CTAs and positive actions
+- **Secondary Sage (oklch(0.88 0.05 130)):** Calm, supportive - used for secondary UI elements
+- **Accent Teal (oklch(0.70 0.15 150)):** Energy, vitality - used for highlights and active states
+- **Background Warm Cream (oklch(0.98 0.005 85)):** Soft, non-clinical - reduces eye strain
+- **Text Charcoal (oklch(0.15 0.01 85)):** Clear, readable - high contrast with background
+
+**Typography:**
+- **Headings:** Crimson Pro (serif) - elegant, trustworthy, health-conscious
+- **Body:** Inter (sans-serif) - clean, modern, highly readable
+- **Hierarchy:**
+  - H1 (App Title): Crimson Pro Bold, 32-40px
+  - H2 (Page Title): Crimson Pro Semibold, 24-28px
+  - H3 (Section): Inter Semibold, 18-20px
+  - Body: Inter Regular, 16px, line-height 1.6
+  - Small: Inter Regular, 14px (for metadata, timestamps)
+
+**Spacing & Layout:**
+- Container max-width: 1200px (7xl)
+- Content padding: 4-6 units (1-1.5rem)
+- Card padding: 6 units (1.5rem)
+- Section gaps: 8 units (2rem)
+- Element gaps: 4 units (1rem)
+- Grid: 12-column responsive grid
+
+**Border Radius:**
+- Cards: 0.75rem (rounded-xl)
+- Buttons: 0.75rem
+- Inputs: 0.75rem
+- Badges: 9999px (fully rounded)
+- Consistent rounding creates visual harmony
+
+**Shadows:**
+- Subtle elevation for cards (no harsh shadows)
+- Hover states: slight shadow increase
+- Focus states: ring with primary color
+
+### Component Design Patterns
+
+**Navigation:**
+- Horizontal tab navigation for main pages
+- Active tab highlighted with primary color
+- Icons + labels for clarity
+- Sticky navigation on scroll (optional)
+
+**Cards:**
+- White background (#FFFFFF) on cream page background
+- Subtle border (border-border)
+- Generous padding (6-8 units)
+- Clear hierarchy: title → metadata → content → actions
+- Hover states for interactive cards
+
+**Buttons:**
+- Primary: Solid primary color, white text, bold
+- Secondary: Outline, primary color border and text
+- Ghost: Text only, subtle hover background
+- Destructive: Red color for dangerous actions
+- Icon buttons: Phosphor icons, consistent size (20-24px)
+
+**Forms & Inputs:**
+- Clear labels above inputs
+- Placeholder text for examples
+- Inline validation (success/error states)
+- Helper text below for guidance
+- Focus states with ring
+
+**Data Visualization:**
+- Progress bars for nutrient %DV (color-coded by status)
+- Line charts for trends over time (Recharts)
+- Badge indicators for status (Excellent, Good, Fair, Poor)
+- Trend arrows (↑↓) for day-over-day changes
+- Color coding:
+  - Green: Optimal, sufficient, positive
+  - Yellow: Approaching, moderate, caution
+  - Orange: Low, needs attention
+  - Red: Critical, urgent, danger
+
+**Feedback & Notifications:**
+- Toast notifications (Sonner) for actions
+- Success: Green with checkmark icon
+- Error: Red with warning icon
+- Info: Blue with info icon
+- Loading states: Skeleton screens or spinners
+- Empty states: Friendly illustrations + CTA
+
+**Gamification Elements:**
+- Achievement badges with rarity colors (common, rare, epic, legendary)
+- Progress bars with smooth animations
+- Streak counter with fire emoji 🔥
+- Score cards with large numbers and trend indicators
+- Celebration animations on milestones (Framer Motion)
+
+### Responsive Design
+
+**Breakpoints:**
+- Mobile: < 768px (sm)
+- Tablet: 768px - 1024px (md)
+- Desktop: > 1024px (lg)
+
+**Mobile Adaptations:**
+- Navigation: Collapse to hamburger menu or bottom nav
+- Cards: Full-width, stack vertically
+- Tables: Horizontal scroll or card view
+- Forms: Full-width inputs, larger touch targets (44px min)
+- Charts: Simplified, key metrics only
+
+**Desktop Enhancements:**
+- Multi-column layouts (sidebar + content)
+- Hover states and tooltips
+- Keyboard shortcuts (future)
+- Expanded charts and visualizations
+
+### Accessibility
+
+**WCAG AA Compliance:**
+- Color contrast ratio: 4.5:1 for normal text, 3:1 for large text
+- All interactive elements have focus states
+- Form inputs have labels (not just placeholders)
+- Error messages are descriptive and actionable
+- Semantic HTML (headings, landmarks, lists)
+
+**Keyboard Navigation:**
+- Tab through interactive elements in logical order
+- Enter/Space to activate buttons
+- Escape to close modals/dialogs
+- Arrow keys for navigation menus (future)
+
+**Screen Reader Support:**
+- ARIA labels for icon-only buttons
+- ARIA live regions for dynamic content (toast notifications)
+- Descriptive alt text for images
+- Landmarks (header, main, nav, footer)
+
+**Motion Preferences:**
+- Respect `prefers-reduced-motion` media query
+- Disable animations for users who opt out
+- Provide instant feedback instead of transitions
+
+---
+
+## Data Quality & Accuracy Standards
+
+Given the critical importance of accurate nutritional calculations, especially with unit conversions, the following standards must be maintained:
+
+### Unit Conversion Accuracy
+1. **Weight Conversions:**
+   - 1 oz (weight) = 28.3495 g (use full precision in calculations, round for display)
+   - 1 lb = 453.592 g
+   - Always clarify "oz" vs "fl oz" to users
+
+2. **Volume Conversions:**
+   - 1 fl oz = 29.5735 ml
+   - 1 cup = 236.588 ml = 8 fl oz
+   - 1 tbsp = 14.7868 ml
+   - 1 tsp = 4.9289 ml
+
+3. **Context Detection Rules:**
+   - Liquids (water, milk, juice, oil) → default to volume (fl oz, ml, cups)
+   - Solids (meat, vegetables, fruits, grains) → default to weight (oz, g, lb)
+   - Ambiguous inputs → prompt user for clarification
+   - Examples:
+     - "20oz water" → interpret as 20 fl oz (volume)
+     - "6oz chicken" → interpret as 6 oz weight
+     - "100g chicken" → store as 100g, display oz equivalent (3.5 oz)
+
+4. **Validation Rules:**
+   - Prevent nonsensical entries (e.g., "1000g water glass")
+   - Warn on unusual quantities (e.g., "50 cups oatmeal")
+   - Suggest typical serving sizes when user enters atypical amounts
+
+### Nutritional Database Standards
+1. **Source Priority:**
+   - USDA FoodData Central (primary reference)
+   - Manufacturer nutrition labels (branded items)
+   - Peer-reviewed nutritional databases
+   - Never estimate or guess nutritional values
+
+2. **Serving Size Standardization:**
+   - All foods have standardized serving size in database
+   - Nutritional values stored per 100g (solids) or 100ml (liquids)
+   - User quantities scaled proportionally with high precision
+
+3. **Micronutrient Coverage:**
+   - Aim for complete micronutrient profiles (20+ nutrients per food)
+   - Mark missing data explicitly (null vs. 0)
+   - Prioritize foods with complete data for MVP database
+
+4. **Regular Updates:**
+   - Review and update nutritional data quarterly
+   - Flag items needing review when new data published
+   - Version database for audit trail
+
+### Calculation Precision
+1. **Internal Calculations:**
+   - Use floating-point precision for all calculations
+   - Never round intermediate values
+   - Only round for final display to user
+
+2. **Display Rounding:**
+   - Calories: whole numbers
+   - Macros: 1 decimal place (e.g., 23.5g protein)
+   - Micros: contextual (vitamin C: whole numbers mg, B12: 1 decimal mcg)
+   - Percentages: whole numbers (e.g., 85% DV)
+
+3. **Aggregation Logic:**
+   - Sum nutrients across all logged foods per day
+   - Handle missing data gracefully (don't count as 0)
+   - Flag incomplete data to user when significant
+
+### Testing & Validation
+1. **Unit Test Coverage:**
+   - 100% coverage for unit conversion functions
+   - Edge cases: very small amounts, very large amounts, zero
+   - Boundary testing for all conversion factors
+
+2. **Integration Testing:**
+   - End-to-end logging scenarios with various units
+   - Cross-verify calculations against known meal totals
+   - Test AI autofill suggestions for accuracy
+
+3. **User Acceptance Testing:**
+   - Beta testers verify real meal logs against manual calculations
+   - Spot-check random logs for accuracy
+   - Gather feedback on confusing unit interpretations
+
+---
+
+## Launch Plan
+
+### Pre-Launch (Weeks 1-4)
+- Build MVP
+- Test with 10-20 beta users (diverse dietary patterns)
+- Refine suggestion engine based on feedback
+- Finalize legal disclaimers with counsel review
+
+### Launch (Week 5)
+- Soft launch on Product Hunt, Reddit (r/nutrition, r/biohacking)
+- SEO content: "How to fix iron absorption", "Gut-friendly meal ideas"
+- Free tier only
+
+### Post-Launch (Weeks 6-12)
+- Gather user feedback on gap suggestions
+- A/B test affiliate placement
+- Introduce premium tier in week 8
+- Begin wearable integration planning
+
+---
+
+## Appendix: Competitive Landscape
+
+| Competitor | Strengths | Weaknesses | NutriWell Advantage |
+|------------|-----------|------------|---------------------|
+| **MyFitnessPal** | Huge food database, popular | Calorie-focused, weak micronutrient tracking, cluttered UI | Micronutrient depth, synergy insights, gut focus |
+| **Cronometer** | Excellent micronutrient tracking | Complex UI, steep learning curve, not gut-focused | Simpler UX, gut health scoring, warm food prioritization |
+| **Cara** | Gut health focus (CGM integration) | Expensive, requires CGM, narrow focus | Broader nutrient tracking, no hardware required, food synergies |
+| **ZOE** | Microbiome testing, personalized | $300+ upfront, UK-focused | Immediate value, no testing required, US-friendly |
+
+**Positioning:** *"The missing link between macro tracking and gut health — without the complexity or cost."*
+
+---
+
+**Document Version:** 1.0  
+**Last Updated:** 2024  
+**Owner:** Product Team
