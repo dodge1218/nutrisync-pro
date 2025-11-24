@@ -1,14 +1,14 @@
 # Product Requirements Document: NutriWell & Wellness Suite
 
-**Status**: ✅ Production Ready + Phase 9 Complete (Personalized DVs)  
+**Status**: ✅ Production Ready + Phase 9 Complete (Personalized DVs) + Net Calories + Cloud Sync  
 **Last Updated**: January 2025  
-**Version**: 3.2
+**Version**: 3.3
 
 ---
 
 ## 🎯 Implementation Status Summary
 
-### ✅ ALL CORE FEATURES COMPLETE (Phases 1-8e + Phase 9)
+### ✅ ALL CORE FEATURES COMPLETE (Phases 1-9 + Net Calories + Cloud Sync)
 
 **NutriWell Mode** - Smart Nutrition Intelligence
 - ✅ Food logging with intelligent unit conversion
@@ -22,6 +22,7 @@
 - ✅ Adrenal load tracking & stress-aware suggestions
 - ✅ Multi-metric health correlations visualization
 - ✅ AI-powered weekly insights (GPT-4o-mini)
+- ✅ **Net calorie tracking** (consumed - exercise burned) with toggle switch
 
 **SleepSync Mode** - Sleep-Optimized Meal Timing
 - ✅ Circadian meal timing analysis
@@ -43,7 +44,12 @@
 
 **System-Wide Features**
 - ✅ User authentication (email/password with Supabase)
-- ✅ Cloud data sync with multi-device support
+- ✅ **Cloud data sync with multi-device support** (auto 2-second debounce)
+  - ✅ Supabase backend with Row Level Security
+  - ✅ Manual Push/Pull controls
+  - ✅ Smart migration tool for existing users
+  - ✅ Enable/disable toggle with status indicators
+  - ✅ Error handling and graceful fallback
 - ✅ New user onboarding with 4-step welcome flow
 - ✅ Interactive tutorials for all three modes
 - ✅ Personalized nutrition profile system
@@ -51,7 +57,6 @@
 - ✅ 7-day re-evaluation reminders with snooze
 - ✅ Cross-mode synergy detection & insights
 - ✅ Legal disclaimer banner (persistent)
-- ✅ Net calorie tracking (consumed - exercise burned)
 - ✅ Responsive design (mobile & desktop)
 
 ---
@@ -60,23 +65,30 @@
 
 **Priority 1: Critical for Scale**
 - [x] **User Authentication** - ✅ Email/password auth with Supabase (COMPLETE)
-- [x] **Cloud Data Storage & Sync** - ✅ COMPLETE - Full cloud sync implemented
+- [x] **Cloud Data Storage & Sync** - ✅ COMPLETE - Full cloud sync implemented (January 2025)
   - ✅ Multi-device sync with automatic 2-second debounce
   - ✅ Real-time cloud backup to Supabase
   - ✅ Manual Push/Pull controls for data management
   - ✅ Smart migration tool for existing local data
   - ✅ Enable/disable toggle in Settings
   - ✅ Sync status indicators and error handling
+  - ✅ Row Level Security (RLS) - users can only access their own data
+  - ✅ JSONB storage for flexible data structures
+  - ✅ Automatic indexing for fast queries
+  - ✅ Error handling with graceful fallback to local storage
 - [ ] **Data Export/Deletion** - GDPR compliance features
   - Export to JSON/CSV
   - Account deletion with cascade delete
   
 **Priority 2: Engagement & Retention**
 - [x] **Activate Personalized DVs** - ✅ COMPLETE - Calculator integrated with toggle in Settings
-- [x] **Exercise-Nutrition Integration** - ✅ Net calorie tracking COMPLETE
+- [x] **Exercise-Nutrition Integration** - ✅ Net calorie tracking COMPLETE (January 2025)
   - ✅ Net calorie display (consumed - burned)
-  - ✅ Toggle switch on Dashboard to view net vs gross calories
+  - ✅ Toggle switch on Food Budget page to view net vs gross calories
   - ✅ Exercise calorie burn integration from LifeFlow
+  - ✅ Automatic detection when exercise logs exist for today
+  - ✅ Flame icon indicator showing calories burned
+  - ✅ Real-time updates as food/exercise logged
   - [ ] Post-workout meal suggestions (planned)
 - [ ] **Profile History Tracking** - Weight/BMI trends, nutrient adequacy over time
 - [ ] **Advanced Educational Content** - Library expansion with more synergy cards
@@ -120,9 +132,9 @@
 | Onboarding & Tutorials | ✅ Complete | First launch |
 | Profile Reminders | ✅ Complete | App-wide |
 | **User Authentication** | ✅ Complete | Email/password with Supabase |
-| **Cloud Data Sync** | ❌ Not Built | Data stored locally (browser only) |
+| **Cloud Data Sync** | ✅ Complete | Multi-device sync + backup |
 | **Personalized DVs Active** | ✅ Complete | Settings → Use Personalized Daily Values toggle |
-| **Net Calorie Tracking** | ❌ Not Built | Food Budget enhancement |
+| **Net Calorie Tracking** | ✅ Complete | Food Budget toggle for net vs gross |
 | **Wearable Sync** | ❌ Not Built | Future integration |
 | **Photo Logging** | ❌ Not Built | AI/API partnership needed |
 | **Lab Integration** | ❌ Not Built | Data import system needed |
