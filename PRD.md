@@ -3462,9 +3462,9 @@ MealTemplate {
 UserProfile {
   staples: { liver: "2-3x/week", culturedDairy: "2x/week", pumpkinSeeds: "daily" },
   preferences: { 
-    warmFoods: true, 
-    showSupplements: false,
-    unitSystem: "imperial" | "metric" | "auto",
+  recurringActivities: [{ name, category, days, time, duration }],
+  onboardingComplete: boolean,
+  tutorialProgress: { step: number, mode: string, completed: boolean },
     autoTasksEnabled: boolean,
     autoTaskCategories: string[],
   },
