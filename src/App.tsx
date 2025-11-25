@@ -130,7 +130,44 @@ function App() {
     return <LoginForm />
   }
 
-  if (!onboardingProfile) {
+  // Only show onboarding if user is NOT logged in (handled above) or if we want to force it for new users.
+  // However, the requirement is: "when the app detects a user is already logged in and already completed setup, it should not ever display the get started pop up again."
+  // Since we don't track "setup completed" in user metadata yet, we assume logged in users are setup.
+  // If we are strictly local (no user), we rely on onboardingProfile.
+  // But here !user returns LoginForm. So we are always logged in here (or mock logged in).
+  // Wait, if !user returns LoginForm, then we are authenticated.
+  // If we are authenticated, we should check if we have a profile.
+  // If we don't have a profile locally, we might want to show onboarding OR skip it if we assume they did it elsewhere.
+  // The user request implies they are seeing it when they shouldn't.
+  // So we will skip WelcomeFlow if user is present, even if onboardingProfile is null.
+  // But wait, if I just remove the check, new users won't see it?
+  // New users (sign up) will have user object.
+  // We need a way to distinguish.
+  // But the user said "already completed setup".
+  // I will assume that if onboardingProfile is null, we check if there are logs?
+  // Or I will just implement the requested logic: If logged in, don't show it?
+  // But new users are also logged in.
+  // Let's look at the logic again.
+  // "when the app detects a user is already logged in and already completed setup"
+  // Maybe I should check if they have logs?
+  
+  if (!onboardingProfile && (!user || (user.created_at && new Date(user.created_at).getTime() > Date.now() - 60000))) {
+     // This is getting complicated.
+     // Let's just trust the user's request: "it should not ever display the get started pop up again" (if logged in and setup).
+     // If I change it to:
+     // if (!onboardingProfile && !user) -> This is impossible because !user returns early.
+     // So if we are here, user is present.
+     // So if (!onboardingProfile) is true, we show it.
+     // The user wants us NOT to show it if they are setup.
+     // I will add a check for foodLogs.length > 0.
+  }
+  
+  // Actually, simpler: The user probably just wants to bypass this check if they are logged in.
+  // But for a BRAND NEW user, they need it.
+  // I'll check if the user has any data.
+  const hasData = logs.length > 0 || appMode !== 'nutriwell'; 
+  
+  if (!onboardingProfile && !hasData) {
     return (
       <Suspense fallback={<LoadingSpinner />}>
         <WelcomeFlow onComplete={handleOnboardingComplete} />

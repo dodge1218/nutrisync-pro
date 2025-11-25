@@ -9,8 +9,15 @@ export function ModeToggle({ className }: { className?: string }) {
     <Button
       variant="ghost"
       size="icon"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className={className}
+      onClick={() => {
+        if (theme === 'dark') setTheme('light')
+        else if (theme === 'light') setTheme('dark')
+        else {
+          const systemIsDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+          setTheme(systemIsDark ? "light" : "dark")
+        }
+      }}
+      className={cn("text-foreground", className)}
       title="Toggle theme"
     >
       <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

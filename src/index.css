@@ -79,7 +79,7 @@
 
 .dark {
   /* Zinc-like Dark Mode Palette */
-  --background: oklch(0.10 0.005 260); /* Very dark grey/blue */
+  --background: oklch(0.15 0.02 260); /* Dark blue-grey, not pure black */
   --foreground: oklch(0.98 0.005 260); /* Almost white */
 
   --card: oklch(0.14 0.005 260); /* Slightly lighter than background */
