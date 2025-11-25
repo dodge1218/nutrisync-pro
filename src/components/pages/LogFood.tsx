@@ -11,6 +11,7 @@ import { Plus, Trash, Check, Storefront, ForkKnife } from '@phosphor-icons/react
 import { toast } from 'sonner'
 import { FOODS_DATABASE, type Food } from '../../data/foods'
 import { MEAL_TEMPLATES, type MealTemplate } from '../../data/mealTemplates'
+import { SmartMealAutofill } from '../SmartMealAutofill'
 import type { FoodLog } from '../../lib/nutritionEngine'
 import type { Page } from '../../types'
 
@@ -131,6 +132,35 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
     toast.success(`Logged ${template.name}`)
   }
 
+  const handleSmartAddMeals = (meals: { mealType: string; foods: { food: Food; quantity: number }[] }[]) => {
+    const now = new Date()
+    const todayStr = now.toISOString().split('T')[0]
+    
+    const newLogs: FoodLog[] = []
+
+    meals.forEach(meal => {
+      // Set time based on meal type
+      const mealTime = new Date(now)
+      if (meal.mealType === 'breakfast') mealTime.setHours(8, 0, 0, 0)
+      else if (meal.mealType === 'lunch') mealTime.setHours(12, 30, 0, 0)
+      else if (meal.mealType === 'dinner') mealTime.setHours(18, 30, 0, 0)
+      else mealTime.setHours(15, 0, 0, 0)
+
+      meal.foods.forEach(item => {
+        newLogs.push({
+          id: `${Date.now()}-${Math.random()}`,
+          foodId: item.food.id,
+          food: item.food,
+          quantity: item.quantity,
+          timestamp: mealTime.toISOString(),
+          mealType: meal.mealType as any,
+        })
+      })
+    })
+
+    setFoodLogs((current) => [...current, ...newLogs])
+  }
+
   const today = new Date().toISOString().split('T')[0]
   const todaysLogs = foodLogs.filter(log => log.timestamp.startsWith(today))
 
@@ -216,6 +246,7 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
           <div className="space-y-2">
             <Label>Quick Log Complete Meals</Label>
             <div className="flex flex-wrap gap-2">
+              <SmartMealAutofill foodLogs={foodLogs} onAddMeals={handleSmartAddMeals} />
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="secondary" size="sm" className="gap-2">
