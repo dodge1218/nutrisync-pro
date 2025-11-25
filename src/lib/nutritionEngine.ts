@@ -1,5 +1,6 @@
 import type { Food } from '../data/foods'
 import { getNutrientDV, type NutrientKey } from './dailyValues'
+import type { ExerciseLog } from './exerciseEngine'
 
 export interface FoodLog {
   id: string
@@ -63,6 +64,14 @@ export interface SynergySuggestion {
   warmOption?: string
 }
 
+export interface PostWorkoutSuggestion {
+  type: 'protein' | 'carbs' | 'hydration' | 'electrolytes'
+  title: string
+  description: string
+  priority: 'high' | 'medium'
+  suggestion: string
+}
+
 export interface WellnessAudit {
   gbdi: number
   adrenalLoad: number
@@ -85,6 +94,7 @@ export interface AnalysisResult {
   gaps: NutrientGap[]
   timingConflicts: TimingConflict[]
   synergySuggestions: SynergySuggestion[]
+  postWorkoutSuggestions: PostWorkoutSuggestion[]
   wellnessAudit: WellnessAudit
   stapleCompliance?: StapleCompliance
   gutSupportScore: number
@@ -659,7 +669,100 @@ export function generateTopFixes(
     .map(f => f.text)
 }
 
-export function analyzeDailyIntake(logs: FoodLog[], userProfile?: { staples?: boolean }): AnalysisResult {
+export function detectPostWorkoutNeeds(logs: FoodLog[], exerciseLogs: ExerciseLog[]): PostWorkoutSuggestion[] {
+  const suggestions: PostWorkoutSuggestion[] = []
+  const now = Date.now()
+  const twoHoursAgo = now - (2 * 60 * 60 * 1000)
+
+  // Find recent intense workouts (last 2 hours)
+  const recentWorkouts = exerciseLogs.filter(log => 
+    log.timestamp >= twoHoursAgo && 
+    (log.intensity === 'high' || log.duration >= 45)
+  )
+
+  if (recentWorkouts.length === 0) return suggestions
+
+  // Check if a meal was logged AFTER the workout
+  const lastWorkoutTime = Math.max(...recentWorkouts.map(w => w.timestamp))
+  const mealsAfterWorkout = logs.filter(log => {
+    const logTime = new Date(log.timestamp).getTime()
+    return logTime > lastWorkoutTime
+  })
+
+  const hasMealAfter = mealsAfterWorkout.length > 0
+  
+  // Calculate totals for post-workout meal if it exists
+  let postWorkoutProtein = 0
+  let postWorkoutCarbs = 0
+  
+  if (hasMealAfter) {
+    const totals = calculateNutrientTotals(mealsAfterWorkout)
+    postWorkoutProtein = totals.protein
+    postWorkoutCarbs = totals.carbs
+  }
+
+  // Generate suggestions
+  const workoutType = recentWorkouts[0].activityName.toLowerCase()
+  const isStrength = workoutType.includes('lift') || workoutType.includes('strength') || workoutType.includes('bodyweight')
+  const isCardio = !isStrength
+
+  if (!hasMealAfter) {
+    if (isStrength) {
+      suggestions.push({
+        type: 'protein',
+        title: 'Post-Workout Protein Needed',
+        description: 'You finished a strength workout but haven\'t logged a recovery meal yet.',
+        priority: 'high',
+        suggestion: 'Eat 20-30g of protein within 2 hours to maximize muscle repair. Try a protein shake, eggs, or chicken.'
+      })
+    } else {
+      suggestions.push({
+        type: 'carbs',
+        title: 'Refuel Your Glycogen',
+        description: 'You finished a cardio session. Your body needs carbs to replenish energy stores.',
+        priority: 'medium',
+        suggestion: 'Eat a balanced meal with carbs and protein. Oatmeal with fruit or a turkey sandwich are great options.'
+      })
+    }
+    
+    suggestions.push({
+      type: 'hydration',
+      title: 'Rehydrate',
+      description: 'Don\'t forget to replace fluids lost during exercise.',
+      priority: 'high',
+      suggestion: 'Drink 16-24oz of water. If you sweat heavily, consider electrolytes.'
+    })
+  } else {
+    // Analyze the post-workout meal
+    if (isStrength && postWorkoutProtein < 20) {
+      suggestions.push({
+        type: 'protein',
+        title: 'Increase Post-Workout Protein',
+        description: `Your post-workout meal only had ${Math.round(postWorkoutProtein)}g protein. Aim for 20-30g.`,
+        priority: 'medium',
+        suggestion: 'Add a side of Greek yogurt, a hard-boiled egg, or a scoop of protein powder.'
+      })
+    }
+    
+    if (isCardio && postWorkoutCarbs < 30) {
+       suggestions.push({
+        type: 'carbs',
+        title: 'Add Carbs for Recovery',
+        description: `Your post-workout meal was low in carbs (${Math.round(postWorkoutCarbs)}g). Carbs help restore energy.`,
+        priority: 'medium',
+        suggestion: 'Add a banana, rice, or sweet potato to your meal.'
+      })
+    }
+  }
+
+  return suggestions
+}
+
+export function analyzeDailyIntake(
+  logs: FoodLog[], 
+  userProfile?: { staples?: boolean },
+  exerciseLogs?: ExerciseLog[]
+): AnalysisResult {
   const totals = calculateNutrientTotals(logs)
   const gaps = detectNutrientGaps(totals)
   const timingConflicts = detectTimingConflicts(logs)
@@ -667,12 +770,14 @@ export function analyzeDailyIntake(logs: FoodLog[], userProfile?: { staples?: bo
   const wellnessAudit = performWellnessAudit(logs, totals)
   const gutSupportScore = calculateGutSupportScore(logs, totals)
   const topFixes = generateTopFixes(gaps, synergySuggestions, wellnessAudit, totals)
+  const postWorkoutSuggestions = exerciseLogs ? detectPostWorkoutNeeds(logs, exerciseLogs) : []
 
   const result: AnalysisResult = {
     totals,
     gaps,
     timingConflicts,
     synergySuggestions,
+    postWorkoutSuggestions,
     wellnessAudit,
     gutSupportScore,
     topFixes

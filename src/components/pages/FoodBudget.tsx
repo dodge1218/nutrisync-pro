@@ -128,7 +128,10 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
   const criticalGaps = gaps.filter(g => g.severity === 'critical' && g.nutrient !== 'sodium')
   const moderateGaps = gaps.filter(g => g.severity === 'moderate' && g.nutrient !== 'sodium')
 
-  const todayExerciseLogs = (exerciseLogs || []).filter(log => log.date === today)
+  const todayExerciseLogs = (exerciseLogs || []).filter(log => {
+    const logDate = new Date(log.timestamp).toISOString().split('T')[0]
+    return logDate === today
+  })
   const todayCaloriesBurned = todayExerciseLogs.reduce((sum, log) => sum + log.caloriesBurned, 0)
   const netCalories = totals.calories - todayCaloriesBurned
 

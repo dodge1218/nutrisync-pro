@@ -4,11 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Badge } from '../ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Separator } from '../ui/separator'
-import { Lightbulb, Warning, Sparkle, ShoppingCart, Lightning } from '@phosphor-icons/react'
+import { Lightbulb, Warning, Sparkle, ShoppingCart, Lightning, Barbell } from '@phosphor-icons/react'
 import { analyzeDailyIntake, type FoodLog } from '../../lib/nutritionEngine'
 import { matchProductsToGaps } from '../../lib/affiliate'
 import { calculateEnhancedAdrenalLoad } from '../../lib/adrenalEngine'
 import type { StressLog } from '../StressTracker'
+import type { ExerciseLog } from '../../lib/exerciseEngine'
 
 interface RecommendationsProps {
   foodLogs: FoodLog[]
@@ -18,15 +19,21 @@ export default function Recommendations({ foodLogs }: RecommendationsProps) {
   const today = new Date().toISOString().split('T')[0]
   const todaysLogs = foodLogs.filter(log => log.timestamp.startsWith(today))
   const [stressLogs] = useKV<StressLog[]>('stress-logs', [])
+  const [exerciseLogs] = useKV<ExerciseLog[]>('exercise-logs', [])
 
   const todayStressLog = stressLogs?.find(log => 
     log.timestamp.startsWith(today)
   )
 
+  const todaysExerciseLogs = exerciseLogs?.filter(log => {
+    const logDate = new Date(log.timestamp).toISOString().split('T')[0]
+    return logDate === today
+  }) || []
+
   const analysis = useMemo(() => {
     if (todaysLogs.length === 0) return null
-    return analyzeDailyIntake(todaysLogs, { staples: true })
-  }, [todaysLogs])
+    return analyzeDailyIntake(todaysLogs, { staples: true }, todaysExerciseLogs)
+  }, [todaysLogs, todaysExerciseLogs])
 
   const adrenalLoadResult = useMemo(() => {
     if (!analysis) return null
@@ -101,6 +108,46 @@ export default function Recommendations({ foodLogs }: RecommendationsProps) {
                   </div>
                 </div>
                 {index < analysis.synergySuggestions.length - 1 && <Separator />}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {analysis.postWorkoutSuggestions && analysis.postWorkoutSuggestions.length > 0 && (
+        <Card className="border-blue-200 bg-blue-50/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Barbell className="text-blue-600" weight="fill" />
+              Post-Workout Recovery
+            </CardTitle>
+            <CardDescription className="text-blue-900">
+              Optimized recommendations based on your recent activity
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {analysis.postWorkoutSuggestions.map((suggestion, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <Badge variant={
+                    suggestion.priority === 'high' ? 'default' : 'secondary'
+                  } className={suggestion.priority === 'high' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-200 text-blue-800 hover:bg-blue-300'}>
+                    {suggestion.priority}
+                  </Badge>
+                  <div className="flex-1">
+                    <div className="font-medium text-blue-900">{suggestion.title}</div>
+                    <p className="text-sm text-blue-800 mt-1">
+                      {suggestion.description}
+                    </p>
+                    <Alert className="mt-2 bg-white border-blue-200">
+                      <Lightbulb className="h-4 w-4 text-blue-600" weight="fill" />
+                      <AlertDescription className="text-sm text-blue-900">
+                        <strong>Tip:</strong> {suggestion.suggestion}
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+                </div>
+                {index < analysis.postWorkoutSuggestions!.length - 1 && <Separator className="bg-blue-200" />}
               </div>
             ))}
           </CardContent>
