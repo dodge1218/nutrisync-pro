@@ -171,28 +171,31 @@ function App() {
       
       <DisclaimerBanner />
       
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <header className="mb-10">
-          <div className="flex items-center justify-between gap-6 flex-wrap">
-            <div className="flex items-center gap-4">
+      <div className="container mx-auto px-6 py-6 max-w-7xl">
+        <header className="mb-8">
+          <div className="flex items-center justify-between gap-6 flex-wrap bg-card/60 backdrop-blur-sm rounded-2xl p-6 border border-border/50 shadow-lg shadow-primary/5">
+            <div className="flex items-center gap-5">
               {mode === 'nutriwell' ? (
-                <div className="p-3 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl shadow-sm border border-primary/20">
-                  <Leaf className="w-10 h-10 text-primary" weight="fill" />
+                <div className="relative p-4 bg-gradient-to-br from-primary to-primary/80 rounded-xl shadow-lg">
+                  <Leaf className="w-8 h-8 text-primary-foreground" weight="duotone" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
                 </div>
               ) : mode === 'sleepsync' ? (
-                <div className="p-3 bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-2xl shadow-sm border border-secondary/20">
-                  <Moon className="w-10 h-10 text-secondary" weight="fill" />
+                <div className="relative p-4 bg-gradient-to-br from-secondary to-secondary/80 rounded-xl shadow-lg">
+                  <Moon className="w-8 h-8 text-secondary-foreground" weight="duotone" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
                 </div>
               ) : (
-                <div className="p-3 bg-gradient-to-br from-accent/20 to-accent/10 rounded-2xl shadow-sm border border-accent/20">
-                  <CalendarBlank className="w-10 h-10 text-accent" weight="fill" />
+                <div className="relative p-4 bg-gradient-to-br from-accent to-accent/80 rounded-xl shadow-lg">
+                  <CalendarBlank className="w-8 h-8 text-accent-foreground" weight="duotone" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
                 </div>
               )}
               <div>
-                <h1 className="text-4xl font-bold text-foreground tracking-tight">
+                <h1 className="text-3xl font-bold text-foreground tracking-tight mb-1">
                   {mode === 'nutriwell' ? 'NutriWell' : mode === 'sleepsync' ? 'SleepSync' : 'LifeFlow'}
                 </h1>
-                <p className="text-sm text-muted-foreground mt-0.5 font-medium">
+                <p className="text-sm text-muted-foreground font-medium">
                   {mode === 'nutriwell' 
                     ? 'Smart nutrition intelligence'
                     : mode === 'sleepsync'
@@ -202,15 +205,15 @@ function App() {
                 </p>
               </div>
             </div>
-            <div className="flex gap-2 items-center flex-wrap justify-end">
+            <div className="flex gap-3 items-center flex-wrap justify-end">
               {mode !== 'nutriwell' && (
                 <Button
                   variant="outline"
                   size="default"
                   onClick={() => switchMode('nutriwell')}
-                  className="flex items-center gap-2 font-semibold shadow-sm hover:shadow-md transition-all"
+                  className="flex items-center gap-2.5 font-semibold bg-card/50 hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-all duration-200"
                 >
-                  <Leaf className="w-4 h-4" weight="fill" />
+                  <Leaf className="w-4 h-4" weight="duotone" />
                   NutriWell
                 </Button>
               )}
@@ -219,9 +222,9 @@ function App() {
                   variant="outline"
                   size="default"
                   onClick={() => switchMode('sleepsync')}
-                  className="flex items-center gap-2 font-semibold shadow-sm hover:shadow-md transition-all"
+                  className="flex items-center gap-2.5 font-semibold bg-card/50 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200"
                 >
-                  <Moon className="w-4 h-4" weight="fill" />
+                  <Moon className="w-4 h-4" weight="duotone" />
                   SleepSync
                 </Button>
               )}
@@ -230,9 +233,9 @@ function App() {
                   variant="outline"
                   size="default"
                   onClick={() => switchMode('lifeflow')}
-                  className="flex items-center gap-2 font-semibold shadow-sm hover:shadow-md transition-all"
+                  className="flex items-center gap-2.5 font-semibold bg-card/50 hover:bg-accent/10 hover:text-accent hover:border-accent/50 transition-all duration-200"
                 >
-                  <CalendarBlank className="w-4 h-4" weight="fill" />
+                  <CalendarBlank className="w-4 h-4" weight="duotone" />
                   LifeFlow
                 </Button>
               )}
@@ -240,10 +243,10 @@ function App() {
                 variant="ghost"
                 size="default"
                 onClick={handleSignOut}
-                className="flex items-center gap-2 hover:bg-muted/80 transition-all"
+                className="flex items-center gap-2 hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
                 title="Sign Out"
               >
-                <SignOut className="w-4 h-4" />
+                <SignOut className="w-5 h-5" weight="duotone" />
               </Button>
             </div>
           </div>
@@ -253,7 +256,7 @@ function App() {
           <>
             <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
 
-            <main className="mt-8">
+            <main className="mt-6">
               {currentPage === 'food-budget' && (
                 <FoodBudget foodLogs={logs} />
               )}
@@ -286,11 +289,11 @@ function App() {
             </main>
           </>
         ) : mode === 'sleepsync' ? (
-          <main className="mt-8">
+          <main className="mt-6">
             <SleepSync foodLogs={logs} />
           </main>
         ) : (
-          <main className="mt-8">
+          <main className="mt-6">
             <LifeFlow foodLogs={logs} />
           </main>
         )}

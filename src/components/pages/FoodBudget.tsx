@@ -104,27 +104,27 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
     const { status, color, trend } = getBudgetStatus(percentOfDV)
 
     return (
-      <div key={nutrient} className="p-3 border rounded-lg bg-card">
-        <div className="flex items-start justify-between mb-2">
+      <div key={nutrient} className="p-4 border border-border/60 rounded-xl bg-card/60 backdrop-blur-sm hover:shadow-md transition-all duration-200">
+        <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <h4 className="font-semibold text-sm text-foreground">{NUTRIENT_DISPLAY_NAMES[nutrient]}</h4>
               <span className={color}>{getTrendIcon(trend)}</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-muted-foreground mt-1 font-medium">
               {formatNutrientAmount(dailyValue, nutrient)} / {formatNutrientAmount(target, nutrient)}
             </p>
           </div>
-          <Badge variant={percentOfDV >= 80 ? 'default' : 'destructive'} className="ml-2 px-2 py-0.5 text-xs font-semibold">
+          <Badge variant={percentOfDV >= 80 ? 'default' : 'destructive'} className="ml-2 px-2.5 py-1 text-xs font-bold shadow-sm">
             {Math.round(percentOfDV)}%
           </Badge>
         </div>
 
-        <div className="space-y-1.5">
-          <Progress value={Math.min(percentOfDV, 100)} className="h-2" />
+        <div className="space-y-2">
+          <Progress value={Math.min(percentOfDV, 100)} className="h-2.5" />
           <div className="flex items-center justify-between text-xs">
-            <span className={`${color} font-medium capitalize`}>{status}</span>
-            <span className="text-muted-foreground font-medium">
+            <span className={`${color} font-semibold capitalize`}>{status}</span>
+            <span className="text-muted-foreground font-semibold">
               {percentOfDV >= 100 ? '+' : ''}{formatNutrientAmount(dailyValue - target, nutrient)}
             </span>
           </div>
@@ -152,22 +152,22 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Dashboard</h2>
-          <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1.5">
-            <Calendar className="w-4 h-4" weight="fill" />
+          <h2 className="text-3xl font-bold text-foreground mb-1">Dashboard</h2>
+          <p className="text-sm text-muted-foreground flex items-center gap-2 font-medium">
+            <Calendar className="w-4 h-4" weight="duotone" />
             {dateString}
           </p>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card className="shadow-sm border-2">
+      <div className="grid gap-5 md:grid-cols-4">
+        <Card className="shadow-lg border border-border/60 bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all duration-200">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-semibold text-foreground">Calories</CardTitle>
+              <CardTitle className="text-sm font-bold text-foreground">Calories</CardTitle>
               {todayCaloriesBurned > 0 && (
-                <div className="flex items-center gap-1.5">
-                  <Label htmlFor="net-calories" className="text-xs cursor-pointer text-foreground">Net</Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="net-calories" className="text-xs cursor-pointer text-foreground font-semibold">Net</Label>
                   <Switch 
                     id="net-calories"
                     checked={showNetCalories}
@@ -178,19 +178,19 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
             </div>
           </CardHeader>
           <CardContent className="pb-4">
-            <div className="space-y-1.5">
-              <div className="flex items-baseline gap-1.5">
-                <div className="text-3xl font-bold text-primary">
+            <div className="space-y-2">
+              <div className="flex items-baseline gap-2">
+                <div className="text-4xl font-bold text-primary">
                   {showNetCalories && todayCaloriesBurned > 0 
                     ? Math.round(netCalories).toLocaleString() 
                     : Math.round(totals.calories).toLocaleString()
                   }
                 </div>
-                <span className="text-sm text-muted-foreground font-medium">kcal</span>
+                <span className="text-sm text-muted-foreground font-semibold">kcal</span>
               </div>
               {todayCaloriesBurned > 0 && (
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Flame className="w-3.5 h-3.5 text-orange-600" weight="fill" />
+                <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+                  <Flame className="w-4 h-4 text-orange-600" weight="duotone" />
                   <span>
                     {showNetCalories 
                       ? `${Math.round(totals.calories)} - ${todayCaloriesBurned} burned`
@@ -203,50 +203,50 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-2">
+        <Card className="shadow-lg border border-border/60 bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all duration-200">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-foreground">GBDI Score</CardTitle>
+            <CardTitle className="text-sm font-bold text-foreground">GBDI Score</CardTitle>
           </CardHeader>
           <CardContent className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="text-3xl font-bold text-secondary">{Math.round(wellness.gbdi)}</div>
-              <Progress value={wellness.gbdi} className="flex-1 h-2.5" />
+              <div className="text-4xl font-bold text-secondary">{Math.round(wellness.gbdi)}</div>
+              <Progress value={wellness.gbdi} className="flex-1 h-3" />
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-xs text-muted-foreground mt-2 font-medium">
               Gut-Brain-Digestive Index
             </p>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-2">
+        <Card className="shadow-lg border border-border/60 bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all duration-200">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-foreground">Critical Gaps</CardTitle>
+            <CardTitle className="text-sm font-bold text-foreground">Critical Gaps</CardTitle>
           </CardHeader>
           <CardContent className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-destructive/10 rounded-lg">
-                <Target className="w-6 h-6 text-destructive" weight="fill" />
+              <div className="p-2.5 bg-destructive/15 rounded-xl">
+                <Target className="w-6 h-6 text-destructive" weight="duotone" />
               </div>
-              <div className="text-3xl font-bold text-destructive">{criticalGaps.length}</div>
+              <div className="text-4xl font-bold text-destructive">{criticalGaps.length}</div>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-xs text-muted-foreground mt-2 font-medium">
               Nutrients below 50% DV
             </p>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-2">
+        <Card className="shadow-lg border border-border/60 bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all duration-200">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-foreground">Plant Diversity</CardTitle>
+            <CardTitle className="text-sm font-bold text-foreground">Plant Diversity</CardTitle>
           </CardHeader>
           <CardContent className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-accent/10 rounded-lg">
-                <ChartBar className="w-6 h-6 text-accent" weight="fill" />
+              <div className="p-2.5 bg-accent/15 rounded-xl">
+                <ChartBar className="w-6 h-6 text-accent" weight="duotone" />
               </div>
-              <div className="text-3xl font-bold text-accent">{wellness.plantDiversityCount}</div>
+              <div className="text-4xl font-bold text-accent">{wellness.plantDiversityCount}</div>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-xs text-muted-foreground mt-2 font-medium">
               Different plant foods today
             </p>
           </CardContent>
