@@ -58,6 +58,7 @@
 - ✅ Cross-mode synergy detection & insights
 - ✅ Legal disclaimer banner (persistent)
 - ✅ Responsive design (mobile & desktop)
+- ✅ **Profile history tracking** (weight, BMI, waist, body fat) with trend visualization
 
 ---
 
@@ -93,7 +94,16 @@
   - ✅ Flame icon indicator showing calories burned
   - ✅ Real-time updates as food/exercise logged
   - [ ] Post-workout meal suggestions (planned)
-- [ ] **Profile History Tracking** - Weight/BMI trends, nutrient adequacy over time
+- [x] **Profile History Tracking** - ✅ COMPLETE (January 2025)
+  - ✅ Weight tracking over time with trend indicators
+  - ✅ BMI calculation and classification (underweight/normal/overweight/obese)
+  - ✅ Waist circumference tracking
+  - ✅ Body fat percentage tracking
+  - ✅ Visual trend charts (last 30 days)
+  - ✅ Metric comparison and progress visualization
+  - ✅ Entry management (add, update, delete)
+  - ✅ Optional notes for context
+  - ✅ Latest values displayed with trend badges
 - [ ] **Advanced Educational Content** - Library expansion with more synergy cards
 - [ ] **Enhanced Synergy Detection** - More sophisticated nutrient interaction rules
 - [ ] **Performance Optimization** - Code splitting, lazy loading, caching
@@ -138,6 +148,7 @@
 | **Cloud Data Sync** | ✅ Complete | Multi-device sync + backup |
 | **Personalized DVs Active** | ✅ Complete | Settings → Use Personalized Daily Values toggle |
 | **Net Calorie Tracking** | ✅ Complete | Food Budget toggle for net vs gross |
+| **Profile History Tracking** | ✅ Complete | Settings → Profile History section |
 | **Wearable Sync** | ❌ Not Built | Future integration |
 | **Photo Logging** | ❌ Not Built | AI/API partnership needed |
 | **Lab Integration** | ❌ Not Built | Data import system needed |
@@ -3170,6 +3181,52 @@ This feature transforms NutriWell from a generic tracking tool into a truly pers
 - 📋 Future: Integrate hook into Food Budget, Recommendations, Dashboard
 
 ---
+
+### Phase 10: Profile History Tracking ✅ COMPLETE
+**Goal:** Track body metrics over time to visualize progress and trends  
+**Status:** Fully implemented (January 2025)  
+**Location:** Settings page → Profile History section
+
+**Overview:**
+Users can now track key body measurements over time including weight, BMI, waist circumference, and body fat percentage. Visual trend charts and progress indicators help users see their health journey at a glance.
+
+#### Implementation Details
+
+**10a. Body Metrics Tracking** ✅
+  - Weight tracking (lb) with decimal precision
+  - BMI calculation and classification (underweight/normal/overweight/obese)
+  - Waist circumference (inches) for health risk assessment
+  - Body fat percentage for body composition tracking
+  - Optional notes for context
+  - Date tracking with historical data
+
+**10b. Trend Visualization** ✅
+  - Last 30 days trend chart using Recharts
+  - Multiple metric views (weight, BMI, waist, body fat)
+  - Trend indicators showing 5-day directional change
+  - Latest values displayed prominently with trend badges
+  - Line charts with smooth curves and data points
+
+**10c. Entry Management** ✅
+  - Add measurements via intuitive dialog form
+  - Update existing entries (same-day edits)
+  - Delete entries with confirmation
+  - Toast notifications for feedback
+
+**10d. Technical Architecture** ✅
+  - Component: `/components/ProfileHistory.tsx`
+  - Storage: `profile-history` in spark.kv
+  - Type-safe TypeScript interfaces
+
+**Impact:**
+Provides users with concrete, visual feedback on their health journey. Seeing trends over time increases motivation and helps users understand if their nutrition and lifestyle changes are working.
+
+**Implementation Files:**
+- ✅ `/components/ProfileHistory.tsx` - Main component (NEW)
+- ✅ `/components/pages/Settings.tsx` - Integration point
+
+---
+
 
 ### Version 1.1 ❌ NOT YET IMPLEMENTED — Monetization & Depth
 **Goal:** Validate affiliate model, add premium tier  
