@@ -26,7 +26,7 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
           variant={currentPage === item.page ? 'default' : 'outline'}
           onClick={() => onNavigate(item.page)}
           size="default"
-          className="gap-2 text-sm font-semibold px-4 h-10"
+          className="gap-2 text-sm font-semibold px-5 h-11 rounded-xl shadow-sm hover:shadow-md transition-all"
         >
           <span className="text-base">{item.icon}</span>
           {item.label}

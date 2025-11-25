@@ -171,28 +171,28 @@ function App() {
       
       <DisclaimerBanner />
       
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
-        <header className="mb-8">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <header className="mb-10">
+          <div className="flex items-center justify-between gap-6 flex-wrap">
+            <div className="flex items-center gap-4">
               {mode === 'nutriwell' ? (
-                <div className="p-2.5 bg-primary/10 rounded-xl">
-                  <Leaf className="w-9 h-9 text-primary" weight="fill" />
+                <div className="p-3 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl shadow-sm border border-primary/20">
+                  <Leaf className="w-10 h-10 text-primary" weight="fill" />
                 </div>
               ) : mode === 'sleepsync' ? (
-                <div className="p-2.5 bg-secondary/10 rounded-xl">
-                  <Moon className="w-9 h-9 text-secondary" weight="fill" />
+                <div className="p-3 bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-2xl shadow-sm border border-secondary/20">
+                  <Moon className="w-10 h-10 text-secondary" weight="fill" />
                 </div>
               ) : (
-                <div className="p-2.5 bg-accent/10 rounded-xl">
-                  <CalendarBlank className="w-9 h-9 text-accent" weight="fill" />
+                <div className="p-3 bg-gradient-to-br from-accent/20 to-accent/10 rounded-2xl shadow-sm border border-accent/20">
+                  <CalendarBlank className="w-10 h-10 text-accent" weight="fill" />
                 </div>
               )}
               <div>
-                <h1 className="text-3xl font-bold text-foreground">
+                <h1 className="text-4xl font-bold text-foreground tracking-tight">
                   {mode === 'nutriwell' ? 'NutriWell' : mode === 'sleepsync' ? 'SleepSync' : 'LifeFlow'}
                 </h1>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground mt-0.5 font-medium">
                   {mode === 'nutriwell' 
                     ? 'Smart nutrition intelligence'
                     : mode === 'sleepsync'
@@ -208,7 +208,7 @@ function App() {
                   variant="outline"
                   size="default"
                   onClick={() => switchMode('nutriwell')}
-                  className="flex items-center gap-2 font-semibold"
+                  className="flex items-center gap-2 font-semibold shadow-sm hover:shadow-md transition-all"
                 >
                   <Leaf className="w-4 h-4" weight="fill" />
                   NutriWell
@@ -219,7 +219,7 @@ function App() {
                   variant="outline"
                   size="default"
                   onClick={() => switchMode('sleepsync')}
-                  className="flex items-center gap-2 font-semibold"
+                  className="flex items-center gap-2 font-semibold shadow-sm hover:shadow-md transition-all"
                 >
                   <Moon className="w-4 h-4" weight="fill" />
                   SleepSync
@@ -230,7 +230,7 @@ function App() {
                   variant="outline"
                   size="default"
                   onClick={() => switchMode('lifeflow')}
-                  className="flex items-center gap-2 font-semibold"
+                  className="flex items-center gap-2 font-semibold shadow-sm hover:shadow-md transition-all"
                 >
                   <CalendarBlank className="w-4 h-4" weight="fill" />
                   LifeFlow
@@ -240,7 +240,7 @@ function App() {
                 variant="ghost"
                 size="default"
                 onClick={handleSignOut}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 hover:bg-muted/80 transition-all"
                 title="Sign Out"
               >
                 <SignOut className="w-4 h-4" />
