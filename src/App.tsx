@@ -171,29 +171,35 @@ function App() {
       
       <DisclaimerBanner />
       
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
-        <header className="mb-8">
-          <div className="flex items-start justify-between gap-4">
+      <div className="container mx-auto px-6 py-8 max-w-7xl">
+        <header className="mb-10">
+          <div className="flex items-start justify-between gap-6">
             <div>
-              <h1 className="text-4xl font-bold text-foreground mb-2 flex items-center gap-3">
+              <h1 className="text-5xl font-bold text-foreground mb-3 flex items-center gap-4">
                 {mode === 'nutriwell' ? (
                   <>
-                    <Leaf className="w-10 h-10 text-primary" />
+                    <div className="p-3 bg-primary/10 rounded-2xl">
+                      <Leaf className="w-12 h-12 text-primary" weight="fill" />
+                    </div>
                     NutriWell
                   </>
                 ) : mode === 'sleepsync' ? (
                   <>
-                    <Moon className="w-10 h-10 text-primary" />
+                    <div className="p-3 bg-secondary/10 rounded-2xl">
+                      <Moon className="w-12 h-12 text-secondary" weight="fill" />
+                    </div>
                     SleepSync
                   </>
                 ) : (
                   <>
-                    <CalendarBlank className="w-10 h-10 text-primary" />
+                    <div className="p-3 bg-accent/10 rounded-2xl">
+                      <CalendarBlank className="w-12 h-12 text-accent" weight="fill" />
+                    </div>
                     LifeFlow
                   </>
                 )}
               </h1>
-              <p className="text-muted-foreground">
+              <p className="text-lg text-muted-foreground ml-[88px]">
                 {mode === 'nutriwell' 
                   ? 'Smart nutrition intelligence for optimal health'
                   : mode === 'sleepsync'
@@ -202,48 +208,48 @@ function App() {
                 }
               </p>
             </div>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-3 items-center flex-wrap justify-end">
               {mode !== 'nutriwell' && (
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="lg"
                   onClick={() => switchMode('nutriwell')}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2.5 font-semibold shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <Leaf className="w-4 h-4" />
+                  <Leaf className="w-5 h-5" weight="fill" />
                   NutriWell
                 </Button>
               )}
               {mode !== 'sleepsync' && (
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="lg"
                   onClick={() => switchMode('sleepsync')}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2.5 font-semibold shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <Moon className="w-4 h-4" />
+                  <Moon className="w-5 h-5" weight="fill" />
                   SleepSync
                 </Button>
               )}
               {mode !== 'lifeflow' && (
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="lg"
                   onClick={() => switchMode('lifeflow')}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2.5 font-semibold shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <CalendarBlank className="w-4 h-4" />
+                  <CalendarBlank className="w-5 h-5" weight="fill" />
                   LifeFlow
                 </Button>
               )}
               <Button
                 variant="ghost"
-                size="sm"
+                size="lg"
                 onClick={handleSignOut}
                 className="flex items-center gap-2"
                 title="Sign Out"
               >
-                <SignOut className="w-4 h-4" />
+                <SignOut className="w-5 h-5" />
               </Button>
             </div>
           </div>
