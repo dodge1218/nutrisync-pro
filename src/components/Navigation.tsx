@@ -19,26 +19,23 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
   ]
 
   return (
-    <nav className="relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 rounded-3xl blur-xl"></div>
-      <div className="relative flex gap-3 flex-wrap bg-white/90 backdrop-blur-xl p-4 rounded-3xl border border-border/60 shadow-2xl shadow-primary/10">
-        {navItems.map(item => (
-          <Button
-            key={item.page}
-            variant={currentPage === item.page ? 'default' : 'ghost'}
-            onClick={() => onNavigate(item.page)}
-            size="lg"
-            className={`gap-2.5 text-sm font-bold px-6 h-12 rounded-2xl transition-all duration-300 ${
-              currentPage === item.page 
-                ? 'bg-gradient-to-br from-primary to-primary/90 text-primary-foreground shadow-xl shadow-primary/40 scale-105' 
-                : 'hover:bg-muted text-muted-foreground hover:text-foreground hover:scale-105 hover:shadow-lg'
-            }`}
-          >
-            <span className="text-xl">{item.icon}</span>
-            <span className="hidden sm:inline">{item.label}</span>
-          </Button>
-        ))}
-      </div>
+    <nav className="flex gap-2 flex-wrap bg-card p-3 rounded-xl border border-border">
+      {navItems.map(item => (
+        <Button
+          key={item.page}
+          variant={currentPage === item.page ? 'default' : 'ghost'}
+          onClick={() => onNavigate(item.page)}
+          size="default"
+          className={`gap-2 text-sm font-medium px-4 h-10 rounded-lg transition-all ${
+            currentPage === item.page 
+              ? 'bg-primary text-primary-foreground' 
+              : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <span className="text-lg">{item.icon}</span>
+          <span className="hidden sm:inline">{item.label}</span>
+        </Button>
+      ))}
     </nav>
   )
 }

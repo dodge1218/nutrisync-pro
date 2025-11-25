@@ -171,37 +171,28 @@ function App() {
       
       <DisclaimerBanner />
       
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">
-        <header className="mb-10">
-          <div className="flex items-center justify-between gap-6 flex-wrap bg-white/80 backdrop-blur-md rounded-3xl p-7 border border-border/40 shadow-2xl shadow-primary/10">
-            <div className="flex items-center gap-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+        <header className="mb-8">
+          <div className="flex items-center justify-between gap-6 flex-wrap bg-card backdrop-blur-sm rounded-2xl p-6 border border-border shadow-lg">
+            <div className="flex items-center gap-4">
               {mode === 'nutriwell' ? (
-                <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-primary to-primary/60 rounded-2xl blur opacity-30"></div>
-                  <div className="relative p-5 bg-gradient-to-br from-primary via-primary to-primary/90 rounded-2xl shadow-xl">
-                    <Leaf className="w-9 h-9 text-primary-foreground" weight="fill" />
-                  </div>
+                <div className="p-3 bg-primary rounded-xl">
+                  <Leaf className="w-7 h-7 text-primary-foreground" weight="fill" />
                 </div>
               ) : mode === 'sleepsync' ? (
-                <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-secondary/60 to-secondary/40 rounded-2xl blur opacity-30"></div>
-                  <div className="relative p-5 bg-gradient-to-br from-secondary via-secondary/95 to-secondary/80 rounded-2xl shadow-xl">
-                    <Moon className="w-9 h-9 text-secondary-foreground" weight="fill" />
-                  </div>
+                <div className="p-3 bg-secondary rounded-xl">
+                  <Moon className="w-7 h-7 text-secondary-foreground" weight="fill" />
                 </div>
               ) : (
-                <div className="relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-accent to-accent/60 rounded-2xl blur opacity-30"></div>
-                  <div className="relative p-5 bg-gradient-to-br from-accent via-accent to-accent/90 rounded-2xl shadow-xl">
-                    <CalendarBlank className="w-9 h-9 text-accent-foreground" weight="fill" />
-                  </div>
+                <div className="p-3 bg-accent rounded-xl">
+                  <CalendarBlank className="w-7 h-7 text-accent-foreground" weight="fill" />
                 </div>
               )}
               <div>
-                <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-1.5">
+                <h1 className="text-3xl font-bold text-foreground tracking-tight">
                   {mode === 'nutriwell' ? 'NutriWell' : mode === 'sleepsync' ? 'SleepSync' : 'LifeFlow'}
                 </h1>
-                <p className="text-base text-muted-foreground font-medium">
+                <p className="text-sm text-muted-foreground">
                   {mode === 'nutriwell' 
                     ? 'Smart nutrition intelligence'
                     : mode === 'sleepsync'
@@ -211,48 +202,48 @@ function App() {
                 </p>
               </div>
             </div>
-            <div className="flex gap-2.5 items-center flex-wrap justify-end">
+            <div className="flex gap-2 items-center flex-wrap justify-end">
               {mode !== 'nutriwell' && (
                 <Button
-                  variant="outline"
-                  size="lg"
+                  variant="ghost"
+                  size="default"
                   onClick={() => switchMode('nutriwell')}
-                  className="flex items-center gap-2.5 font-bold bg-white hover:bg-primary hover:text-primary-foreground hover:border-primary border-2 transition-all duration-300 rounded-2xl px-5 py-6 shadow-md hover:shadow-xl"
+                  className="flex items-center gap-2 hover:bg-primary/20 hover:text-primary transition-all rounded-xl"
                 >
                   <Leaf className="w-5 h-5" weight="bold" />
-                  NutriWell
+                  <span className="hidden sm:inline">NutriWell</span>
                 </Button>
               )}
               {mode !== 'sleepsync' && (
                 <Button
-                  variant="outline"
-                  size="lg"
+                  variant="ghost"
+                  size="default"
                   onClick={() => switchMode('sleepsync')}
-                  className="flex items-center gap-2.5 font-bold bg-white hover:bg-secondary hover:text-secondary-foreground hover:border-secondary border-2 transition-all duration-300 rounded-2xl px-5 py-6 shadow-md hover:shadow-xl"
+                  className="flex items-center gap-2 hover:bg-secondary/20 hover:text-secondary transition-all rounded-xl"
                 >
                   <Moon className="w-5 h-5" weight="bold" />
-                  SleepSync
+                  <span className="hidden sm:inline">SleepSync</span>
                 </Button>
               )}
               {mode !== 'lifeflow' && (
                 <Button
-                  variant="outline"
-                  size="lg"
+                  variant="ghost"
+                  size="default"
                   onClick={() => switchMode('lifeflow')}
-                  className="flex items-center gap-2.5 font-bold bg-white hover:bg-accent hover:text-accent-foreground hover:border-accent border-2 transition-all duration-300 rounded-2xl px-5 py-6 shadow-md hover:shadow-xl"
+                  className="flex items-center gap-2 hover:bg-accent/20 hover:text-accent transition-all rounded-xl"
                 >
                   <CalendarBlank className="w-5 h-5" weight="bold" />
-                  LifeFlow
+                  <span className="hidden sm:inline">LifeFlow</span>
                 </Button>
               )}
               <Button
                 variant="ghost"
-                size="lg"
+                size="default"
                 onClick={handleSignOut}
-                className="flex items-center gap-2 hover:bg-destructive hover:text-destructive-foreground transition-all duration-300 rounded-2xl px-4 py-6"
+                className="flex items-center gap-2 hover:bg-destructive/20 hover:text-destructive transition-all rounded-xl"
                 title="Sign Out"
               >
-                <SignOut className="w-6 h-6" weight="bold" />
+                <SignOut className="w-5 h-5" weight="bold" />
               </Button>
             </div>
           </div>

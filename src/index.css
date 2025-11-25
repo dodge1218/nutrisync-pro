@@ -8,7 +8,7 @@
   
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, oklch(0.98 0.01 250) 0%, oklch(0.95 0.02 270) 100%);
+    background: oklch(0.12 0.02 260);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -17,8 +17,8 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-weight: 700;
-    letter-spacing: -0.04em;
-    line-height: 1.2;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
   }
 
   p, span, div, label, button, td, th, li, a {
@@ -40,35 +40,35 @@
 }
 
 :root {
-  --background: oklch(0.97 0.01 260);
-  --foreground: oklch(0.15 0.01 260);
+  --background: oklch(0.12 0.02 260);
+  --foreground: oklch(0.95 0.01 260);
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.01 260);
+  --card: oklch(0.18 0.03 260);
+  --card-foreground: oklch(0.95 0.01 260);
   
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.01 260);
+  --popover: oklch(0.18 0.03 260);
+  --popover-foreground: oklch(0.95 0.01 260);
 
-  --primary: oklch(0.52 0.24 265);
-  --primary-foreground: oklch(0.99 0 0);
+  --primary: oklch(0.72 0.19 145);
+  --primary-foreground: oklch(0.12 0.02 260);
 
-  --secondary: oklch(0.92 0.06 275);
-  --secondary-foreground: oklch(0.15 0.01 260);
+  --secondary: oklch(0.68 0.22 285);
+  --secondary-foreground: oklch(0.12 0.02 260);
 
-  --muted: oklch(0.95 0.01 260);
-  --muted-foreground: oklch(0.50 0.01 260);
+  --muted: oklch(0.25 0.03 260);
+  --muted-foreground: oklch(0.60 0.01 260);
 
-  --accent: oklch(0.65 0.26 330);
-  --accent-foreground: oklch(0.99 0 0);
+  --accent: oklch(0.75 0.20 55);
+  --accent-foreground: oklch(0.12 0.02 260);
 
-  --destructive: oklch(0.57 0.24 25);
-  --destructive-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.65 0.24 25);
+  --destructive-foreground: oklch(0.12 0.02 260);
 
-  --border: oklch(0.90 0.01 260);
-  --input: oklch(0.94 0.01 260);
-  --ring: oklch(0.52 0.24 265);
+  --border: oklch(0.25 0.03 260);
+  --input: oklch(0.22 0.03 260);
+  --ring: oklch(0.72 0.19 145);
 
-  --radius: 1rem;
+  --radius: 0.75rem;
 }
 
 @theme {
