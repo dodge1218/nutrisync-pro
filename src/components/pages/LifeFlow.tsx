@@ -111,13 +111,13 @@ const activityIcons: Record<string, React.ReactNode> = {
 }
 
 const categoryColors: Record<string, string> = {
-  work: 'bg-blue-100 text-blue-700 border-blue-300',
-  exercise: 'bg-green-100 text-green-700 border-green-300',
-  hygiene: 'bg-purple-100 text-purple-700 border-purple-300',
-  cooking: 'bg-orange-100 text-orange-700 border-orange-300',
-  'pet-care': 'bg-pink-100 text-pink-700 border-pink-300',
-  meal: 'bg-yellow-100 text-yellow-700 border-yellow-300',
-  custom: 'bg-gray-100 text-gray-700 border-gray-300'
+  work: 'bg-blue-50 text-blue-700 border-blue-200',
+  exercise: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  hygiene: 'bg-purple-50 text-purple-700 border-purple-200',
+  cooking: 'bg-orange-50 text-orange-700 border-orange-200',
+  'pet-care': 'bg-pink-50 text-pink-700 border-pink-200',
+  meal: 'bg-amber-50 text-amber-700 border-amber-200',
+  custom: 'bg-secondary text-secondary-foreground border-border'
 }
 
 export default function LifeFlow({ foodLogs }: LifeFlowProps) {
@@ -425,23 +425,27 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
   const activeGoals = (goals || []).filter(g => g.status === 'active')
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold text-foreground flex items-center gap-3">
-            <CalendarBlank className="w-8 h-8 text-primary" />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center">
+              <CalendarBlank className="w-7 h-7 text-accent" weight="duotone" />
+            </div>
             LifeFlow
           </h2>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-2 text-base">
             Time-blocked scheduling powered by your food and sleep patterns
           </p>
         </div>
       </div>
 
-      <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-primary/3 to-background">
-        <CardHeader>
+      <Card className="border-accent/30 bg-gradient-to-br from-accent/10 via-accent/5 to-background shadow-sm">
+        <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Sun className="w-5 h-5 text-primary" />
+            <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">
+              <Sun className="w-5 h-5 text-accent" weight="duotone" />
+            </div>
             Your Awake Window
           </CardTitle>
           <CardDescription>
@@ -449,54 +453,54 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-3 rounded-lg bg-background/50">
-              <p className="text-xs text-muted-foreground mb-1">Wake Time</p>
-              <p className="text-2xl font-bold">{awakeWindow.start}</p>
+          <div className="grid grid-cols-3 gap-3 md:gap-4">
+            <div className="text-center p-4 rounded-xl bg-card shadow-sm border border-border/50">
+              <p className="text-xs font-medium text-muted-foreground mb-2">Wake Time</p>
+              <p className="text-2xl md:text-3xl font-bold text-foreground">{awakeWindow.start}</p>
             </div>
-            <div className="text-center p-3 rounded-lg bg-background/50 border-2 border-primary/20">
-              <p className="text-xs text-muted-foreground mb-1">Available Hours</p>
-              <p className="text-2xl font-bold text-primary">{Math.round(awakeWindow.duration * 10) / 10}h</p>
+            <div className="text-center p-4 rounded-xl bg-gradient-to-br from-accent to-accent/80 shadow-md border-2 border-accent/30">
+              <p className="text-xs font-medium text-accent-foreground/90 mb-2">Available Hours</p>
+              <p className="text-2xl md:text-3xl font-bold text-accent-foreground">{Math.round(awakeWindow.duration * 10) / 10}h</p>
             </div>
-            <div className="text-center p-3 rounded-lg bg-background/50">
-              <p className="text-xs text-muted-foreground mb-1">Sleep Time</p>
-              <p className="text-2xl font-bold">{awakeWindow.end}</p>
+            <div className="text-center p-4 rounded-xl bg-card shadow-sm border border-border/50">
+              <p className="text-xs font-medium text-muted-foreground mb-2">Sleep Time</p>
+              <p className="text-2xl md:text-3xl font-bold text-foreground">{awakeWindow.end}</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
       <Tabs defaultValue="schedule" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 h-auto">
-          <TabsTrigger value="schedule" className="flex-col md:flex-row gap-1 py-3">
-            <ClockAfternoon className="w-4 h-4" />
+        <TabsList className="grid w-full grid-cols-5 h-auto bg-card/50 p-1 gap-1">
+          <TabsTrigger value="schedule" className="flex-col md:flex-row gap-1 py-3 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+            <ClockAfternoon className="w-4 h-4" weight="duotone" />
             <span className="text-xs md:text-sm">Schedule</span>
           </TabsTrigger>
-          <TabsTrigger value="checkin" className="flex-col md:flex-row gap-1 py-3">
-            <CheckCircle className="w-4 h-4" />
+          <TabsTrigger value="checkin" className="flex-col md:flex-row gap-1 py-3 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+            <CheckCircle className="w-4 h-4" weight="duotone" />
             <span className="text-xs md:text-sm">Check-In</span>
           </TabsTrigger>
-          <TabsTrigger value="activities" className="flex-col md:flex-row gap-1 py-3">
-            <ListChecks className="w-4 h-4" />
+          <TabsTrigger value="activities" className="flex-col md:flex-row gap-1 py-3 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+            <ListChecks className="w-4 h-4" weight="duotone" />
             <span className="text-xs md:text-sm">Activities</span>
           </TabsTrigger>
-          <TabsTrigger value="goals" className="flex-col md:flex-row gap-1 py-3">
-            <Target className="w-4 h-4" />
+          <TabsTrigger value="goals" className="flex-col md:flex-row gap-1 py-3 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+            <Target className="w-4 h-4" weight="duotone" />
             <span className="text-xs md:text-sm">Goals</span>
           </TabsTrigger>
-          <TabsTrigger value="exercise" className="flex-col md:flex-row gap-1 py-3">
-            <Barbell className="w-4 h-4" />
+          <TabsTrigger value="exercise" className="flex-col md:flex-row gap-1 py-3 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">
+            <Barbell className="w-4 h-4" weight="duotone" />
             <span className="text-xs md:text-sm">Exercise</span>
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="schedule" className="space-y-4">
-          <Card className="border-primary/20">
+        <TabsContent value="schedule" className="space-y-4 mt-6">
+          <Card className="border-accent/30 bg-gradient-to-r from-accent/5 to-background shadow-sm">
             <CardContent className="pt-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Label className="text-sm font-medium whitespace-nowrap">Planning days:</Label>
+                  <div className="flex items-center gap-3">
+                    <Label className="text-sm font-semibold text-foreground whitespace-nowrap">Planning days:</Label>
                     <div className="flex gap-2">
                       {[3, 5, 7].map(num => (
                         <Button
@@ -504,28 +508,28 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
                           variant={selectedDays === num ? 'default' : 'outline'}
                           size="sm"
                           onClick={() => setSelectedDays(num)}
-                          className="min-w-[2.5rem]"
+                          className={`min-w-[2.5rem] ${selectedDays === num ? 'bg-accent hover:bg-accent/90' : ''}`}
                         >
                           {num}
                         </Button>
                       ))}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-card/50 border border-border/50">
                     <input
                       type="checkbox"
                       id="autofill-meals"
                       checked={autofillMeals}
                       onChange={(e) => setAutofillMeals(e.target.checked)}
-                      className="w-4 h-4 rounded border-input"
+                      className="w-4 h-4 rounded border-input accent-accent"
                     />
-                    <Label htmlFor="autofill-meals" className="cursor-pointer text-sm">
+                    <Label htmlFor="autofill-meals" className="cursor-pointer text-sm font-medium">
                       Auto-predict meals
                     </Label>
                   </div>
                 </div>
-                <Button onClick={generateSchedulesForDays} className="w-full md:w-auto">
-                  <Sparkle className="w-4 h-4 mr-2" />
+                <Button onClick={generateSchedulesForDays} className="w-full md:w-auto bg-accent hover:bg-accent/90 shadow-md">
+                  <Sparkle className="w-4 h-4 mr-2" weight="duotone" />
                   Generate Schedule
                 </Button>
               </div>
@@ -533,12 +537,16 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
           </Card>
 
           {mealPatterns.length > 0 && autofillMeals && (
-            <Card className="border-primary/20 bg-primary/5">
-              <CardContent className="pt-4">
-                <p className="text-sm text-muted-foreground">
-                  <Sparkle className="w-4 h-4 inline mr-1" />
-                  Detected {mealPatterns.length} meal patterns from your history. Future meals and cook times will be auto-filled based on your habits.
-                </p>
+            <Card className="border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-accent/10 shadow-sm">
+              <CardContent className="pt-5 pb-5">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center flex-shrink-0">
+                    <Sparkle className="w-5 h-5 text-accent" weight="duotone" />
+                  </div>
+                  <p className="text-sm text-foreground leading-relaxed pt-1">
+                    <span className="font-semibold">AI-Powered Predictions Active:</span> Detected {mealPatterns.length} meal patterns from your history. Future meals and cook times will be auto-filled based on your habits.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           )}
@@ -555,54 +563,62 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
                 const dateDisplay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 
                 return (
-                  <Card key={dateStr} className="overflow-hidden">
-                    <CardHeader className="bg-gradient-to-br from-muted/30 to-background">
+                  <Card key={dateStr} className="overflow-hidden border-border/50 shadow-sm hover:shadow-md transition-all">
+                    <CardHeader className="bg-gradient-to-br from-accent/10 via-accent/5 to-background border-b border-border/50">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div>
-                          <CardTitle className="text-lg">{dayName}, {dateDisplay}</CardTitle>
-                          <CardDescription className="mt-1">{stats.completed} of {stats.total} completed</CardDescription>
+                          <CardTitle className="text-lg font-bold flex items-center gap-2">
+                            <CalendarBlank className="w-5 h-5 text-accent" weight="duotone" />
+                            {dayName}, {dateDisplay}
+                          </CardTitle>
+                          <CardDescription className="mt-1.5 font-medium">{stats.completed} of {stats.total} completed</CardDescription>
                         </div>
                         <div className="flex items-center gap-3">
-                          <Progress value={stats.percentage} className="w-20 sm:w-24 h-2" />
-                          <span className="text-sm font-medium min-w-[3rem] text-right">{stats.percentage}%</span>
+                          <Progress value={stats.percentage} className="w-24 sm:w-32 h-2.5 [&>div]:bg-accent" />
+                          <span className="text-base font-bold text-accent min-w-[3.5rem] text-right">{stats.percentage}%</span>
                         </div>
                       </div>
                     </CardHeader>
-                    <CardContent className="pt-6">
-                      <div className="space-y-2">
+                    <CardContent className="pt-6 pb-6">
+                      <div className="space-y-2.5">
                         {schedule.activities.map(activity => (
                           <div
                             key={activity.id}
-                            className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors"
+                            className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-xl border border-border/50 bg-card hover:bg-accent/5 hover:border-accent/30 transition-all shadow-sm"
                           >
                             <button
                               onClick={() => handleToggleActivity(dateStr, activity.id)}
                               className="flex-shrink-0 self-start sm:self-auto"
                             >
                               {activity.isCompleted ? (
-                                <CheckCircle className="w-5 h-5 text-green-600" weight="fill" />
+                                <CheckCircle className="w-6 h-6 text-green-600" weight="fill" />
                               ) : (
-                                <Circle className="w-5 h-5 text-muted-foreground" />
+                                <Circle className="w-6 h-6 text-muted-foreground hover:text-accent transition-colors" />
                               )}
                             </button>
                             <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-0">
-                              <Badge variant="outline" className={`${categoryColors[activity.category]} flex-shrink-0 w-fit`}>
+                              <Badge variant="outline" className={`${categoryColors[activity.category]} flex-shrink-0 w-fit px-2.5 py-1 font-medium`}>
                                 {activityIcons[activity.category]}
-                                <span className="ml-1 text-xs">{activity.category}</span>
+                                <span className="ml-1.5 text-xs">{activity.category}</span>
                               </Badge>
-                              <span className={`${activity.isCompleted ? 'line-through text-muted-foreground' : ''} truncate sm:flex-1`}>
+                              <span className={`${activity.isCompleted ? 'line-through text-muted-foreground' : 'text-foreground font-medium'} truncate sm:flex-1`}>
                                 {activity.name}
                               </span>
                             </div>
-                            <div className="text-sm text-muted-foreground whitespace-nowrap self-end sm:self-auto">
+                            <div className="text-sm font-semibold text-muted-foreground whitespace-nowrap self-end sm:self-auto bg-muted/50 px-3 py-1.5 rounded-lg">
                               {activity.startTime} - {activity.endTime}
                             </div>
                           </div>
                         ))}
                         {schedule.activities.length === 0 && (
-                          <p className="text-sm text-muted-foreground text-center py-8">
-                            No activities scheduled. Add recurring activities or generate a schedule.
-                          </p>
+                          <div className="text-center py-12 px-4">
+                            <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
+                              <CalendarBlank className="w-8 h-8 text-muted-foreground" weight="duotone" />
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              No activities scheduled. Add recurring activities or generate a schedule.
+                            </p>
+                          </div>
                         )}
                       </div>
                     </CardContent>
@@ -611,15 +627,17 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
               })}
             </div>
           ) : (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <CalendarBlank className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold mb-2">No schedule generated yet</h3>
-                <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
+            <Card className="border-border/50 shadow-sm">
+              <CardContent className="py-16 text-center">
+                <div className="w-20 h-20 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-6">
+                  <CalendarBlank className="w-10 h-10 text-accent" weight="duotone" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-foreground">No schedule generated yet</h3>
+                <p className="text-sm text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
                   Create your personalized daily schedule with time-blocked activities, meals, and goals
                 </p>
-                <Button onClick={generateSchedulesForDays}>
-                  <Sparkle className="w-4 h-4 mr-2" />
+                <Button onClick={generateSchedulesForDays} size="lg" className="bg-accent hover:bg-accent/90 shadow-md">
+                  <Sparkle className="w-5 h-5 mr-2" weight="duotone" />
                   Generate Schedule
                 </Button>
               </CardContent>
@@ -627,7 +645,7 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
           )}
         </TabsContent>
 
-        <TabsContent value="checkin" className="space-y-4">
+        <TabsContent value="checkin" className="space-y-4 mt-6">
           <DailyCheckIn
             foodLogs={foodLogs}
             activeGoals={activeGoals}
@@ -637,7 +655,7 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
           <CheckInHistory />
         </TabsContent>
 
-        <TabsContent value="activities" className="space-y-4">
+        <TabsContent value="activities" className="space-y-6 mt-6">
           <AutoTaskSettings
             config={autoTaskConfig || getDefaultAutoTaskConfig()}
             autoTasks={autoTasks || []}
@@ -649,23 +667,31 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
             }}
           />
 
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pt-2">
             <div>
-              <h3 className="text-lg font-semibold">Recurring Activities</h3>
-              <p className="text-sm text-muted-foreground">Activities that repeat on specific days</p>
+              <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">
+                  <ListChecks className="w-5 h-5 text-accent" weight="duotone" />
+                </div>
+                Recurring Activities
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">Activities that repeat on specific days</p>
             </div>
-            <Button onClick={() => setIsAddingActivity(true)} className="w-full sm:w-auto">
-              <Plus className="w-4 h-4 mr-2" />
+            <Button onClick={() => setIsAddingActivity(true)} className="w-full sm:w-auto bg-accent hover:bg-accent/90 shadow-md">
+              <Plus className="w-4 h-4 mr-2" weight="bold" />
               Add Activity
             </Button>
           </div>
 
           {isAddingActivity && (
-            <Card className="border-primary/20">
-              <CardHeader>
-                <CardTitle className="text-lg">New Recurring Activity</CardTitle>
+            <Card className="border-accent/30 shadow-md">
+              <CardHeader className="bg-gradient-to-r from-accent/5 to-background border-b border-border/50">
+                <CardTitle className="text-lg font-bold flex items-center gap-2">
+                  <Plus className="w-5 h-5 text-accent" weight="duotone" />
+                  New Recurring Activity
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-5 pt-6">
                 <div className="space-y-2">
                   <Label htmlFor="activity-name">Activity Name</Label>
                   <Input
@@ -767,32 +793,35 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
-                  <Button onClick={handleAddActivity} className="flex-1">Add Activity</Button>
-                  <Button variant="outline" onClick={() => setIsAddingActivity(false)}>Cancel</Button>
+                <div className="flex gap-2 pt-2">
+                  <Button onClick={handleAddActivity} className="flex-1 bg-accent hover:bg-accent/90 shadow-md" size="lg">
+                    <Plus className="w-4 h-4 mr-2" weight="bold" />
+                    Add Activity
+                  </Button>
+                  <Button variant="outline" onClick={() => setIsAddingActivity(false)} size="lg">Cancel</Button>
                 </div>
               </CardContent>
             </Card>
           )}
 
-          <div className="grid gap-3">
+          <div className="grid gap-4">
             {(recurringActivities || []).map(activity => (
-              <Card key={activity.id} className="hover:border-primary/30 transition-colors">
-                <CardContent className="pt-6">
+              <Card key={activity.id} className="hover:border-accent/40 transition-all shadow-sm hover:shadow-md border-border/50">
+                <CardContent className="pt-6 pb-6">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0">
-                      <Badge variant="outline" className={`${categoryColors[activity.category]} flex-shrink-0`}>
+                      <Badge variant="outline" className={`${categoryColors[activity.category]} flex-shrink-0 px-2.5 py-1`}>
                         {activityIcons[activity.category]}
-                        <span className="ml-1">{activity.category}</span>
+                        <span className="ml-1.5 font-medium">{activity.category}</span>
                       </Badge>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">{activity.name}</p>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className="font-semibold text-foreground truncate text-base">{activity.name}</p>
+                        <p className="text-sm text-muted-foreground mt-1.5 font-medium">
                           {activity.startTime} • {activity.duration} min
                         </p>
-                        <div className="flex flex-wrap gap-1 mt-2">
+                        <div className="flex flex-wrap gap-1.5 mt-2.5">
                           {activity.days.map(day => (
-                            <Badge key={day} variant="secondary" className="text-xs">
+                            <Badge key={day} variant="secondary" className="text-xs font-semibold px-2">
                               {day.toUpperCase()}
                             </Badge>
                           ))}
@@ -803,24 +832,26 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleRemoveActivity(activity.id)}
-                      className="self-end sm:self-auto"
+                      className="self-end sm:self-auto hover:bg-destructive/10"
                     >
-                      <Trash className="w-4 h-4 text-destructive" />
+                      <Trash className="w-5 h-5 text-destructive" weight="duotone" />
                     </Button>
                   </div>
                 </CardContent>
               </Card>
             ))}
             {(!recurringActivities || recurringActivities.length === 0) && !isAddingActivity && (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <ListChecks className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <h3 className="text-lg font-semibold mb-2">No recurring activities yet</h3>
-                  <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
+              <Card className="border-border/50 shadow-sm">
+                <CardContent className="py-16 text-center">
+                  <div className="w-20 h-20 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-6">
+                    <ListChecks className="w-10 h-10 text-accent" weight="duotone" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">No recurring activities yet</h3>
+                  <p className="text-sm text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
                     Add activities that repeat weekly, like work hours, exercise routines, or daily tasks
                   </p>
-                  <Button onClick={() => setIsAddingActivity(true)}>
-                    <Plus className="w-4 h-4 mr-2" />
+                  <Button onClick={() => setIsAddingActivity(true)} size="lg" className="bg-accent hover:bg-accent/90 shadow-md">
+                    <Plus className="w-5 h-5 mr-2" weight="bold" />
                     Add Your First Activity
                   </Button>
                 </CardContent>
@@ -829,24 +860,32 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
           </div>
         </TabsContent>
 
-        <TabsContent value="goals" className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+        <TabsContent value="goals" className="space-y-6 mt-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div>
-              <h3 className="text-lg font-semibold">Your Goals</h3>
-              <p className="text-sm text-muted-foreground">Track progress toward your objectives</p>
+              <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">
+                  <Target className="w-5 h-5 text-accent" weight="duotone" />
+                </div>
+                Your Goals
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">Track progress toward your objectives</p>
             </div>
-            <Button onClick={() => setIsAddingGoal(true)} className="w-full sm:w-auto">
-              <Plus className="w-4 h-4 mr-2" />
+            <Button onClick={() => setIsAddingGoal(true)} className="w-full sm:w-auto bg-accent hover:bg-accent/90 shadow-md">
+              <Plus className="w-4 h-4 mr-2" weight="bold" />
               Add Goal
             </Button>
           </div>
 
           {isAddingGoal && (
-            <Card className="border-primary/20">
-              <CardHeader>
-                <CardTitle className="text-lg">New Goal</CardTitle>
+            <Card className="border-accent/30 shadow-md">
+              <CardHeader className="bg-gradient-to-r from-accent/5 to-background border-b border-border/50">
+                <CardTitle className="text-lg font-bold flex items-center gap-2">
+                  <Target className="w-5 h-5 text-accent" weight="duotone" />
+                  New Goal
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-5 pt-6">
                 <div className="space-y-2">
                   <Label htmlFor="goal-title">Goal Title</Label>
                   <Input
@@ -933,9 +972,12 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
                   )}
                 </div>
 
-                <div className="flex gap-2">
-                  <Button onClick={handleAddGoal} className="flex-1">Add Goal</Button>
-                  <Button variant="outline" onClick={() => setIsAddingGoal(false)}>Cancel</Button>
+                <div className="flex gap-2 pt-2">
+                  <Button onClick={handleAddGoal} className="flex-1 bg-accent hover:bg-accent/90 shadow-md" size="lg">
+                    <Target className="w-4 h-4 mr-2" weight="bold" />
+                    Add Goal
+                  </Button>
+                  <Button variant="outline" onClick={() => setIsAddingGoal(false)} size="lg">Cancel</Button>
                 </div>
               </CardContent>
             </Card>
@@ -948,46 +990,48 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
               const progress = totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0
 
               return (
-                <Card key={goal.id} className="hover:border-primary/30 transition-colors">
-                  <CardHeader>
+                <Card key={goal.id} className="hover:border-accent/40 transition-all shadow-sm hover:shadow-md border-border/50">
+                  <CardHeader className="bg-gradient-to-r from-accent/5 to-background border-b border-border/30">
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                       <div className="flex-1">
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                          <Target className="w-5 h-5 text-primary flex-shrink-0" />
+                        <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                          <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center flex-shrink-0">
+                            <Target className="w-5 h-5 text-accent" weight="duotone" />
+                          </div>
                           <span className="break-words">{goal.title}</span>
                         </CardTitle>
-                        <CardDescription className="mt-2 break-words">{goal.description}</CardDescription>
+                        <CardDescription className="mt-2 break-words leading-relaxed">{goal.description}</CardDescription>
                         {goal.targetDate && (
-                          <p className="text-xs text-muted-foreground mt-3">
+                          <p className="text-xs font-medium text-muted-foreground mt-3">
                             Target: {new Date(goal.targetDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                           </p>
                         )}
                       </div>
                       <div className="flex items-center gap-3 self-end sm:self-auto">
-                        <Progress value={progress} className="w-20 sm:w-24 h-2" />
-                        <span className="text-sm font-medium min-w-[3rem] text-right">{progress}%</span>
+                        <Progress value={progress} className="w-24 sm:w-32 h-2.5 [&>div]:bg-accent" />
+                        <span className="text-base font-bold text-accent min-w-[3.5rem] text-right">{progress}%</span>
                       </div>
                     </div>
                   </CardHeader>
                   {goal.milestones.length > 0 && (
-                    <CardContent>
-                      <div className="space-y-2">
+                    <CardContent className="pt-5 pb-5">
+                      <div className="space-y-2.5">
                         {goal.milestones.map(milestone => (
                           <div
                             key={milestone.id}
-                            className="flex items-start gap-3 p-2 rounded-lg hover:bg-accent/5 transition-colors"
+                            className="flex items-start gap-3 p-3 rounded-xl hover:bg-accent/5 transition-colors border border-transparent hover:border-accent/20"
                           >
                             <button
                               onClick={() => handleToggleMilestone(goal.id, milestone.id)}
                               className="flex-shrink-0 mt-0.5"
                             >
                               {milestone.completed ? (
-                                <CheckCircle className="w-5 h-5 text-green-600" weight="fill" />
+                                <CheckCircle className="w-6 h-6 text-green-600" weight="fill" />
                               ) : (
-                                <Circle className="w-5 h-5 text-muted-foreground" />
+                                <Circle className="w-6 h-6 text-muted-foreground hover:text-accent transition-colors" />
                               )}
                             </button>
-                            <span className={`${milestone.completed ? 'line-through text-muted-foreground' : ''} break-words flex-1`}>
+                            <span className={`${milestone.completed ? 'line-through text-muted-foreground' : 'text-foreground font-medium'} break-words flex-1`}>
                               {milestone.title}
                             </span>
                           </div>
@@ -999,15 +1043,17 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
               )
             })}
             {activeGoals.length === 0 && !isAddingGoal && (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <h3 className="text-lg font-semibold mb-2">No goals set yet</h3>
-                  <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
+              <Card className="border-border/50 shadow-sm">
+                <CardContent className="py-16 text-center">
+                  <div className="w-20 h-20 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-6">
+                    <Target className="w-10 h-10 text-accent" weight="duotone" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">No goals set yet</h3>
+                  <p className="text-sm text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
                     Set measurable goals with milestones to track your progress over time
                   </p>
-                  <Button onClick={() => setIsAddingGoal(true)}>
-                    <Plus className="w-4 h-4 mr-2" />
+                  <Button onClick={() => setIsAddingGoal(true)} size="lg" className="bg-accent hover:bg-accent/90 shadow-md">
+                    <Plus className="w-5 h-5 mr-2" weight="bold" />
                     Set Your First Goal
                   </Button>
                 </CardContent>
