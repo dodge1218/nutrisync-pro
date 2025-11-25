@@ -45,6 +45,7 @@ import ExerciseCreator from './ExerciseCreator'
 import DailyCheckIn from '../DailyCheckIn'
 import CheckInHistory from '../CheckInHistory'
 import AutoTaskSettings from '../AutoTaskSettings'
+import SmartRoutineBuilder from '../SmartRoutineBuilder'
 import { toast } from 'sonner'
 
 interface LifeFlowProps {
@@ -136,6 +137,7 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
   const [cookHistory] = useKV<{ templateId: string; actualMinutes: number; timestamp: string }[]>('cook-history', [])
 
   const [isAddingActivity, setIsAddingActivity] = useState(false)
+  const [isSmartBuilderOpen, setIsSmartBuilderOpen] = useState(false)
   const [isAddingGoal, setIsAddingGoal] = useState(false)
   const [selectedDays, setSelectedDays] = useState(3)
   const [autofillMeals, setAutofillMeals] = useState(true)
@@ -352,6 +354,12 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
       duration: 60,
       days: ['mon', 'tue', 'wed', 'thu', 'fri']
     })
+  }
+
+  const handleSmartAddActivities = (activities: RecurringActivity[]) => {
+    setRecurringActivities((current) => [...(current || []), ...activities])
+    setIsSmartBuilderOpen(false)
+    toast.success(`Added ${activities.length} activities to your routine`)
   }
 
   const handleRemoveActivity = (id: string) => {
@@ -674,11 +682,30 @@ export default function LifeFlow({ foodLogs }: LifeFlowProps) {
               </h3>
               <p className="text-sm text-muted-foreground mt-1">Activities that repeat on specific days</p>
             </div>
-            <Button onClick={() => setIsAddingActivity(true)} className="w-full sm:w-auto bg-sky-500 hover:bg-sky-600 text-white shadow-md">
-              <Plus className="w-4 h-4 mr-2" weight="bold" />
-              Add Activity
-            </Button>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button 
+                onClick={() => setIsSmartBuilderOpen(true)} 
+                variant="outline"
+                className="flex-1 sm:flex-none border-sky-500/30 hover:bg-sky-500/5 text-sky-600 dark:text-sky-400"
+              >
+                <Sparkle className="w-4 h-4 mr-2" weight="fill" />
+                AI Builder
+              </Button>
+              <Button onClick={() => setIsAddingActivity(true)} className="flex-1 sm:flex-none bg-sky-500 hover:bg-sky-600 text-white shadow-md">
+                <Plus className="w-4 h-4 mr-2" weight="bold" />
+                Add Activity
+              </Button>
+            </div>
           </div>
+
+          {isSmartBuilderOpen && (
+            <div className="mb-6">
+              <SmartRoutineBuilder 
+                onAddActivities={handleSmartAddActivities}
+                onClose={() => setIsSmartBuilderOpen(false)}
+              />
+            </div>
+          )}
 
           {isAddingActivity && (
             <Card className="border-sky-500/30 shadow-md">
