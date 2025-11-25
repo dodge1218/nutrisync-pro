@@ -171,31 +171,37 @@ function App() {
       
       <DisclaimerBanner />
       
-      <div className="container mx-auto px-6 py-6 max-w-7xl">
-        <header className="mb-8">
-          <div className="flex items-center justify-between gap-6 flex-wrap bg-card/60 backdrop-blur-sm rounded-2xl p-6 border border-border/50 shadow-lg shadow-primary/5">
-            <div className="flex items-center gap-5">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">
+        <header className="mb-10">
+          <div className="flex items-center justify-between gap-6 flex-wrap bg-white/80 backdrop-blur-md rounded-3xl p-7 border border-border/40 shadow-2xl shadow-primary/10">
+            <div className="flex items-center gap-6">
               {mode === 'nutriwell' ? (
-                <div className="relative p-4 bg-gradient-to-br from-primary to-primary/80 rounded-xl shadow-lg">
-                  <Leaf className="w-8 h-8 text-primary-foreground" weight="duotone" />
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-primary to-primary/60 rounded-2xl blur opacity-30"></div>
+                  <div className="relative p-5 bg-gradient-to-br from-primary via-primary to-primary/90 rounded-2xl shadow-xl">
+                    <Leaf className="w-9 h-9 text-primary-foreground" weight="fill" />
+                  </div>
                 </div>
               ) : mode === 'sleepsync' ? (
-                <div className="relative p-4 bg-gradient-to-br from-secondary to-secondary/80 rounded-xl shadow-lg">
-                  <Moon className="w-8 h-8 text-secondary-foreground" weight="duotone" />
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-secondary/60 to-secondary/40 rounded-2xl blur opacity-30"></div>
+                  <div className="relative p-5 bg-gradient-to-br from-secondary via-secondary/95 to-secondary/80 rounded-2xl shadow-xl">
+                    <Moon className="w-9 h-9 text-secondary-foreground" weight="fill" />
+                  </div>
                 </div>
               ) : (
-                <div className="relative p-4 bg-gradient-to-br from-accent to-accent/80 rounded-xl shadow-lg">
-                  <CalendarBlank className="w-8 h-8 text-accent-foreground" weight="duotone" />
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-accent to-accent/60 rounded-2xl blur opacity-30"></div>
+                  <div className="relative p-5 bg-gradient-to-br from-accent via-accent to-accent/90 rounded-2xl shadow-xl">
+                    <CalendarBlank className="w-9 h-9 text-accent-foreground" weight="fill" />
+                  </div>
                 </div>
               )}
               <div>
-                <h1 className="text-3xl font-bold text-foreground tracking-tight mb-1">
+                <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-1.5">
                   {mode === 'nutriwell' ? 'NutriWell' : mode === 'sleepsync' ? 'SleepSync' : 'LifeFlow'}
                 </h1>
-                <p className="text-sm text-muted-foreground font-medium">
+                <p className="text-base text-muted-foreground font-medium">
                   {mode === 'nutriwell' 
                     ? 'Smart nutrition intelligence'
                     : mode === 'sleepsync'
@@ -205,48 +211,48 @@ function App() {
                 </p>
               </div>
             </div>
-            <div className="flex gap-3 items-center flex-wrap justify-end">
+            <div className="flex gap-2.5 items-center flex-wrap justify-end">
               {mode !== 'nutriwell' && (
                 <Button
                   variant="outline"
-                  size="default"
+                  size="lg"
                   onClick={() => switchMode('nutriwell')}
-                  className="flex items-center gap-2.5 font-semibold bg-card/50 hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-all duration-200"
+                  className="flex items-center gap-2.5 font-bold bg-white hover:bg-primary hover:text-primary-foreground hover:border-primary border-2 transition-all duration-300 rounded-2xl px-5 py-6 shadow-md hover:shadow-xl"
                 >
-                  <Leaf className="w-4 h-4" weight="duotone" />
+                  <Leaf className="w-5 h-5" weight="bold" />
                   NutriWell
                 </Button>
               )}
               {mode !== 'sleepsync' && (
                 <Button
                   variant="outline"
-                  size="default"
+                  size="lg"
                   onClick={() => switchMode('sleepsync')}
-                  className="flex items-center gap-2.5 font-semibold bg-card/50 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200"
+                  className="flex items-center gap-2.5 font-bold bg-white hover:bg-secondary hover:text-secondary-foreground hover:border-secondary border-2 transition-all duration-300 rounded-2xl px-5 py-6 shadow-md hover:shadow-xl"
                 >
-                  <Moon className="w-4 h-4" weight="duotone" />
+                  <Moon className="w-5 h-5" weight="bold" />
                   SleepSync
                 </Button>
               )}
               {mode !== 'lifeflow' && (
                 <Button
                   variant="outline"
-                  size="default"
+                  size="lg"
                   onClick={() => switchMode('lifeflow')}
-                  className="flex items-center gap-2.5 font-semibold bg-card/50 hover:bg-accent/10 hover:text-accent hover:border-accent/50 transition-all duration-200"
+                  className="flex items-center gap-2.5 font-bold bg-white hover:bg-accent hover:text-accent-foreground hover:border-accent border-2 transition-all duration-300 rounded-2xl px-5 py-6 shadow-md hover:shadow-xl"
                 >
-                  <CalendarBlank className="w-4 h-4" weight="duotone" />
+                  <CalendarBlank className="w-5 h-5" weight="bold" />
                   LifeFlow
                 </Button>
               )}
               <Button
                 variant="ghost"
-                size="default"
+                size="lg"
                 onClick={handleSignOut}
-                className="flex items-center gap-2 hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
+                className="flex items-center gap-2 hover:bg-destructive hover:text-destructive-foreground transition-all duration-300 rounded-2xl px-4 py-6"
                 title="Sign Out"
               >
-                <SignOut className="w-5 h-5" weight="duotone" />
+                <SignOut className="w-6 h-6" weight="bold" />
               </Button>
             </div>
           </div>
@@ -256,7 +262,7 @@ function App() {
           <>
             <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
 
-            <main className="mt-6">
+            <main className="mt-8">
               {currentPage === 'food-budget' && (
                 <FoodBudget foodLogs={logs} />
               )}
@@ -289,11 +295,11 @@ function App() {
             </main>
           </>
         ) : mode === 'sleepsync' ? (
-          <main className="mt-6">
+          <main className="mt-8">
             <SleepSync foodLogs={logs} />
           </main>
         ) : (
-          <main className="mt-6">
+          <main className="mt-8">
             <LifeFlow foodLogs={logs} />
           </main>
         )}
