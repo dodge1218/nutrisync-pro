@@ -148,15 +148,15 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
   const allTemplates = [...MEAL_TEMPLATES, ...(customTemplates || [])]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Card>
-        <CardHeader>
-          <CardTitle>Log Your Meals</CardTitle>
-          <CardDescription>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg text-foreground">Log Your Meals</CardTitle>
+          <CardDescription className="text-sm">
             Search for foods and track what you eat today
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="meal-type">Meal Type</Label>
@@ -400,43 +400,44 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Today's Meals ({todaysLogs.length})</CardTitle>
-          <CardDescription>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg text-foreground">Today's Meals ({todaysLogs.length})</CardTitle>
+          <CardDescription className="text-sm">
             Foods logged today
           </CardDescription>
         </CardHeader>
         <CardContent>
           {todaysLogs.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">
+            <p className="text-muted-foreground text-center py-6 text-sm">
               No meals logged yet today. Start by adding your first meal above.
             </p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {todaysLogs.map(log => (
                 <div
                   key={log.id}
-                  className="flex items-center justify-between p-3 border rounded-lg"
+                  className="flex items-center justify-between p-2.5 border rounded-lg bg-card hover:bg-muted/50 transition-colors"
                 >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <div className="font-medium">{log.food.name}</div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <div className="font-semibold text-sm text-foreground">{log.food.name}</div>
                       {log.food.brand && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs px-1.5 py-0">
                           {log.food.brand}
                         </Badge>
                       )}
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-xs text-muted-foreground mt-0.5">
                       {log.quantity} × {log.food.servingSize} · {Math.round(log.food.calories * log.quantity)} cal
                     </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
+                    className="h-8 w-8"
                     onClick={() => handleDeleteLog(log.id)}
                   >
-                    <Trash className="text-destructive" />
+                    <Trash className="text-destructive w-4 h-4" />
                   </Button>
                 </div>
               ))}
@@ -444,8 +445,8 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
           )}
 
           {todaysLogs.length > 0 && (
-            <div className="mt-4 flex justify-end">
-              <Button onClick={() => onNavigate('food-budget')}>
+            <div className="mt-3 flex justify-end">
+              <Button onClick={() => onNavigate('food-budget')} size="sm">
                 View Analysis →
               </Button>
             </div>

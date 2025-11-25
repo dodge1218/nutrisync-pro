@@ -171,85 +171,79 @@ function App() {
       
       <DisclaimerBanner />
       
-      <div className="container mx-auto px-6 py-8 max-w-7xl">
-        <header className="mb-10">
-          <div className="flex items-start justify-between gap-6">
-            <div>
-              <h1 className="text-5xl font-bold text-foreground mb-3 flex items-center gap-4">
-                {mode === 'nutriwell' ? (
-                  <>
-                    <div className="p-3 bg-primary/10 rounded-2xl">
-                      <Leaf className="w-12 h-12 text-primary" weight="fill" />
-                    </div>
-                    NutriWell
-                  </>
-                ) : mode === 'sleepsync' ? (
-                  <>
-                    <div className="p-3 bg-secondary/10 rounded-2xl">
-                      <Moon className="w-12 h-12 text-secondary" weight="fill" />
-                    </div>
-                    SleepSync
-                  </>
-                ) : (
-                  <>
-                    <div className="p-3 bg-accent/10 rounded-2xl">
-                      <CalendarBlank className="w-12 h-12 text-accent" weight="fill" />
-                    </div>
-                    LifeFlow
-                  </>
-                )}
-              </h1>
-              <p className="text-lg text-muted-foreground ml-[88px]">
-                {mode === 'nutriwell' 
-                  ? 'Smart nutrition intelligence for optimal health'
-                  : mode === 'sleepsync'
-                  ? 'Sleep-optimized meal timing for better rest'
-                  : 'Time-blocked scheduling for your goals'
-                }
-              </p>
+      <div className="container mx-auto px-4 py-6 max-w-7xl">
+        <header className="mb-8">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {mode === 'nutriwell' ? (
+                <div className="p-2.5 bg-primary/10 rounded-xl">
+                  <Leaf className="w-9 h-9 text-primary" weight="fill" />
+                </div>
+              ) : mode === 'sleepsync' ? (
+                <div className="p-2.5 bg-secondary/10 rounded-xl">
+                  <Moon className="w-9 h-9 text-secondary" weight="fill" />
+                </div>
+              ) : (
+                <div className="p-2.5 bg-accent/10 rounded-xl">
+                  <CalendarBlank className="w-9 h-9 text-accent" weight="fill" />
+                </div>
+              )}
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">
+                  {mode === 'nutriwell' ? 'NutriWell' : mode === 'sleepsync' ? 'SleepSync' : 'LifeFlow'}
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  {mode === 'nutriwell' 
+                    ? 'Smart nutrition intelligence'
+                    : mode === 'sleepsync'
+                    ? 'Sleep-optimized meal timing'
+                    : 'Time-blocked scheduling'
+                  }
+                </p>
+              </div>
             </div>
-            <div className="flex gap-3 items-center flex-wrap justify-end">
+            <div className="flex gap-2 items-center flex-wrap justify-end">
               {mode !== 'nutriwell' && (
                 <Button
                   variant="outline"
-                  size="lg"
+                  size="default"
                   onClick={() => switchMode('nutriwell')}
-                  className="flex items-center gap-2.5 font-semibold shadow-sm hover:shadow-md transition-shadow"
+                  className="flex items-center gap-2 font-semibold"
                 >
-                  <Leaf className="w-5 h-5" weight="fill" />
+                  <Leaf className="w-4 h-4" weight="fill" />
                   NutriWell
                 </Button>
               )}
               {mode !== 'sleepsync' && (
                 <Button
                   variant="outline"
-                  size="lg"
+                  size="default"
                   onClick={() => switchMode('sleepsync')}
-                  className="flex items-center gap-2.5 font-semibold shadow-sm hover:shadow-md transition-shadow"
+                  className="flex items-center gap-2 font-semibold"
                 >
-                  <Moon className="w-5 h-5" weight="fill" />
+                  <Moon className="w-4 h-4" weight="fill" />
                   SleepSync
                 </Button>
               )}
               {mode !== 'lifeflow' && (
                 <Button
                   variant="outline"
-                  size="lg"
+                  size="default"
                   onClick={() => switchMode('lifeflow')}
-                  className="flex items-center gap-2.5 font-semibold shadow-sm hover:shadow-md transition-shadow"
+                  className="flex items-center gap-2 font-semibold"
                 >
-                  <CalendarBlank className="w-5 h-5" weight="fill" />
+                  <CalendarBlank className="w-4 h-4" weight="fill" />
                   LifeFlow
                 </Button>
               )}
               <Button
                 variant="ghost"
-                size="lg"
+                size="default"
                 onClick={handleSignOut}
                 className="flex items-center gap-2"
                 title="Sign Out"
               >
-                <SignOut className="w-5 h-5" />
+                <SignOut className="w-4 h-4" />
               </Button>
             </div>
           </div>

@@ -104,25 +104,25 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
     const { status, color, trend } = getBudgetStatus(percentOfDV)
 
     return (
-      <div key={nutrient} className="p-5 border-2 rounded-xl space-y-3 shadow-sm hover:shadow-md transition-shadow bg-gradient-to-br from-card to-muted/20">
-        <div className="flex items-start justify-between">
+      <div key={nutrient} className="p-3 border rounded-lg bg-card">
+        <div className="flex items-start justify-between mb-2">
           <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h4 className="font-semibold text-base">{NUTRIENT_DISPLAY_NAMES[nutrient]}</h4>
+            <div className="flex items-center gap-1.5">
+              <h4 className="font-semibold text-sm text-foreground">{NUTRIENT_DISPLAY_NAMES[nutrient]}</h4>
               <span className={color}>{getTrendIcon(trend)}</span>
             </div>
-            <p className="text-sm text-muted-foreground mt-1.5">
-              Today: {formatNutrientAmount(dailyValue, nutrient)} / {formatNutrientAmount(target, nutrient)}
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {formatNutrientAmount(dailyValue, nutrient)} / {formatNutrientAmount(target, nutrient)}
             </p>
           </div>
-          <Badge variant={percentOfDV >= 80 ? 'default' : 'destructive'} className="ml-2 px-3 py-1 text-sm font-semibold">
+          <Badge variant={percentOfDV >= 80 ? 'default' : 'destructive'} className="ml-2 px-2 py-0.5 text-xs font-semibold">
             {Math.round(percentOfDV)}%
           </Badge>
         </div>
 
-        <div className="space-y-2">
-          <Progress value={Math.min(percentOfDV, 100)} className="h-3" />
-          <div className="flex items-center justify-between text-sm">
+        <div className="space-y-1.5">
+          <Progress value={Math.min(percentOfDV, 100)} className="h-2" />
+          <div className="flex items-center justify-between text-xs">
             <span className={`${color} font-medium capitalize`}>{status}</span>
             <span className="text-muted-foreground font-medium">
               {percentOfDV >= 100 ? '+' : ''}{formatNutrientAmount(dailyValue - target, nutrient)}
@@ -149,27 +149,25 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
   })
 
   return (
-    <div className="space-y-8">
-      <ProfileReminder onUpdateClick={() => setShowProfileDialog(true)} />
-      
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-4xl font-bold text-foreground">Dashboard</h2>
-          <p className="text-base text-muted-foreground mt-2 flex items-center gap-2">
-            <Calendar className="w-5 h-5" weight="fill" />
+          <h2 className="text-2xl font-bold text-foreground">Dashboard</h2>
+          <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1.5">
+            <Calendar className="w-4 h-4" weight="fill" />
             {dateString}
           </p>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-4">
-        <Card className="shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-card to-primary/5">
-          <CardHeader className="pb-4">
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card className="shadow-sm border-2">
+          <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-semibold">Calories</CardTitle>
+              <CardTitle className="text-sm font-semibold text-foreground">Calories</CardTitle>
               {todayCaloriesBurned > 0 && (
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="net-calories" className="text-xs cursor-pointer">Net</Label>
+                <div className="flex items-center gap-1.5">
+                  <Label htmlFor="net-calories" className="text-xs cursor-pointer text-foreground">Net</Label>
                   <Switch 
                     id="net-calories"
                     checked={showNetCalories}
@@ -179,20 +177,20 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
               )}
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex items-baseline gap-2">
-                <div className="text-4xl font-bold text-primary">
+          <CardContent className="pb-4">
+            <div className="space-y-1.5">
+              <div className="flex items-baseline gap-1.5">
+                <div className="text-3xl font-bold text-primary">
                   {showNetCalories && todayCaloriesBurned > 0 
                     ? Math.round(netCalories).toLocaleString() 
                     : Math.round(totals.calories).toLocaleString()
                   }
                 </div>
-                <span className="text-base text-muted-foreground font-medium">kcal</span>
+                <span className="text-sm text-muted-foreground font-medium">kcal</span>
               </div>
               {todayCaloriesBurned > 0 && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Flame className="w-4 h-4 text-orange-600" weight="fill" />
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Flame className="w-3.5 h-3.5 text-orange-600" weight="fill" />
                   <span>
                     {showNetCalories 
                       ? `${Math.round(totals.calories)} - ${todayCaloriesBurned} burned`
@@ -205,50 +203,50 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
           </CardContent>
         </Card>
 
-        <Card className="shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-card to-secondary/5">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-base font-semibold">GBDI Score</CardTitle>
+        <Card className="shadow-sm border-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold text-foreground">GBDI Score</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4">
-              <div className="text-4xl font-bold text-secondary">{Math.round(wellness.gbdi)}</div>
-              <Progress value={wellness.gbdi} className="flex-1 h-3" />
+          <CardContent className="pb-4">
+            <div className="flex items-center gap-3">
+              <div className="text-3xl font-bold text-secondary">{Math.round(wellness.gbdi)}</div>
+              <Progress value={wellness.gbdi} className="flex-1 h-2.5" />
             </div>
-            <p className="text-sm text-muted-foreground mt-3">
+            <p className="text-xs text-muted-foreground mt-2">
               Gut-Brain-Digestive Index
             </p>
           </CardContent>
         </Card>
 
-        <Card className="shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-card to-destructive/5">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-base font-semibold">Critical Gaps</CardTitle>
+        <Card className="shadow-sm border-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold text-foreground">Critical Gaps</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-destructive/10 rounded-xl">
-                <Target className="w-8 h-8 text-destructive" weight="fill" />
+          <CardContent className="pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-destructive/10 rounded-lg">
+                <Target className="w-6 h-6 text-destructive" weight="fill" />
               </div>
-              <div className="text-4xl font-bold text-destructive">{criticalGaps.length}</div>
+              <div className="text-3xl font-bold text-destructive">{criticalGaps.length}</div>
             </div>
-            <p className="text-sm text-muted-foreground mt-3">
+            <p className="text-xs text-muted-foreground mt-2">
               Nutrients below 50% DV
             </p>
           </CardContent>
         </Card>
 
-        <Card className="shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-card to-accent/5">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-base font-semibold">Plant Diversity</CardTitle>
+        <Card className="shadow-sm border-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold text-foreground">Plant Diversity</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-accent/10 rounded-xl">
-                <ChartBar className="w-8 h-8 text-accent" weight="fill" />
+          <CardContent className="pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-accent/10 rounded-lg">
+                <ChartBar className="w-6 h-6 text-accent" weight="fill" />
               </div>
-              <div className="text-4xl font-bold text-accent">{wellness.plantDiversityCount}</div>
+              <div className="text-3xl font-bold text-accent">{wellness.plantDiversityCount}</div>
             </div>
-            <p className="text-sm text-muted-foreground mt-3">
+            <p className="text-xs text-muted-foreground mt-2">
               Different plant foods today
             </p>
           </CardContent>
@@ -266,31 +264,31 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
       )}
 
       {criticalGaps.length > 0 && (
-        <Card className="border-2 border-destructive/30 bg-gradient-to-br from-card to-destructive/10 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-destructive text-xl">
-              <div className="p-2 bg-destructive/15 rounded-xl">
-                <Lightbulb className="w-6 h-6" weight="fill" />
+        <Card className="border-2 border-destructive/30 shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-destructive text-lg">
+              <div className="p-1.5 bg-destructive/10 rounded-lg">
+                <Lightbulb className="w-5 h-5" weight="fill" />
               </div>
-              Critical Deficiencies Detected
+              Critical Deficiencies
             </CardTitle>
-            <CardDescription className="text-base">
-              These nutrients are below 50% of daily value and require immediate attention
+            <CardDescription className="text-sm">
+              Below 50% of daily value - need immediate attention
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {criticalGaps.map(gap => {
                 const deficit = getNutrientDV(gap.nutrient) - (totals[gap.nutrient] || 0)
                 return (
-                  <div key={gap.nutrient} className="flex items-center justify-between p-4 bg-background rounded-xl border border-destructive/20 shadow-sm">
+                  <div key={gap.nutrient} className="flex items-center justify-between p-3 bg-background rounded-lg border">
                     <div>
-                      <div className="font-semibold text-base">{NUTRIENT_DISPLAY_NAMES[gap.nutrient]}</div>
-                      <div className="text-sm text-muted-foreground mt-0.5">
-                        Need {formatNutrientAmount(deficit, gap.nutrient)} more today
+                      <div className="font-semibold text-sm text-foreground">{NUTRIENT_DISPLAY_NAMES[gap.nutrient]}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">
+                        Need {formatNutrientAmount(deficit, gap.nutrient)} more
                       </div>
                     </div>
-                    <Badge variant="destructive" className="px-3 py-1.5 text-sm font-bold">{Math.round(gap.percentOfDV)}%</Badge>
+                    <Badge variant="destructive" className="px-2 py-0.5 text-xs font-bold">{Math.round(gap.percentOfDV)}%</Badge>
                   </div>
                 )
               })}
@@ -302,43 +300,39 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
       <PostWorkoutNutrition foodLogs={todayLogs} />
 
       <Tabs defaultValue="macros">
-        <TabsList className="grid grid-cols-4 w-full max-w-3xl h-14 p-1.5">
-          <TabsTrigger value="macros" className="text-base font-semibold">Macros</TabsTrigger>
-          <TabsTrigger value="vitamins" className="text-base font-semibold">Vitamins</TabsTrigger>
-          <TabsTrigger value="minerals" className="text-base font-semibold">Minerals</TabsTrigger>
-          <TabsTrigger value="trends" className="text-base font-semibold">Trends</TabsTrigger>
+        <TabsList className="grid grid-cols-4 w-full max-w-2xl h-11 p-1">
+          <TabsTrigger value="macros" className="text-sm font-semibold">Macros</TabsTrigger>
+          <TabsTrigger value="vitamins" className="text-sm font-semibold">Vitamins</TabsTrigger>
+          <TabsTrigger value="minerals" className="text-sm font-semibold">Minerals</TabsTrigger>
+          <TabsTrigger value="trends" className="text-sm font-semibold">Trends</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="macros" className="space-y-4 mt-6">
-          <div className="grid gap-6 md:grid-cols-2">
+        <TabsContent value="macros" className="space-y-3 mt-4">
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {NUTRIENT_CATEGORIES.macros.map(nutrient => renderNutrientBudget(nutrient))}
           </div>
         </TabsContent>
 
-        <TabsContent value="vitamins" className="space-y-4 mt-6">
-          <ScrollArea className="h-[600px] pr-4">
-            <div className="grid gap-6 md:grid-cols-2">
-              {NUTRIENT_CATEGORIES.vitamins.map(nutrient => renderNutrientBudget(nutrient))}
-            </div>
-          </ScrollArea>
+        <TabsContent value="vitamins" className="space-y-3 mt-4">
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 max-h-[500px] overflow-y-auto pr-2">
+            {NUTRIENT_CATEGORIES.vitamins.map(nutrient => renderNutrientBudget(nutrient))}
+          </div>
         </TabsContent>
 
-        <TabsContent value="minerals" className="space-y-4 mt-6">
-          <ScrollArea className="h-[600px] pr-4">
-            <div className="grid gap-6 md:grid-cols-2">
-              {NUTRIENT_CATEGORIES.minerals.map(nutrient => renderNutrientBudget(nutrient))}
-            </div>
-          </ScrollArea>
+        <TabsContent value="minerals" className="space-y-3 mt-4">
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 max-h-[500px] overflow-y-auto pr-2">
+            {NUTRIENT_CATEGORIES.minerals.map(nutrient => renderNutrientBudget(nutrient))}
+          </div>
         </TabsContent>
 
-        <TabsContent value="trends" className="space-y-4 mt-6">
-          <div className="space-y-6">
+        <TabsContent value="trends" className="space-y-4 mt-4">
+          <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold mb-3">Critical Nutrient Trends</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <h3 className="text-base font-semibold mb-2 text-foreground">Critical Nutrient Trends</h3>
+              <p className="text-xs text-muted-foreground mb-3">
                 Tracking your most important nutrients over the last 7 days
               </p>
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-3 md:grid-cols-2">
                 {criticalGaps.slice(0, 6).map(gap => (
                   <NutrientTimeline 
                     key={gap.nutrient}
@@ -352,8 +346,8 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
 
             {moderateGaps.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold mb-3">Moderate Deficiency Trends</h3>
-                <div className="grid gap-4 md:grid-cols-2">
+                <h3 className="text-base font-semibold mb-2 text-foreground">Moderate Deficiency Trends</h3>
+                <div className="grid gap-3 md:grid-cols-2">
                   {moderateGaps.slice(0, 4).map(gap => (
                     <NutrientTimeline 
                       key={gap.nutrient}
@@ -368,10 +362,10 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
 
             {criticalGaps.length === 0 && moderateGaps.length === 0 && (
               <Card>
-                <CardContent className="py-12 text-center">
+                <CardContent className="py-8 text-center">
                   <div className="text-muted-foreground">
-                    <p className="text-lg font-semibold mb-2">Excellent Work!</p>
-                    <p>All your nutrients are at optimal levels. Keep it up!</p>
+                    <p className="text-base font-semibold mb-1 text-foreground">Excellent Work!</p>
+                    <p className="text-sm">All your nutrients are at optimal levels. Keep it up!</p>
                   </div>
                 </CardContent>
               </Card>
@@ -381,19 +375,19 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
       </Tabs>
 
       {moderateGaps.length > 0 && (
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle className="text-xl">Areas for Improvement</CardTitle>
-            <CardDescription className="text-base">
+        <Card className="shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg text-foreground">Areas for Improvement</CardTitle>
+            <CardDescription className="text-sm">
               Nutrients between 50-80% of daily value
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
               {moderateGaps.map(gap => (
-                <div key={gap.nutrient} className="flex items-center justify-between p-4 bg-gradient-to-br from-muted/30 to-muted/50 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                  <span className="font-semibold text-base">{NUTRIENT_DISPLAY_NAMES[gap.nutrient]}</span>
-                  <Badge variant="outline" className="bg-orange-500/15 text-orange-700 border-orange-500/30 px-3 py-1 text-sm font-bold">
+                <div key={gap.nutrient} className="flex items-center justify-between p-2.5 bg-muted/50 rounded-lg">
+                  <span className="font-semibold text-sm text-foreground">{NUTRIENT_DISPLAY_NAMES[gap.nutrient]}</span>
+                  <Badge variant="outline" className="bg-orange-500/10 text-orange-700 border-orange-500/30 px-2 py-0.5 text-xs font-bold">
                     {Math.round(gap.percentOfDV)}%
                   </Badge>
                 </div>

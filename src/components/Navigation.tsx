@@ -19,16 +19,16 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
   ]
 
   return (
-    <nav className="flex gap-3 flex-wrap">
+    <nav className="flex gap-2 flex-wrap">
       {navItems.map(item => (
         <Button
           key={item.page}
           variant={currentPage === item.page ? 'default' : 'outline'}
           onClick={() => onNavigate(item.page)}
-          size="lg"
-          className="gap-2.5 text-base font-semibold px-6 py-6 shadow-sm hover:shadow-md transition-shadow"
+          size="default"
+          className="gap-2 text-sm font-semibold px-4 h-10"
         >
-          <span className="text-lg">{item.icon}</span>
+          <span className="text-base">{item.icon}</span>
           {item.label}
         </Button>
       ))}
