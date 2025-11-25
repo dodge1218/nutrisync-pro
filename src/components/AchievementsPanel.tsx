@@ -191,14 +191,14 @@ export default function AchievementsPanel({
       <CardContent className="space-y-6">
         {unlockedAchievements.length > 0 && (
           <div>
-            <h3 className="text-sm font-medium mb-3 text-green-700">🎉 Unlocked</h3>
+            <h3 className="text-sm font-medium mb-3 text-green-700 dark:text-green-400">🎉 Unlocked</h3>
             <div className="grid gap-3">
               {unlockedAchievements.map((achievement) => (
                 <motion.div
                   key={achievement.id}
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className={`relative overflow-hidden p-4 rounded-lg border-2 ${getRarityBorder(achievement.rarity)} bg-gradient-to-br ${getRarityColor(achievement.rarity)} bg-opacity-10`}
+                  className={`relative overflow-hidden p-4 rounded-lg border-2 ${getRarityBorder(achievement.rarity)} bg-card`}
                 >
                   <div className="flex items-start gap-3">
                     <div className={`p-2 rounded-lg bg-gradient-to-br ${getRarityColor(achievement.rarity)} text-white`}>
@@ -215,7 +215,7 @@ export default function AchievementsPanel({
                         {achievement.description}
                       </div>
                       {achievement.maxProgress && achievement.progress !== undefined && (
-                        <div className="text-xs text-green-700 font-medium mt-1">
+                        <div className="text-xs text-green-700 dark:text-green-400 font-medium mt-1">
                           ✓ Completed: {achievement.progress}/{achievement.maxProgress}
                         </div>
                       )}

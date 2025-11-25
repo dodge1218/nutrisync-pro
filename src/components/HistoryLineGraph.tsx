@@ -160,7 +160,7 @@ export default function HistoryLineGraph({ snapshots }: HistoryLineGraphProps) {
             <CardTitle className="text-2xl flex items-center gap-2">
               7-Day Nutrition Trends
               {hasExcellentPerformance && (
-                <Badge className="bg-yellow-500 text-white">90%+ Achievement!</Badge>
+                <Badge className="bg-yellow-500 text-yellow-950 hover:bg-yellow-600">90%+ Achievement!</Badge>
               )}
             </CardTitle>
             <CardDescription className="mt-2">

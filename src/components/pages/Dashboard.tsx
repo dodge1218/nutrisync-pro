@@ -124,9 +124,9 @@ export default function Dashboard({ foodLogs }: DashboardProps) {
   }
 
   const getStatusBadge = (percent: number) => {
-    if (percent >= 100) return <Badge variant="default" className="bg-green-600">Complete</Badge>
-    if (percent >= 80) return <Badge variant="secondary" className="bg-green-100 text-green-800">Good</Badge>
-    if (percent >= 50) return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Low</Badge>
+    if (percent >= 100) return <Badge variant="default" className="bg-green-600 dark:bg-green-500">Complete</Badge>
+    if (percent >= 80) return <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">Good</Badge>
+    if (percent >= 50) return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">Low</Badge>
     return <Badge variant="destructive">Critical</Badge>
   }
 

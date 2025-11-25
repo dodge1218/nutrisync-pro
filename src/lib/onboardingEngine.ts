@@ -42,24 +42,11 @@ export const NUTRIWELL_TUTORIAL_STEPS: OnboardingStep[] = [
     placement: 'top',
   },
   {
-    id: 'understand-gbdi',
-    title: 'Understanding Gut Health',
-    description: 'Your Gut Health score measures gut-friendly factors like fiber, fermented foods, and plant diversity. Higher is better!',
-    targetElement: '#gbdi-score',
-    placement: 'bottom',
-  },
-  {
     id: 'get-recommendations',
     title: 'Get personalized recommendations',
     description: 'We analyze your nutrient gaps and suggest foods that close multiple gaps efficiently. Food-first solutions!',
     targetElement: '#recommendations-nav',
     placement: 'bottom',
-  },
-  {
-    id: 'explore-features',
-    title: 'Explore other features',
-    description: 'Check out Meal Planner for templates, Food Budget for trends, and Achievements for gamification. Log daily to track progress!',
-    placement: 'center',
   },
 ]
 

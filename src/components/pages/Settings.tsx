@@ -16,8 +16,8 @@ export default function Settings() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-500 to-slate-700 bg-clip-text text-transparent flex items-center gap-3">
-            <Gear className="w-8 h-8 text-slate-600" weight="duotone" />
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-500 to-slate-700 dark:from-gray-200 dark:to-slate-400 bg-clip-text text-transparent flex items-center gap-3">
+            <Gear className="w-8 h-8 text-slate-600 dark:text-slate-400" weight="duotone" />
             Settings
           </h1>
           <p className="text-muted-foreground mt-2 text-base">
@@ -30,11 +30,11 @@ export default function Settings() {
       
       <CloudSyncSettings />
       
-      <Card className="border-slate-200 shadow-sm">
+      <Card className="border-slate-200 dark:border-slate-800 shadow-sm">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-              <User className="w-5 h-5 text-slate-600" weight="duotone" />
+            <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+              <User className="w-5 h-5 text-slate-600 dark:text-slate-400" weight="duotone" />
             </div>
             Nutrition Calculations
           </CardTitle>
@@ -56,23 +56,23 @@ export default function Settings() {
             />
           </div>
           {enabled && (
-            <div className="bg-slate-50 border border-slate-100 p-3 rounded-lg text-sm text-slate-600">
+            <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 p-3 rounded-lg text-sm text-slate-600 dark:text-slate-400">
               ✓ Using your profile data to calculate personalized nutrient targets. Keep your profile updated in the section above.
             </div>
           )}
           {!usePersonalizedDVs && (
-            <div className="bg-slate-50 border border-slate-100 p-3 rounded-lg text-sm text-slate-600">
+            <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 p-3 rounded-lg text-sm text-slate-600 dark:text-slate-400">
               Currently using standard daily values (RDA). Enable personalized DVs for recommendations tailored to your needs.
             </div>
           )}
         </CardContent>
       </Card>
       
-      <Card className="border-slate-200 shadow-sm">
+      <Card className="border-slate-200 dark:border-slate-800 shadow-sm">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-              <BellRinging className="w-5 h-5 text-slate-600" weight="duotone" />
+            <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+              <BellRinging className="w-5 h-5 text-slate-600 dark:text-slate-400" weight="duotone" />
             </div>
             Preferences
           </CardTitle>
@@ -106,11 +106,11 @@ export default function Settings() {
       
       <ProfileHistory />
 
-      <Card className="border-slate-200 shadow-sm">
+      <Card className="border-slate-200 dark:border-slate-800 shadow-sm">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-              <FileText className="w-5 h-5 text-slate-600" weight="duotone" />
+            <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+              <FileText className="w-5 h-5 text-slate-600 dark:text-slate-400" weight="duotone" />
             </div>
             Legal & Documentation
           </CardTitle>
@@ -134,7 +134,7 @@ export default function Settings() {
         </CardContent>
       </Card>
       
-      <Card className="bg-slate-50/50 border-slate-200 shadow-sm">
+      <Card className="bg-slate-50/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 shadow-sm">
         <CardHeader>
           <CardTitle className="text-lg">About This App</CardTitle>
         </CardHeader>

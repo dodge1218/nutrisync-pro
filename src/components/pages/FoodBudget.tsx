@@ -83,8 +83,8 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
 
   const getBudgetStatus = (percentOfDV: number) => {
     if (percentOfDV < 50) return { status: 'critical', color: 'text-destructive', trend: 'deficit' }
-    if (percentOfDV < 80) return { status: 'low', color: 'text-orange-600', trend: 'deficit' }
-    if (percentOfDV < 100) return { status: 'approaching', color: 'text-yellow-600', trend: 'approaching' }
+    if (percentOfDV < 80) return { status: 'low', color: 'text-orange-600 dark:text-orange-400', trend: 'deficit' }
+    if (percentOfDV < 100) return { status: 'approaching', color: 'text-yellow-600 dark:text-yellow-400', trend: 'approaching' }
     if (percentOfDV < 150) return { status: 'optimal', color: 'text-primary', trend: 'met' }
     return { status: 'excess', color: 'text-muted-foreground', trend: 'surplus' }
   }
@@ -367,7 +367,7 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
               {moderateGaps.map(gap => (
                 <div key={gap.nutrient} className="flex items-center justify-between p-2.5 bg-muted/50 rounded-lg">
                   <span className="font-semibold text-sm text-foreground">{NUTRIENT_DISPLAY_NAMES[gap.nutrient]}</span>
-                  <Badge variant="outline" className="bg-orange-500/10 text-orange-700 border-orange-500/30 px-2 py-0.5 text-xs font-bold">
+                  <Badge variant="outline" className="bg-orange-500/10 text-orange-700 dark:text-orange-300 border-orange-500/30 px-2 py-0.5 text-xs font-bold">
                     {Math.round(gap.percentOfDV)}%
                   </Badge>
                 </div>

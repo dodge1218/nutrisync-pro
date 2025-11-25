@@ -14,21 +14,21 @@ export default function StreakTracker({ foodLogs }: StreakTrackerProps) {
   const last7Days = getLast7DaysStatus(foodLogs)
 
   const getStreakLevel = (streak: number) => {
-    if (streak >= 30) return { label: 'Legendary', color: 'text-purple-600', bgColor: 'bg-purple-100', emoji: '👑' }
-    if (streak >= 14) return { label: 'Master', color: 'text-orange-600', bgColor: 'bg-orange-100', emoji: '🔥' }
-    if (streak >= 7) return { label: 'Champion', color: 'text-yellow-600', bgColor: 'bg-yellow-100', emoji: '⭐' }
-    if (streak >= 3) return { label: 'Rising', color: 'text-green-600', bgColor: 'bg-green-100', emoji: '🌱' }
-    return { label: 'Starter', color: 'text-gray-600', bgColor: 'bg-gray-100', emoji: '💫' }
+    if (streak >= 30) return { label: 'Legendary', color: 'text-purple-600 dark:text-purple-400', bgColor: 'bg-purple-100 dark:bg-purple-900/30', emoji: '👑' }
+    if (streak >= 14) return { label: 'Master', color: 'text-orange-600 dark:text-orange-400', bgColor: 'bg-orange-100 dark:bg-orange-900/30', emoji: '🔥' }
+    if (streak >= 7) return { label: 'Champion', color: 'text-yellow-600 dark:text-yellow-400', bgColor: 'bg-yellow-100 dark:bg-yellow-900/30', emoji: '⭐' }
+    if (streak >= 3) return { label: 'Rising', color: 'text-green-600 dark:text-green-400', bgColor: 'bg-green-100 dark:bg-green-900/30', emoji: '🌱' }
+    return { label: 'Starter', color: 'text-gray-600 dark:text-gray-400', bgColor: 'bg-gray-100 dark:bg-gray-800', emoji: '💫' }
   }
 
   const level = getStreakLevel(currentStreak)
 
   return (
-    <Card className="border-2 border-orange-200">
+    <Card className="border-2 border-orange-200 dark:border-orange-800">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Flame className="h-5 w-5 text-orange-600" weight="fill" />
+            <Flame className="h-5 w-5 text-orange-600 dark:text-orange-400" weight="fill" />
             <CardTitle>Streak Tracker</CardTitle>
           </div>
           <Badge className={level.bgColor} variant="outline">
@@ -43,13 +43,13 @@ export default function StreakTracker({ foodLogs }: StreakTrackerProps) {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex items-center justify-between">
-          <div className="flex-1 text-center border-r">
+          <div className="flex-1 text-center border-r border-border">
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="text-5xl font-bold text-orange-600 mb-1">
+              <div className="text-5xl font-bold text-orange-600 dark:text-orange-400 mb-1">
                 {currentStreak}
               </div>
               <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
@@ -102,40 +102,40 @@ export default function StreakTracker({ foodLogs }: StreakTrackerProps) {
         </div>
 
         {currentStreak === 0 && (
-          <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-            <div className="text-sm text-blue-900">
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="text-sm text-blue-900 dark:text-blue-100">
               <strong>Start your streak today!</strong> Log at least one meal each day to build consistency.
             </div>
           </div>
         )}
 
         {currentStreak >= 3 && currentStreak < 7 && (
-          <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-            <div className="text-sm text-green-900">
+          <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="text-sm text-green-900 dark:text-green-100">
               <strong>Great progress!</strong> {7 - currentStreak} more day{7 - currentStreak !== 1 ? 's' : ''} to reach Champion level!
             </div>
           </div>
         )}
 
         {currentStreak >= 7 && currentStreak < 14 && (
-          <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-            <div className="text-sm text-yellow-900">
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg border border-yellow-200 dark:border-yellow-800">
+            <div className="text-sm text-yellow-900 dark:text-yellow-100">
               <strong>You're on fire!</strong> {14 - currentStreak} more day{14 - currentStreak !== 1 ? 's' : ''} to reach Master level!
             </div>
           </div>
         )}
 
         {currentStreak >= 14 && currentStreak < 30 && (
-          <div className="bg-orange-50 p-3 rounded-lg border border-orange-200">
-            <div className="text-sm text-orange-900">
+          <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg border border-orange-200 dark:border-orange-800">
+            <div className="text-sm text-orange-900 dark:text-orange-100">
               <strong>Incredible commitment!</strong> {30 - currentStreak} more day{30 - currentStreak !== 1 ? 's' : ''} to reach Legendary status!
             </div>
           </div>
         )}
 
         {currentStreak >= 30 && (
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-3 rounded-lg border border-purple-200">
-            <div className="text-sm text-purple-900">
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-3 rounded-lg border border-purple-200 dark:border-purple-800">
+            <div className="text-sm text-purple-900 dark:text-purple-100">
               <strong>🎉 Legendary status achieved!</strong> You've built an amazing habit. Keep it going!
             </div>
           </div>

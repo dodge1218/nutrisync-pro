@@ -80,26 +80,26 @@ export default function SleepSync({ foodLogs }: CircaFastProps) {
   }
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-600'
-    if (score >= 75) return 'text-blue-600'
-    if (score >= 50) return 'text-yellow-600'
-    if (score >= 25) return 'text-orange-600'
-    return 'text-red-600'
+    if (score >= 90) return 'text-green-600 dark:text-green-400'
+    if (score >= 75) return 'text-blue-600 dark:text-blue-400'
+    if (score >= 50) return 'text-yellow-600 dark:text-yellow-400'
+    if (score >= 25) return 'text-orange-600 dark:text-orange-400'
+    return 'text-red-600 dark:text-red-400'
   }
 
   const getTrendIcon = (trend: 'improving' | 'stable' | 'declining') => {
-    if (trend === 'improving') return <TrendUp className="w-4 h-4 text-green-600" />
-    if (trend === 'declining') return <TrendDown className="w-4 h-4 text-red-600" />
-    return <Minus className="w-4 h-4 text-gray-600" />
+    if (trend === 'improving') return <TrendUp className="w-4 h-4 text-green-600 dark:text-green-400" />
+    if (trend === 'declining') return <TrendDown className="w-4 h-4 text-red-600 dark:text-red-400" />
+    return <Minus className="w-4 h-4 text-gray-600 dark:text-gray-400" />
   }
 
   const getStatusBadge = (status: CircadianAnalysis['digestiveBufferStatus']) => {
     const colors = {
-      optimal: 'bg-green-100 text-green-700 border-green-300',
-      good: 'bg-blue-100 text-blue-700 border-blue-300',
-      fair: 'bg-yellow-100 text-yellow-700 border-yellow-300',
-      poor: 'bg-orange-100 text-orange-700 border-orange-300',
-      critical: 'bg-red-100 text-red-700 border-red-300'
+      optimal: 'bg-green-100 text-green-700 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800',
+      good: 'bg-blue-100 text-blue-700 border-blue-300 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
+      fair: 'bg-yellow-100 text-yellow-700 border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800',
+      poor: 'bg-orange-100 text-orange-700 border-orange-300 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800',
+      critical: 'bg-red-100 text-red-700 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'
     }
     return (
       <Badge variant="outline" className={colors[status]}>
@@ -224,9 +224,9 @@ export default function SleepSync({ foodLogs }: CircaFastProps) {
                 </div>
 
                 {hoursUntilSleep > 0 && todayAnalysis.lastMealHoursBeforeSleep < 3 && (
-                  <Alert className="mt-4 border-amber-300 bg-amber-50">
-                    <Timer className="h-4 w-4 text-amber-600" />
-                    <AlertDescription className="text-amber-900">
+                  <Alert className="mt-4 border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800">
+                    <Timer className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                    <AlertDescription className="text-amber-900 dark:text-amber-100">
                       <strong>Digestion in progress:</strong> Your body needs{' '}
                       {Math.ceil(3 - todayAnalysis.lastMealHoursBeforeSleep)} more hour(s) 
                       before optimal sleep time.
@@ -276,7 +276,7 @@ export default function SleepSync({ foodLogs }: CircaFastProps) {
               </div>
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">Late Meals</p>
-                <p className="text-2xl font-bold text-orange-600">
+                <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                   {weekAnalysis.weeklyPattern.daysWithLateMeals}
                 </p>
               </div>
@@ -290,19 +290,19 @@ export default function SleepSync({ foodLogs }: CircaFastProps) {
 
             <div className="pt-4 border-t space-y-2">
               {weekAnalysis.isEarlyEater && (
-                <div className="flex items-start gap-2 text-sm text-green-700 bg-green-50 p-3 rounded-lg">
+                <div className="flex items-start gap-2 text-sm text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
                   <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <span>You're an early eater - following Blueprint principles!</span>
                 </div>
               )}
               {weekAnalysis.isLateEater && (
-                <div className="flex items-start gap-2 text-sm text-orange-700 bg-orange-50 p-3 rounded-lg">
+                <div className="flex items-start gap-2 text-sm text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg">
                   <Warning className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <span>You're a late eater - try shifting meals earlier</span>
                 </div>
               )}
               {weekAnalysis.caffeineIssues && (
-                <div className="flex items-start gap-2 text-sm text-red-700 bg-red-50 p-3 rounded-lg">
+                <div className="flex items-start gap-2 text-sm text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
                   <Coffee className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <span>Caffeine too close to sleep - cut off 8-10 hours before bed</span>
                 </div>
@@ -313,9 +313,9 @@ export default function SleepSync({ foodLogs }: CircaFastProps) {
       </div>
 
       {todayAnalysis.warnings.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50/50">
+        <Card className="border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-900/10">
           <CardHeader>
-            <CardTitle className="text-orange-900 flex items-center gap-2">
+            <CardTitle className="text-orange-900 dark:text-orange-100 flex items-center gap-2">
               <Warning className="w-5 h-5" />
               Warnings
             </CardTitle>
@@ -323,8 +323,8 @@ export default function SleepSync({ foodLogs }: CircaFastProps) {
           <CardContent>
             <ul className="space-y-2">
               {todayAnalysis.warnings.map((warning, idx) => (
-                <li key={idx} className="flex items-start gap-2 text-sm text-orange-900">
-                  <span className="text-orange-500 mt-1">•</span>
+                <li key={idx} className="flex items-start gap-2 text-sm text-orange-900 dark:text-orange-100">
+                  <span className="text-orange-500 dark:text-orange-400 mt-1">•</span>
                   <span>{warning}</span>
                 </li>
               ))}

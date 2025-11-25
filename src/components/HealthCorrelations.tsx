@@ -206,18 +206,18 @@ export default function HealthCorrelations({ foodLogs, daysToShow = 7 }: HealthC
 
   const getStrengthColor = (strength: string) => {
     switch (strength) {
-      case 'strong': return 'bg-purple-100 text-purple-800 border-purple-200'
-      case 'moderate': return 'bg-blue-100 text-blue-800 border-blue-200'
-      case 'weak': return 'bg-gray-100 text-gray-800 border-gray-200'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'strong': return 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800'
+      case 'moderate': return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800'
+      case 'weak': return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
     }
   }
 
   const getDirectionIcon = (direction: string) => {
     if (direction === 'positive') {
-      return <TrendUp className="w-4 h-4 text-green-600" weight="bold" />
+      return <TrendUp className="w-4 h-4 text-green-600 dark:text-green-400" weight="bold" />
     } else {
-      return <TrendDown className="w-4 h-4 text-orange-600" weight="bold" />
+      return <TrendDown className="w-4 h-4 text-orange-600 dark:text-orange-400" weight="bold" />
     }
   }
 
@@ -236,23 +236,24 @@ export default function HealthCorrelations({ foodLogs, daysToShow = 7 }: HealthC
         <div className="w-full h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" opacity={0.5} />
               <XAxis 
                 dataKey="displayDate" 
-                stroke="#6b7280"
+                stroke="var(--color-muted-foreground)"
                 tick={{ fontSize: 12 }}
               />
               <YAxis 
-                stroke="#6b7280"
+                stroke="var(--color-muted-foreground)"
                 tick={{ fontSize: 12 }}
                 domain={[0, 100]}
               />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #e5e7eb',
+                  backgroundColor: 'var(--color-card)', 
+                  border: '1px solid var(--color-border)',
                   borderRadius: '8px',
-                  padding: '12px'
+                  padding: '12px',
+                  color: 'var(--color-card-foreground)'
                 }}
               />
               <Legend 

@@ -26,6 +26,18 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['@github/spark']
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-ui': ['@radix-ui/react-slot', 'class-variance-authority', 'clsx', 'tailwind-merge'],
+          'vendor-charts': ['recharts'],
+          'vendor-icons': ['@phosphor-icons/react'],
+        }
+      }
+    }
+  },
   server: {
     hmr: {
       overlay: false

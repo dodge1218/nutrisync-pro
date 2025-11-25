@@ -222,7 +222,47 @@ const educationalContent: EducationalCard[] = [
     description: 'Vitamin E has 8 forms (tocopherols and tocotrienols). Most supplements only contain alpha-tocopherol. Get all forms from whole foods like nuts and seeds.',
     keyTakeaway: 'Eat mixed nuts, seeds, and wheat germ; avoid isolated alpha-tocopherol',
     tags: ['vitamin-e', 'antioxidants', 'whole-foods']
-  }
+  },
+  {
+    id: 'turmeric-black-pepper',
+    title: 'Turmeric + Black Pepper: The Golden Synergy',
+    category: 'synergy',
+    description: 'Curcumin in turmeric is poorly absorbed on its own. Piperine in black pepper enhances curcumin absorption by up to 2000%.',
+    keyTakeaway: 'Always add a pinch of black pepper when cooking with turmeric',
+    tags: ['turmeric', 'inflammation', 'synergy']
+  },
+  {
+    id: 'sulforaphane-broccoli',
+    title: 'Sulforaphane: The Cellular Defender',
+    category: 'nutrient',
+    description: 'Found in cruciferous vegetables (especially broccoli sprouts), sulforaphane activates the Nrf2 pathway, boosting the body\'s antioxidant and detoxification systems.',
+    keyTakeaway: 'Eat raw or lightly steamed broccoli sprouts for maximum benefit',
+    tags: ['detox', 'antioxidants', 'cellular-health']
+  },
+  {
+    id: 'hydration-cognition',
+    title: 'Hydration & Brain Performance',
+    category: 'wellness',
+    description: 'Even mild dehydration (1-2%) can impair cognitive function, concentration, and mood. The brain is 73% water and highly sensitive to fluid balance.',
+    keyTakeaway: 'Drink water before you feel thirsty; aim for pale yellow urine',
+    tags: ['hydration', 'brain-health', 'focus']
+  },
+  {
+    id: 'chrononutrition-rhythm',
+    title: 'Chrononutrition: Aligning Food with Clocks',
+    category: 'timing',
+    description: 'Your body processes food differently at different times. Insulin sensitivity is highest in the morning and lowest at night. Late eating can disrupt circadian rhythms.',
+    keyTakeaway: 'Front-load your calories; eat a bigger breakfast and smaller dinner',
+    tags: ['circadian-rhythm', 'metabolism', 'timing']
+  },
+  {
+    id: 'caffeine-l-theanine',
+    title: 'Caffeine + L-Theanine: Focused Calm',
+    category: 'synergy',
+    description: 'L-Theanine (found in green tea) smooths out the stimulating effects of caffeine, promoting alert relaxation and reducing jitters and anxiety.',
+    keyTakeaway: 'Drink green tea or matcha for a balanced energy boost',
+    tags: ['focus', 'energy', 'nootropics']
+  },
 ]
 
 export default function Education() {
@@ -324,8 +364,8 @@ export default function Education() {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Topics in development: Omega-3 benefits, B-vitamin synergies, electrolyte balance for athletes,
-            anti-inflammatory foods, and meal timing for sleep optimization.
+            Topics in development: Adaptogens for stress resilience, mitochondrial health, blood sugar balancing hacks, 
+            and personalized nutrition based on genetics.
           </p>
         </CardContent>
       </Card>

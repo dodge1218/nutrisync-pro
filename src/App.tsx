@@ -1,30 +1,31 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense, lazy } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Toaster } from './components/ui/sonner'
-import LogFood from './components/pages/LogFood'
-import Recommendations from './components/pages/Recommendations'
-import Education from './components/pages/Education'
-import Settings from './components/pages/Settings'
-import Achievements from './components/pages/Achievements'
-import MealPlanner from './components/pages/MealPlanner'
-import FoodBudget from './components/pages/FoodBudget'
-import SleepSync from './components/pages/SleepSync'
-import LifeFlow from './components/pages/LifeFlow'
-import DisclaimerBanner from './components/DisclaimerBanner'
-import WelcomeFlow from './components/WelcomeFlow'
-import TutorialOverlay from './components/TutorialOverlay'
-import ProfileReminder from './components/ProfileReminder'
-import ProfilePopupManager from './components/ProfilePopupManager'
-import { LoginForm } from './components/auth/LoginForm'
-import { useAuth } from './hooks/useAuth'
-import { Leaf } from '@phosphor-icons/react'
-import type { FoodLog } from './lib/nutritionEngine'
-import { getLast7DaysKeys, getDateKey } from './lib/historyTracking'
-import type { UserOnboardingProfile, TutorialProgress } from './lib/onboardingEngine'
-import { getTutorialSteps } from './lib/onboardingEngine'
 import { DashboardLayout } from './components/layout/DashboardLayout'
 import { LoadingSpinner } from './components/ui/loading'
+import { LoginForm } from './components/auth/LoginForm'
+import { useAuth } from './hooks/useAuth'
+import { getLast7DaysKeys, getDateKey } from './lib/historyTracking'
+import type { FoodLog } from './lib/nutritionEngine'
+import type { UserOnboardingProfile, TutorialProgress } from './lib/onboardingEngine'
+import { getTutorialSteps } from './lib/onboardingEngine'
 import { Page, AppMode } from './types'
+
+// Lazy load page components
+const LogFood = lazy(() => import('./components/pages/LogFood'))
+const Recommendations = lazy(() => import('./components/pages/Recommendations'))
+const Education = lazy(() => import('./components/pages/Education'))
+const Settings = lazy(() => import('./components/pages/Settings'))
+const Achievements = lazy(() => import('./components/pages/Achievements'))
+const MealPlanner = lazy(() => import('./components/pages/MealPlanner'))
+const FoodBudget = lazy(() => import('./components/pages/FoodBudget'))
+const SleepSync = lazy(() => import('./components/pages/SleepSync'))
+const LifeFlow = lazy(() => import('./components/pages/LifeFlow'))
+const DisclaimerBanner = lazy(() => import('./components/DisclaimerBanner'))
+const WelcomeFlow = lazy(() => import('./components/WelcomeFlow'))
+const TutorialOverlay = lazy(() => import('./components/TutorialOverlay'))
+const ProfileReminder = lazy(() => import('./components/ProfileReminder'))
+const ProfilePopupManager = lazy(() => import('./components/ProfilePopupManager'))
 
 function App() {
   const { user, loading } = useAuth()
@@ -130,7 +131,11 @@ function App() {
   }
 
   if (!onboardingProfile) {
-    return <WelcomeFlow onComplete={handleOnboardingComplete} />
+    return (
+      <Suspense fallback={<LoadingSpinner />}>
+        <WelcomeFlow onComplete={handleOnboardingComplete} />
+      </Suspense>
+    )
   }
 
   return (
@@ -140,60 +145,62 @@ function App() {
       currentMode={mode}
       onSwitchMode={switchMode}
     >
-      <ProfileReminder />
-      <ProfilePopupManager mode={mode} />
-      
-      {showTutorial && tutorialProgress && (
-        <TutorialOverlay
-          step={getTutorialSteps(tutorialProgress.mode)[tutorialProgress.currentStep]}
-          currentStepNum={tutorialProgress.currentStep}
-          totalSteps={getTutorialSteps(tutorialProgress.mode).length}
-          onNext={handleTutorialNext}
-          onPrevious={handleTutorialPrevious}
-          onSkip={handleTutorialSkip}
-          onClose={handleTutorialClose}
-        />
-      )}
-      
-      <DisclaimerBanner />
-      
-      {mode === 'nutriwell' ? (
-        <>
-          {currentPage === 'food-budget' && (
-            <FoodBudget foodLogs={logs} />
-          )}
-          {currentPage === 'log-food' && (
-            <LogFood 
-              foodLogs={logs} 
-              setFoodLogs={setFoodLogs}
-              onNavigate={setCurrentPage}
-            />
-          )}
-          {currentPage === 'meal-planner' && (
-            <MealPlanner 
-              foodLogs={logs} 
-              setFoodLogs={setFoodLogs}
-              onNavigate={setCurrentPage}
-            />
-          )}
-          {currentPage === 'recommendations' && (
-            <Recommendations foodLogs={logs} />
-          )}
-          {currentPage === 'education' && (
-            <Education />
-          )}
-          {currentPage === 'achievements' && (
-            <Achievements foodLogs={logs} />
-          )}
-          {currentPage === 'settings' && (
-            <Settings />
-          )}
-        </>
-      ) : mode === 'sleepsync' ? (
-        <SleepSync foodLogs={logs} />
-      ) : (
-        <LifeFlow foodLogs={logs} />
-      )}
+      <Suspense fallback={<LoadingSpinner />}>
+        <ProfileReminder />
+        <ProfilePopupManager mode={mode} />
+        
+        {showTutorial && tutorialProgress && (
+          <TutorialOverlay
+            step={getTutorialSteps(tutorialProgress.mode)[tutorialProgress.currentStep]}
+            currentStepNum={tutorialProgress.currentStep}
+            totalSteps={getTutorialSteps(tutorialProgress.mode).length}
+            onNext={handleTutorialNext}
+            onPrevious={handleTutorialPrevious}
+            onSkip={handleTutorialSkip}
+            onClose={handleTutorialClose}
+          />
+        )}
+        
+        <DisclaimerBanner />
+        
+        {mode === 'nutriwell' ? (
+          <>
+            {currentPage === 'food-budget' && (
+              <FoodBudget foodLogs={logs} />
+            )}
+            {currentPage === 'log-food' && (
+              <LogFood 
+                foodLogs={logs} 
+                setFoodLogs={setFoodLogs}
+                onNavigate={setCurrentPage}
+              />
+            )}
+            {currentPage === 'meal-planner' && (
+              <MealPlanner 
+                foodLogs={logs} 
+                setFoodLogs={setFoodLogs}
+                onNavigate={setCurrentPage}
+              />
+            )}
+            {currentPage === 'recommendations' && (
+              <Recommendations foodLogs={logs} />
+            )}
+            {currentPage === 'education' && (
+              <Education />
+            )}
+            {currentPage === 'achievements' && (
+              <Achievements foodLogs={logs} />
+            )}
+            {currentPage === 'settings' && (
+              <Settings />
+            )}
+          </>
+        ) : mode === 'sleepsync' ? (
+          <SleepSync foodLogs={logs} />
+        ) : (
+          <LifeFlow foodLogs={logs} />
+        )}
+      </Suspense>
 
       <Toaster />
     </DashboardLayout>
