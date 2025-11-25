@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { ModeToggle } from '@/components/mode-toggle';
 import { 
   SquaresFour, 
   ForkKnife, 
@@ -53,13 +54,16 @@ export function Sidebar({
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      <button 
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-card rounded-md shadow-md border border-border"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {isOpen ? <X className="w-6 h-6" /> : <List className="w-6 h-6" />}
-      </button>
+      {/* Mobile Menu Button & Theme Toggle */}
+      <div className="lg:hidden fixed top-4 left-4 z-50 flex items-center gap-2">
+        <button 
+          className="p-2 bg-card rounded-md shadow-md border border-border text-foreground"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X className="w-6 h-6" /> : <List className="w-6 h-6" />}
+        </button>
+        <ModeToggle className="bg-card border border-border shadow-md rounded-md h-[42px] w-[42px]" />
+      </div>
 
       {/* Sidebar Container */}
       <aside className={cn(
@@ -69,11 +73,14 @@ export function Sidebar({
       )}>
         <div className="flex flex-col h-full">
           {/* Logo / Header */}
-          <div className="p-6 border-b border-border flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-primary-foreground" weight="fill" />
+          <div className="p-6 border-b border-border flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Leaf className="w-5 h-5 text-primary-foreground" weight="fill" />
+              </div>
+              <span className="font-bold text-xl tracking-tight">NutriWell</span>
             </div>
-            <span className="font-bold text-xl tracking-tight">NutriWell</span>
+            <ModeToggle className="hidden lg:flex" />
           </div>
 
           {/* Navigation */}

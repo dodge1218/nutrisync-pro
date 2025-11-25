@@ -1,14 +1,14 @@
 # Product Requirements Document: NutriWell & Wellness Suite
 
-**Status**: ✅ Production Ready + Phase 9 Complete (Personalized DVs) + Net Calories + Cloud Sync + UI Modernized  
-**Last Updated**: January 2025  
-**Version**: 3.4
+**Status**: ✅ Production Ready + Phase 9 Complete (Personalized DVs) + Net Calories + Cloud Sync + UI Modernized + Theme Toggle  
+**Last Updated**: November 2025  
+**Version**: 3.5
 
 ---
 
 ## 🎯 Implementation Status Summary
 
-### ✅ ALL CORE FEATURES COMPLETE (Phases 1-9 + Net Calories + Cloud Sync)
+### ✅ ALL CORE FEATURES COMPLETE (Phases 1-11 + Net Calories + Cloud Sync)
 
 **NutriWell Mode** - Smart Nutrition Intelligence
 - ✅ Food logging with intelligent unit conversion
@@ -59,6 +59,7 @@
 - ✅ Legal disclaimer banner (persistent)
 - ✅ Responsive design (mobile & desktop)
 - ✅ **Profile history tracking** (weight, BMI, waist, body fat) with trend visualization
+- ✅ **Theme Toggle** (Dark/Light/System modes)
 
 ---
 
@@ -83,6 +84,7 @@
   - ✅ Account deletion with cascade delete
   - ✅ Confirmation dialog with type-to-confirm safety
   - ✅ Automatic sign out after deletion
+- [x] **Theme Toggle** - ✅ COMPLETE - Dark/Light mode support (November 2025)
   
 **Priority 2: Engagement & Retention**
 - [x] **Activate Personalized DVs** - ✅ COMPLETE - Calculator integrated with toggle in Settings
@@ -1620,9 +1622,9 @@ Provides users with concrete, visual feedback on their health journey. Seeing tr
 
 ---
 
-### Phase 11: UI Redesign & Modernization (Clean & Minimalist) 📋
+### Phase 11: UI Redesign & Modernization (Clean & Minimalist) ✅ COMPLETE
 **Goal:** Completely overhaul the UI to be professional, clean, and modern.
-**Status:** In Progress
+**Status:** Complete (November 2025)
 
 #### 11.1 Design System Refinement
 - **Color Palette:** Refine `oklch` values for a softer, high-quality dark mode. Reduce "neon" feel, increase "pro app" feel.
@@ -1645,3 +1647,6 @@ Provides users with concrete, visual feedback on their health journey. Seeing tr
 - **Log Food:** Simplify the logging flow. Focus on speed and clarity.
 - **Food Budget:** Redesign progress bars to be sleek and informative.
 - **LifeFlow:** Improve the calendar/schedule visualization.
+
+#### 11.5 Theme Support
+- **Dark/Light Mode:** Toggle button implemented for user preference.
