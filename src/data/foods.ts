@@ -1414,7 +1414,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'apple',
   name: 'Apple (with skin)',
   servingSize: '1 medium (182g)',
@@ -1451,7 +1451,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'orange',
   name: 'Orange',
   servingSize: '1 medium (131g)',
@@ -1488,7 +1488,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'strawberries',
   name: 'Strawberries',
   servingSize: '1 cup (152g)',
@@ -1525,7 +1525,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'raspberries',
   name: 'Raspberries',
   servingSize: '1 cup (123g)',
@@ -1562,7 +1562,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'blackberries',
   name: 'Blackberries',
   servingSize: '1 cup (144g)',
@@ -1599,7 +1599,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'pineapple',
   name: 'Pineapple',
   servingSize: '1 cup chunks (165g)',
@@ -1636,7 +1636,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'mango',
   name: 'Mango',
   servingSize: '1 cup pieces (165g)',
@@ -1673,7 +1673,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'kiwi',
   name: 'Kiwi',
   servingSize: '1 fruit (69g)',
@@ -1710,7 +1710,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'grapes',
   name: 'Grapes (red or green)',
   servingSize: '1 cup (151g)',
@@ -1746,7 +1746,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'watermelon',
   name: 'Watermelon',
   servingSize: '1 cup diced (152g)',
@@ -1783,7 +1783,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'cantaloupe',
   name: 'Cantaloupe',
   servingSize: '1 cup cubes (160g)',
@@ -1820,7 +1820,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'peach',
   name: 'Peach',
   servingSize: '1 medium (150g)',
@@ -1856,7 +1856,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'pear',
   name: 'Pear',
   servingSize: '1 medium (178g)',
@@ -1892,7 +1892,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'cherries',
   name: 'Cherries',
   servingSize: '1 cup (138g)',
@@ -1929,7 +1929,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'lemon',
   name: 'Lemon',
   servingSize: '1 fruit (58g)',
@@ -1966,7 +1966,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'lime',
   name: 'Lime',
   servingSize: '1 fruit (67g)',
@@ -2003,7 +2003,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'grapefruit',
   name: 'Grapefruit',
   servingSize: '1/2 fruit (123g)',
@@ -2040,7 +2040,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'pomegranate',
   name: 'Pomegranate Seeds',
   servingSize: '1/2 cup (87g)',
@@ -2077,7 +2077,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'papaya',
   name: 'Papaya',
   servingSize: '1 cup pieces (145g)',
@@ -2114,7 +2114,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'fruits'
-},\n{
+}, {
   id: 'carrot',
   name: 'Carrot (raw)',
   servingSize: '1 medium (61g)',
@@ -2151,7 +2151,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'kale',
   name: 'Kale (raw)',
   servingSize: '1 cup (21g)',
@@ -2188,7 +2188,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'cucumber',
   name: 'Cucumber',
   servingSize: '1/2 cup slices (52g)',
@@ -2224,7 +2224,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'vegetables'
-},\n{
+}, {
   id: 'tomato',
   name: 'Tomato',
   servingSize: '1 medium (123g)',
@@ -2261,7 +2261,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'onion',
   name: 'Onion (chopped)',
   servingSize: '1/2 cup (80g)',
@@ -2298,7 +2298,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'potato',
   name: 'Potato (baked)',
   servingSize: '1 medium (173g)',
@@ -2334,7 +2334,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'zucchini',
   name: 'Zucchini (cooked)',
   servingSize: '1 cup (180g)',
@@ -2370,7 +2370,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'asparagus',
   name: 'Asparagus (cooked)',
   servingSize: '1/2 cup (90g)',
@@ -2407,7 +2407,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'brussels-sprouts',
   name: 'Brussels Sprouts (cooked)',
   servingSize: '1/2 cup (78g)',
@@ -2444,7 +2444,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'cauliflower',
   name: 'Cauliflower (cooked)',
   servingSize: '1 cup (124g)',
@@ -2481,7 +2481,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'cabbage',
   name: 'Cabbage (cooked)',
   servingSize: '1/2 cup (75g)',
@@ -2517,7 +2517,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'lettuce-romaine',
   name: 'Romaine Lettuce',
   servingSize: '1 cup (47g)',
@@ -2553,7 +2553,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'vegetables'
-},\n{
+}, {
   id: 'mushrooms',
   name: 'Mushrooms (cooked)',
   servingSize: '1 cup (156g)',
@@ -2590,7 +2590,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'green-beans',
   name: 'Green Beans (cooked)',
   servingSize: '1 cup (125g)',
@@ -2626,7 +2626,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'peas',
   name: 'Green Peas (cooked)',
   servingSize: '1/2 cup (80g)',
@@ -2662,7 +2662,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'corn',
   name: 'Corn (cooked)',
   servingSize: '1/2 cup (82g)',
@@ -2698,7 +2698,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'celery',
   name: 'Celery',
   servingSize: '1 stalk (40g)',
@@ -2735,7 +2735,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'vegetables'
-},\n{
+}, {
   id: 'beets',
   name: 'Beets (cooked)',
   servingSize: '1/2 cup (85g)',
@@ -2771,7 +2771,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'eggplant',
   name: 'Eggplant (cooked)',
   servingSize: '1 cup (99g)',
@@ -2807,7 +2807,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'vegetables'
-},\n{
+}, {
   id: 'radish',
   name: 'Radish',
   servingSize: '1/2 cup slices (58g)',
@@ -2844,7 +2844,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'vegetables'
-},\n{
+}, {
   id: 'ground-beef',
   name: 'Ground Beef (85% lean, cooked)',
   servingSize: '3 oz (85g)',
@@ -2881,7 +2881,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'protein'
-},\n{
+}, {
   id: 'steak',
   name: 'Steak (Sirloin, cooked)',
   servingSize: '3 oz (85g)',
@@ -2918,7 +2918,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'protein'
-},\n{
+}, {
   id: 'pork-chop',
   name: 'Pork Chop (cooked)',
   servingSize: '3 oz (85g)',
@@ -2954,7 +2954,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'protein'
-},\n{
+}, {
   id: 'bacon',
   name: 'Bacon (cooked)',
   servingSize: '2 slices (16g)',
@@ -2990,7 +2990,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: true,
   warmSuitable: true,
   category: 'protein'
-},\n{
+}, {
   id: 'turkey-breast',
   name: 'Turkey Breast (cooked)',
   servingSize: '3 oz (85g)',
@@ -3027,7 +3027,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'protein'
-},\n{
+}, {
   id: 'chicken-thigh',
   name: 'Chicken Thigh (cooked)',
   servingSize: '3 oz (85g)',
@@ -3063,7 +3063,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'protein'
-},\n{
+}, {
   id: 'tuna-canned',
   name: 'Tuna (canned in water)',
   servingSize: '1 can (165g)',
@@ -3100,7 +3100,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'protein'
-},\n{
+}, {
   id: 'cod',
   name: 'Cod (cooked)',
   servingSize: '3 oz (85g)',
@@ -3137,7 +3137,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'protein'
-},\n{
+}, {
   id: 'shrimp',
   name: 'Shrimp (cooked)',
   servingSize: '3 oz (85g)',
@@ -3174,7 +3174,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'protein'
-},\n{
+}, {
   id: 'tofu',
   name: 'Tofu (firm)',
   servingSize: '1/2 cup (126g)',
@@ -3211,7 +3211,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'protein'
-},\n{
+}, {
   id: 'tempeh',
   name: 'Tempeh',
   servingSize: '1/2 cup (83g)',
@@ -3248,7 +3248,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'protein'
-},\n{
+}, {
   id: 'edamame',
   name: 'Edamame (cooked)',
   servingSize: '1/2 cup (78g)',
@@ -3285,7 +3285,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'protein'
-},\n{
+}, {
   id: 'chickpeas',
   name: 'Chickpeas (cooked)',
   servingSize: '1/2 cup (82g)',
@@ -3322,7 +3322,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'legumes'
-},\n{
+}, {
   id: 'black-beans',
   name: 'Black Beans (cooked)',
   servingSize: '1/2 cup (86g)',
@@ -3359,7 +3359,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'legumes'
-},\n{
+}, {
   id: 'kidney-beans',
   name: 'Kidney Beans (cooked)',
   servingSize: '1/2 cup (88g)',
@@ -3396,7 +3396,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'legumes'
-},\n{
+}, {
   id: 'white-beans',
   name: 'White Beans (cooked)',
   servingSize: '1/2 cup (91g)',
@@ -3433,7 +3433,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'legumes'
-},\n{
+}, {
   id: 'hummus',
   name: 'Hummus',
   servingSize: '2 tbsp (30g)',
@@ -3469,7 +3469,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'legumes'
-},\n{
+}, {
   id: 'brown-rice',
   name: 'Brown Rice (cooked)',
   servingSize: '1 cup (195g)',
@@ -3505,7 +3505,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'white-rice',
   name: 'White Rice (cooked)',
   servingSize: '1 cup (158g)',
@@ -3541,7 +3541,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'jasmine-rice',
   name: 'Jasmine Rice (cooked)',
   servingSize: '1 cup (158g)',
@@ -3577,7 +3577,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'basmati-rice',
   name: 'Basmati Rice (cooked)',
   servingSize: '1 cup (158g)',
@@ -3613,7 +3613,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'whole-wheat-bread',
   name: 'Whole Wheat Bread',
   servingSize: '1 slice (28g)',
@@ -3649,7 +3649,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'sourdough-bread',
   name: 'Sourdough Bread',
   servingSize: '1 slice (64g)',
@@ -3685,7 +3685,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'pasta-whole-wheat',
   name: 'Whole Wheat Pasta (cooked)',
   servingSize: '1 cup (140g)',
@@ -3721,7 +3721,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'pasta-white',
   name: 'White Pasta (cooked)',
   servingSize: '1 cup (140g)',
@@ -3757,7 +3757,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'couscous',
   name: 'Couscous (cooked)',
   servingSize: '1 cup (157g)',
@@ -3793,7 +3793,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'barley',
   name: 'Barley (cooked)',
   servingSize: '1 cup (157g)',
@@ -3829,7 +3829,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'buckwheat',
   name: 'Buckwheat (cooked)',
   servingSize: '1 cup (168g)',
@@ -3866,7 +3866,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'millet',
   name: 'Millet (cooked)',
   servingSize: '1 cup (174g)',
@@ -3902,7 +3902,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'corn-tortilla',
   name: 'Corn Tortilla',
   servingSize: '1 medium (24g)',
@@ -3938,7 +3938,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'flour-tortilla',
   name: 'Flour Tortilla',
   servingSize: '1 medium (45g)',
@@ -3973,7 +3973,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'bagel',
   name: 'Bagel',
   servingSize: '1 medium (105g)',
@@ -4009,7 +4009,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'english-muffin',
   name: 'English Muffin',
   servingSize: '1 whole (58g)',
@@ -4045,7 +4045,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'grains'
-},\n{
+}, {
   id: 'crackers',
   name: 'Crackers (Whole Wheat)',
   servingSize: '5 crackers (15g)',
@@ -4081,7 +4081,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'grains'
-},\n{
+}, {
   id: 'milk-whole',
   name: 'Whole Milk',
   servingSize: '1 cup (244g)',
@@ -4118,7 +4118,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'dairy'
-},\n{
+}, {
   id: 'milk-2',
   name: '2% Milk',
   servingSize: '1 cup (244g)',
@@ -4154,7 +4154,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'dairy'
-},\n{
+}, {
   id: 'almond-milk',
   name: 'Almond Milk (unsweetened)',
   servingSize: '1 cup (240g)',
@@ -4190,7 +4190,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'dairy'
-},\n{
+}, {
   id: 'oat-milk',
   name: 'Oat Milk',
   servingSize: '1 cup (240g)',
@@ -4226,7 +4226,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'dairy'
-},\n{
+}, {
   id: 'soy-milk',
   name: 'Soy Milk',
   servingSize: '1 cup (240g)',
@@ -4262,7 +4262,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'dairy'
-},\n{
+}, {
   id: 'cheddar-cheese',
   name: 'Cheddar Cheese',
   servingSize: '1 oz (28g)',
@@ -4299,7 +4299,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'dairy'
-},\n{
+}, {
   id: 'mozzarella',
   name: 'Mozzarella Cheese',
   servingSize: '1 oz (28g)',
@@ -4335,7 +4335,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'dairy'
-},\n{
+}, {
   id: 'parmesan',
   name: 'Parmesan Cheese',
   servingSize: '1 oz (28g)',
@@ -4372,7 +4372,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'dairy'
-},\n{
+}, {
   id: 'feta',
   name: 'Feta Cheese',
   servingSize: '1 oz (28g)',
@@ -4408,7 +4408,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'dairy'
-},\n{
+}, {
   id: 'cottage-cheese',
   name: 'Cottage Cheese (low fat)',
   servingSize: '1/2 cup (113g)',
@@ -4444,7 +4444,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'dairy'
-},\n{
+}, {
   id: 'butter',
   name: 'Butter',
   servingSize: '1 tbsp (14g)',
@@ -4480,7 +4480,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'oils-fats'
-},\n{
+}, {
   id: 'ghee',
   name: 'Ghee',
   servingSize: '1 tbsp (14g)',
@@ -4517,7 +4517,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'oils-fats'
-},\n{
+}, {
   id: 'cream-cheese',
   name: 'Cream Cheese',
   servingSize: '1 tbsp (14g)',
@@ -4553,7 +4553,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'dairy'
-},\n{
+}, {
   id: 'sour-cream',
   name: 'Sour Cream',
   servingSize: '2 tbsp (24g)',
@@ -4589,7 +4589,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'dairy'
-},\n{
+}, {
   id: 'heavy-cream',
   name: 'Heavy Cream',
   servingSize: '1 tbsp (15g)',
@@ -4625,7 +4625,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'dairy'
-},\n{
+}, {
   id: 'walnuts',
   name: 'Walnuts',
   servingSize: '1 oz (28g)',
@@ -4662,7 +4662,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'nuts-seeds'
-},\n{
+}, {
   id: 'cashews',
   name: 'Cashews',
   servingSize: '1 oz (28g)',
@@ -4698,7 +4698,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'nuts-seeds'
-},\n{
+}, {
   id: 'peanuts',
   name: 'Peanuts',
   servingSize: '1 oz (28g)',
@@ -4734,7 +4734,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'nuts-seeds'
-},\n{
+}, {
   id: 'peanut-butter',
   name: 'Peanut Butter',
   servingSize: '2 tbsp (32g)',
@@ -4770,7 +4770,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'nuts-seeds'
-},\n{
+}, {
   id: 'almond-butter',
   name: 'Almond Butter',
   servingSize: '2 tbsp (32g)',
@@ -4806,7 +4806,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'nuts-seeds'
-},\n{
+}, {
   id: 'chia-seeds',
   name: 'Chia Seeds',
   servingSize: '1 oz (28g)',
@@ -4843,7 +4843,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'nuts-seeds'
-},\n{
+}, {
   id: 'flax-seeds',
   name: 'Flax Seeds (ground)',
   servingSize: '1 tbsp (7g)',
@@ -4880,7 +4880,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'nuts-seeds'
-},\n{
+}, {
   id: 'sunflower-seeds',
   name: 'Sunflower Seeds',
   servingSize: '1 oz (28g)',
@@ -4916,7 +4916,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'nuts-seeds'
-},\n{
+}, {
   id: 'hemp-seeds',
   name: 'Hemp Seeds',
   servingSize: '3 tbsp (30g)',
@@ -4953,7 +4953,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'nuts-seeds'
-},\n{
+}, {
   id: 'pistachios',
   name: 'Pistachios',
   servingSize: '1 oz (28g)',
@@ -4989,7 +4989,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'nuts-seeds'
-},\n{
+}, {
   id: 'macadamia-nuts',
   name: 'Macadamia Nuts',
   servingSize: '1 oz (28g)',
@@ -5025,7 +5025,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'nuts-seeds'
-},\n{
+}, {
   id: 'pecans',
   name: 'Pecans',
   servingSize: '1 oz (28g)',
@@ -5061,7 +5061,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'nuts-seeds'
-},\n{
+}, {
   id: 'coconut-oil',
   name: 'Coconut Oil',
   servingSize: '1 tbsp (14g)',
@@ -5098,7 +5098,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'oils-fats'
-},\n{
+}, {
   id: 'avocado-oil',
   name: 'Avocado Oil',
   servingSize: '1 tbsp (14g)',
@@ -5135,7 +5135,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'oils-fats'
-},\n{
+}, {
   id: 'canola-oil',
   name: 'Canola Oil',
   servingSize: '1 tbsp (14g)',
@@ -5171,7 +5171,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'oils-fats'
-},\n{
+}, {
   id: 'sesame-oil',
   name: 'Sesame Oil',
   servingSize: '1 tbsp (14g)',
@@ -5207,7 +5207,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'oils-fats'
-},\n{
+}, {
   id: 'mayonnaise',
   name: 'Mayonnaise',
   servingSize: '1 tbsp (14g)',
@@ -5243,7 +5243,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'oils-fats'
-},\n{
+}, {
   id: 'ketchup',
   name: 'Ketchup',
   servingSize: '1 tbsp (17g)',
@@ -5279,7 +5279,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'spices-seasonings'
-},\n{
+}, {
   id: 'mustard',
   name: 'Mustard (yellow)',
   servingSize: '1 tsp (5g)',
@@ -5315,7 +5315,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'spices-seasonings'
-},\n{
+}, {
   id: 'soy-sauce',
   name: 'Soy Sauce',
   servingSize: '1 tbsp (16g)',
@@ -5352,7 +5352,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: true,
   category: 'spices-seasonings'
-},\n{
+}, {
   id: 'vinegar',
   name: 'Vinegar (Apple Cider)',
   servingSize: '1 tbsp (15g)',
@@ -5388,7 +5388,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'spices-seasonings'
-},\n{
+}, {
   id: 'honey',
   name: 'Honey',
   servingSize: '1 tbsp (21g)',
@@ -5424,7 +5424,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'spices-seasonings'
-},\n{
+}, {
   id: 'maple-syrup',
   name: 'Maple Syrup',
   servingSize: '1 tbsp (20g)',
@@ -5460,7 +5460,7 @@ export const FOODS_DATABASE: Food[] = [
   gutStressors: false,
   warmSuitable: false,
   category: 'spices-seasonings'
-},\n{
+}, {
   id: 'sugar',
   name: 'Sugar (white)',
   servingSize: '1 tsp (4g)',

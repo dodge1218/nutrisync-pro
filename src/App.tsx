@@ -165,9 +165,13 @@ function App() {
   // Actually, simpler: The user probably just wants to bypass this check if they are logged in.
   // But for a BRAND NEW user, they need it.
   // I'll check if the user has any data.
-  const hasData = logs.length > 0 || appMode !== 'nutriwell'; 
-  
-  if (!onboardingProfile && !hasData) {
+  // Only show onboarding if:
+  // 1. No local onboarding profile exists
+  // 2. No data exists (logs or mode change)
+  // 3. User is brand new (created in last 5 mins)
+  const isNewUser = user?.created_at && (new Date().getTime() - new Date(user.created_at).getTime() < 5 * 60 * 1000)
+
+  if (!onboardingProfile && !hasData && isNewUser) {
     return (
       <Suspense fallback={<LoadingSpinner />}>
         <WelcomeFlow onComplete={handleOnboardingComplete} />
