@@ -36,23 +36,45 @@ export function useAuth() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, username?: string) => {
     if (!supabaseConfigured) {
       return { data: null, error: new Error('Supabase not configured') }
     }
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          username,
+        },
+      },
     })
     return { data, error }
   }
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (identifier: string, password: string) => {
     if (!supabaseConfigured) {
       return { data: null, error: new Error('Supabase not configured') }
     }
+
+    let emailToUse = identifier
+
+    // If identifier is not an email, try to resolve it as a username
+    if (!identifier.includes('@')) {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('email')
+        .eq('username', identifier)
+        .single()
+
+      if (error || !data) {
+        return { data: null, error: new Error('Invalid username or password') }
+      }
+      emailToUse = data.email
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({
-      email,
+      email: emailToUse,
       password,
     })
     return { data, error }

@@ -13,10 +13,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 export function LoginForm() {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
+  const [loginIdentifier, setLoginIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [showSignupSuccess, setShowSignupSuccess] = useState(false)
   const { signIn, signUp } = useAuth()
+
+  const validateInput = (value: string, type: 'Username' | 'Password') => {
+    if (value.length < 8) return `${type} must be at least 8 characters`
+    if (!/[A-Z]/.test(value)) return `${type} must contain at least one uppercase letter`
+    if (!/[0-9]/.test(value)) return `${type} must contain at least one number`
+    return null
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,14 +33,29 @@ export function LoginForm() {
 
     try {
       if (isLogin) {
-        const { error } = await signIn(email, password)
+        const { error } = await signIn(loginIdentifier, password)
         if (error) {
           toast.error(error.message)
         } else {
           toast.success('Welcome back!')
         }
       } else {
-        const { error } = await signUp(email, password)
+        // Validate Username and Password
+        const usernameError = validateInput(username, 'Username')
+        if (usernameError) {
+          toast.error(usernameError)
+          setLoading(false)
+          return
+        }
+
+        const passwordError = validateInput(password, 'Password')
+        if (passwordError) {
+          toast.error(passwordError)
+          setLoading(false)
+          return
+        }
+
+        const { error } = await signUp(email, password, username)
         if (error) {
           toast.error(error.message)
         } else {
@@ -81,18 +105,50 @@ export function LoginForm() {
           </Alert>
         )}
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-              className="mt-1"
-            />
-          </div>
+          {isLogin ? (
+            <div>
+              <Label htmlFor="loginIdentifier">Email or Username</Label>
+              <Input
+                id="loginIdentifier"
+                type="text"
+                value={loginIdentifier}
+                onChange={(e) => setLoginIdentifier(e.target.value)}
+                placeholder="username or email@example.com"
+                required
+                className="mt-1"
+              />
+            </div>
+          ) : (
+            <>
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Username (min 8 chars, 1 upper, 1 number)"
+                  required
+                  className="mt-1"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Min 8 chars, 1 uppercase, 1 number
+                </p>
+              </div>
+            </>
+          )}
 
           <div>
             <Label htmlFor="password">Password</Label>
@@ -103,12 +159,12 @@ export function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              minLength={6}
+              minLength={8}
               className="mt-1"
             />
             {!isLogin && (
-              <p className="text-sm text-muted-foreground mt-1">
-                Must be at least 6 characters
+              <p className="text-xs text-muted-foreground mt-1">
+                Min 8 chars, 1 uppercase, 1 number
               </p>
             )}
           </div>
@@ -121,7 +177,14 @@ export function LoginForm() {
         <div className="mt-6 text-center">
           <button
             type="button"
-            onClick={() => setIsLogin(!isLogin)}
+            onClick={() => {
+              setIsLogin(!isLogin)
+              // Reset fields when switching modes
+              setEmail('')
+              setUsername('')
+              setLoginIdentifier('')
+              setPassword('')
+            }}
             className="text-sm text-primary hover:underline"
           >
             {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}

@@ -5,6 +5,7 @@
 CREATE TABLE IF NOT EXISTS public.user_profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT NOT NULL,
+  username TEXT UNIQUE,
   is_developer BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -15,14 +16,17 @@ ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
 
 -- Drop existing policies if they exist (for re-running this script)
 DROP POLICY IF EXISTS "Users can view own profile" ON public.user_profiles;
+DROP POLICY IF EXISTS "Public profiles access" ON public.user_profiles;
 DROP POLICY IF EXISTS "Users can update own profile" ON public.user_profiles;
 DROP POLICY IF EXISTS "Users can insert own profile" ON public.user_profiles;
 
--- Create policies: Users can only access their own data
-CREATE POLICY "Users can view own profile" 
+-- Create policies
+-- Allow public read access to profiles so we can resolve username -> email during login
+-- Note: In a high-security production app, you might want to use a secure Edge Function instead
+CREATE POLICY "Public profiles access" 
   ON public.user_profiles 
   FOR SELECT 
-  USING (auth.uid() = id);
+  USING (true);
 
 CREATE POLICY "Users can update own profile" 
   ON public.user_profiles 
@@ -41,8 +45,8 @@ DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.user_profiles (id, email)
-  VALUES (NEW.id, NEW.email)
+  INSERT INTO public.user_profiles (id, email, username)
+  VALUES (NEW.id, NEW.email, NEW.raw_user_meta_data->>'username')
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
