@@ -11,7 +11,9 @@ const projectRoot = process.env.PROJECT_ROOT || import.meta.dirname
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      jsxRuntime: 'automatic',
+    }),
     sparkPlugin() as PluginOption,
     tailwindcss(),
     createIconImportProxy() as PluginOption,
