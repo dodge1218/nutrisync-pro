@@ -33,7 +33,7 @@ export function LoginForm() {
         if (error) {
           toast.error(error.message)
         } else {
-          toast.success('Account created! Please check your email to verify.')
+          toast.success('Thanks for signing up! Check your email to authenticate your account.')
         }
       }
     } catch (error) {
