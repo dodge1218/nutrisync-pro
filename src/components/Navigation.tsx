@@ -1,6 +1,6 @@
 import { Button } from './ui/button'
 import { Notepad, CalendarDots, ChartBar, Lightbulb, Book, Trophy, Gear } from '@phosphor-icons/react'
-import type { Page } from '../App'
+import type { Page } from '../types'
 
 interface NavigationProps {
   currentPage: Page

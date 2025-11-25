@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Button } from './ui/button'
 import { Card, CardContent } from './ui/card'
 import { X } from '@phosphor-icons/react'
-import { AppMode } from '@/App'
+import { AppMode } from '@/types'
 import { OnboardingStep } from '@/lib/onboardingEngine'
 
 interface TutorialOverlayProps {

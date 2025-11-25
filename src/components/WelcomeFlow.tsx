@@ -6,7 +6,7 @@ import { Checkbox } from './ui/checkbox'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { RadioGroup, RadioGroupItem } from './ui/radio-group'
-import { AppMode } from '@/App'
+import { AppMode } from '@/types'
 import { UserOnboardingProfile, GOAL_OPTIONS } from '@/lib/onboardingEngine'
 import { Leaf, Moon, CalendarBlank } from '@phosphor-icons/react'
 

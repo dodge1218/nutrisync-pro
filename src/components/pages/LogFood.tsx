@@ -12,7 +12,7 @@ import { toast } from 'sonner'
 import { FOODS_DATABASE, type Food } from '../../data/foods'
 import { MEAL_TEMPLATES, type MealTemplate } from '../../data/mealTemplates'
 import type { FoodLog } from '../../lib/nutritionEngine'
-import type { Page } from '../../App'
+import type { Page } from '../../types'
 
 interface LogFoodProps {
   foodLogs: FoodLog[]

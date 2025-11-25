@@ -1,4 +1,4 @@
-import { AppMode } from '@/App'
+import { AppMode } from '@/types'
 
 export interface OnboardingStep {
   id: string

@@ -13,7 +13,7 @@ import { MEAL_TEMPLATES, type MealTemplate, type MealIngredient } from '../../da
 import { FOODS_DATABASE } from '../../data/foods'
 import { WELLNESS_SUPPLEMENTS, type WellnessSupplement } from '../../data/wellnessSupplements'
 import type { FoodLog } from '../../lib/nutritionEngine'
-import type { Page } from '../../App'
+import type { Page } from '../../types'
 
 interface MealPlannerProps {
   foodLogs: FoodLog[]
