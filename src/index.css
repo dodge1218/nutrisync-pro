@@ -13,24 +13,38 @@
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    color: oklch(0.15 0 0);
+    color: #000000;
     font-weight: 700;
   }
 
-  p, span, div, label, button {
-    color: oklch(0.15 0 0);
+  p, span, div, label, button, td, th, li, a {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #000000;
+  }
+  
+  table {
+    font-size: 0.875rem;
+  }
+  
+  th {
+    padding: 0.5rem;
+    font-weight: 600;
+  }
+  
+  td {
+    padding: 0.5rem;
   }
 }
 
 :root {
   --background: oklch(0.98 0.005 250);
-  --foreground: oklch(0.15 0 0);
+  --foreground: #000000;
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0 0);
+  --card-foreground: #000000;
   
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0 0);
+  --popover-foreground: #000000;
 
   --primary: oklch(0.50 0.20 260);
   --primary-foreground: oklch(0.99 0 0);
@@ -39,7 +53,7 @@
   --secondary-foreground: oklch(0.99 0 0);
 
   --muted: oklch(0.96 0.005 250);
-  --muted-foreground: oklch(0.45 0 0);
+  --muted-foreground: #000000;
 
   --accent: oklch(0.62 0.20 330);
   --accent-foreground: oklch(0.99 0 0);

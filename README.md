@@ -2,7 +2,9 @@
 
 A comprehensive nutrition tracking and analysis platform that helps users identify nutrient gaps, optimize absorption through synergy insights, and support gut health — all with a food-first, low-friction approach.
 
-![NutriWell](https://img.shields.io/badge/Status-MVP-green) ![React](https://img.shields.io/badge/React-19-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)
+![NutriWell](https://img.shields.io/badge/Status-Production%20Ready-green) ![React](https://img.shields.io/badge/React-19-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)
+
+> **✨ Recently Updated:** Codebase cleaned and optimized (Jan 2025). Consistent UI styling, professional dashboard aesthetic, and streamlined project structure. See [CLEANUP-COMPLETE.md](./CLEANUP-COMPLETE.md) for details.
 
 ---
 
