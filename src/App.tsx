@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Toaster } from './components/ui/sonner'
-import { Button } from './components/ui/button'
 import LogFood from './components/pages/LogFood'
 import Recommendations from './components/pages/Recommendations'
 import Education from './components/pages/Education'
@@ -12,25 +11,23 @@ import FoodBudget from './components/pages/FoodBudget'
 import SleepSync from './components/pages/SleepSync'
 import LifeFlow from './components/pages/LifeFlow'
 import DisclaimerBanner from './components/DisclaimerBanner'
-import Navigation from './components/Navigation'
 import WelcomeFlow from './components/WelcomeFlow'
 import TutorialOverlay from './components/TutorialOverlay'
 import ProfileReminder from './components/ProfileReminder'
 import ProfilePopupManager from './components/ProfilePopupManager'
 import { LoginForm } from './components/auth/LoginForm'
 import { useAuth } from './hooks/useAuth'
-import { Moon, Leaf, CalendarBlank, SignOut } from '@phosphor-icons/react'
+import { Leaf } from '@phosphor-icons/react'
 import type { FoodLog } from './lib/nutritionEngine'
 import { getLast7DaysKeys, getDateKey } from './lib/historyTracking'
 import type { UserOnboardingProfile, TutorialProgress } from './lib/onboardingEngine'
 import { getTutorialSteps } from './lib/onboardingEngine'
-import { toast } from 'sonner'
-
-export type Page = 'log-food' | 'meal-planner' | 'food-budget' | 'recommendations' | 'education' | 'achievements' | 'settings' | 'sleepsync' | 'lifeflow'
-export type AppMode = 'nutriwell' | 'sleepsync' | 'lifeflow'
+import { DashboardLayout } from './components/layout/DashboardLayout'
+import { LoadingSpinner } from './components/ui/loading'
+import { Page, AppMode } from './types'
 
 function App() {
-  const { user, loading, signOut } = useAuth()
+  const { user, loading } = useAuth()
   const [currentPage, setCurrentPage] = useState<Page>('food-budget')
   const [appMode, setAppMode] = useKV<AppMode>('app-mode', 'nutriwell')
   const [foodLogs, setFoodLogs] = useKV<FoodLog[]>('food-logs', [])
@@ -124,24 +121,8 @@ function App() {
     setShowTutorial(false)
   }
 
-  const handleSignOut = async () => {
-    const { error } = await signOut()
-    if (error) {
-      toast.error('Failed to sign out')
-    } else {
-      toast.success('Signed out successfully')
-    }
-  }
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <Leaf className="w-16 h-16 text-primary mx-auto mb-4 animate-pulse" />
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    )
+    return <LoadingSpinner />
   }
 
   if (!user) {
@@ -153,7 +134,12 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <DashboardLayout
+      currentPage={currentPage}
+      onNavigate={setCurrentPage}
+      currentMode={mode}
+      onSwitchMode={switchMode}
+    >
       <ProfileReminder />
       <ProfilePopupManager mode={mode} />
       
@@ -171,133 +157,46 @@ function App() {
       
       <DisclaimerBanner />
       
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
-        <header className="mb-8">
-          <div className="flex items-center justify-between gap-6 flex-wrap bg-card backdrop-blur-sm rounded-2xl p-6 border border-border shadow-lg">
-            <div className="flex items-center gap-4">
-              {mode === 'nutriwell' ? (
-                <div className="p-3 bg-primary rounded-xl">
-                  <Leaf className="w-7 h-7 text-primary-foreground" weight="fill" />
-                </div>
-              ) : mode === 'sleepsync' ? (
-                <div className="p-3 bg-secondary rounded-xl">
-                  <Moon className="w-7 h-7 text-secondary-foreground" weight="fill" />
-                </div>
-              ) : (
-                <div className="p-3 bg-accent rounded-xl">
-                  <CalendarBlank className="w-7 h-7 text-accent-foreground" weight="fill" />
-                </div>
-              )}
-              <div>
-                <h1 className="text-3xl font-bold text-foreground tracking-tight">
-                  {mode === 'nutriwell' ? 'NutriWell' : mode === 'sleepsync' ? 'SleepSync' : 'LifeFlow'}
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  {mode === 'nutriwell' 
-                    ? 'Smart nutrition intelligence'
-                    : mode === 'sleepsync'
-                    ? 'Sleep-optimized meal timing'
-                    : 'Time-blocked scheduling'
-                  }
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-2 items-center flex-wrap justify-end">
-              {mode !== 'nutriwell' && (
-                <Button
-                  variant="ghost"
-                  size="default"
-                  onClick={() => switchMode('nutriwell')}
-                  className="flex items-center gap-2 hover:bg-primary/20 hover:text-primary transition-all rounded-xl"
-                >
-                  <Leaf className="w-5 h-5" weight="bold" />
-                  <span className="hidden sm:inline">NutriWell</span>
-                </Button>
-              )}
-              {mode !== 'sleepsync' && (
-                <Button
-                  variant="ghost"
-                  size="default"
-                  onClick={() => switchMode('sleepsync')}
-                  className="flex items-center gap-2 hover:bg-secondary/20 hover:text-secondary transition-all rounded-xl"
-                >
-                  <Moon className="w-5 h-5" weight="bold" />
-                  <span className="hidden sm:inline">SleepSync</span>
-                </Button>
-              )}
-              {mode !== 'lifeflow' && (
-                <Button
-                  variant="ghost"
-                  size="default"
-                  onClick={() => switchMode('lifeflow')}
-                  className="flex items-center gap-2 hover:bg-accent/20 hover:text-accent transition-all rounded-xl"
-                >
-                  <CalendarBlank className="w-5 h-5" weight="bold" />
-                  <span className="hidden sm:inline">LifeFlow</span>
-                </Button>
-              )}
-              <Button
-                variant="ghost"
-                size="default"
-                onClick={handleSignOut}
-                className="flex items-center gap-2 hover:bg-destructive/20 hover:text-destructive transition-all rounded-xl"
-                title="Sign Out"
-              >
-                <SignOut className="w-5 h-5" weight="bold" />
-              </Button>
-            </div>
-          </div>
-        </header>
-
-        {mode === 'nutriwell' ? (
-          <>
-            <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
-
-            <main className="mt-8">
-              {currentPage === 'food-budget' && (
-                <FoodBudget foodLogs={logs} />
-              )}
-              {currentPage === 'log-food' && (
-                <LogFood 
-                  foodLogs={logs} 
-                  setFoodLogs={setFoodLogs}
-                  onNavigate={setCurrentPage}
-                />
-              )}
-              {currentPage === 'meal-planner' && (
-                <MealPlanner 
-                  foodLogs={logs} 
-                  setFoodLogs={setFoodLogs}
-                  onNavigate={setCurrentPage}
-                />
-              )}
-              {currentPage === 'recommendations' && (
-                <Recommendations foodLogs={logs} />
-              )}
-              {currentPage === 'education' && (
-                <Education />
-              )}
-              {currentPage === 'achievements' && (
-                <Achievements foodLogs={logs} />
-              )}
-              {currentPage === 'settings' && (
-                <Settings />
-              )}
-            </main>
-          </>
-        ) : mode === 'sleepsync' ? (
-          <main className="mt-8">
-            <SleepSync foodLogs={logs} />
-          </main>
-        ) : (
-          <main className="mt-8">
-            <LifeFlow foodLogs={logs} />
-          </main>
-        )}
-      </div>
+      {mode === 'nutriwell' ? (
+        <>
+          {currentPage === 'food-budget' && (
+            <FoodBudget foodLogs={logs} />
+          )}
+          {currentPage === 'log-food' && (
+            <LogFood 
+              foodLogs={logs} 
+              setFoodLogs={setFoodLogs}
+              onNavigate={setCurrentPage}
+            />
+          )}
+          {currentPage === 'meal-planner' && (
+            <MealPlanner 
+              foodLogs={logs} 
+              setFoodLogs={setFoodLogs}
+              onNavigate={setCurrentPage}
+            />
+          )}
+          {currentPage === 'recommendations' && (
+            <Recommendations foodLogs={logs} />
+          )}
+          {currentPage === 'education' && (
+            <Education />
+          )}
+          {currentPage === 'achievements' && (
+            <Achievements foodLogs={logs} />
+          )}
+          {currentPage === 'settings' && (
+            <Settings />
+          )}
+        </>
+      ) : mode === 'sleepsync' ? (
+        <SleepSync foodLogs={logs} />
+      ) : (
+        <LifeFlow foodLogs={logs} />
+      )}
 
       <Toaster />
-    </div>
+    </DashboardLayout>
   )
 }
 

@@ -304,11 +304,11 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
                       setSearchQuery('')
                       setSelectedPortion(1)
                     }}
-                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted transition-colors text-left"
+                    className="flex items-center justify-between p-3 rounded-lg border border-border bg-card hover:bg-accent hover:text-accent-foreground transition-colors text-left shadow-sm group"
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <div className="font-medium">{food.name}</div>
+                        <div className="font-medium group-hover:text-accent-foreground">{food.name}</div>
                         {food.brand && (
                           <Badge variant="secondary" className="gap-1 text-xs">
                             <Storefront className="h-3 w-3" weight="fill" />
@@ -316,16 +316,16 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
                           </Badge>
                         )}
                       </div>
-                      <div className="text-sm text-muted-foreground">{food.servingSize} · {food.calories} cal</div>
+                      <div className="text-sm text-muted-foreground group-hover:text-accent-foreground/80">{food.servingSize} · {food.calories} cal</div>
                       <div className="flex gap-1 mt-1 flex-wrap">
                         {food.tags.slice(0, 3).map(tag => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
+                          <Badge key={tag} variant="secondary" className="text-xs bg-secondary/20 text-secondary-foreground">
                             {tag}
                           </Badge>
                         ))}
                       </div>
                     </div>
-                    <Plus className="text-primary" />
+                    <Plus className="text-primary group-hover:text-accent-foreground" />
                   </button>
                 ))}
               </div>
@@ -408,36 +408,47 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
         </CardHeader>
         <CardContent>
           {todaysLogs.length === 0 ? (
-            <p className="text-muted-foreground text-center py-6 text-sm">
-              No meals logged yet today. Start by adding your first meal above.
-            </p>
+            <div className="flex flex-col items-center justify-center py-8 text-center border-2 border-dashed border-border/50 rounded-xl bg-muted/10">
+              <div className="p-3 bg-muted rounded-full mb-3">
+                <ForkKnife className="w-6 h-6 text-muted-foreground" />
+              </div>
+              <p className="text-muted-foreground text-sm font-medium">
+                No meals logged yet today.
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Start by adding your first meal above.
+              </p>
+            </div>
           ) : (
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {todaysLogs.map(log => (
                 <div
                   key={log.id}
-                  className="flex items-center justify-between p-2.5 border rounded-lg bg-card hover:bg-muted/50 transition-colors"
+                  className="flex items-center justify-between p-3 border border-border rounded-lg bg-card hover:bg-accent/5 transition-colors shadow-sm"
                 >
                   <div className="flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <div className="font-semibold text-sm text-foreground">{log.food.name}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="font-medium text-sm text-foreground">{log.food.name}</div>
                       {log.food.brand && (
-                        <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-5">
                           {log.food.brand}
                         </Badge>
                       )}
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 capitalize text-muted-foreground">
+                        {log.mealType}
+                      </Badge>
                     </div>
-                    <div className="text-xs text-muted-foreground mt-0.5">
-                      {log.quantity} × {log.food.servingSize} · {Math.round(log.food.calories * log.quantity)} cal
+                    <div className="text-xs text-muted-foreground mt-1 font-medium">
+                      {log.quantity} × {log.food.servingSize} · <span className="text-primary">{Math.round(log.food.calories * log.quantity)} cal</span>
                     </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8"
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                     onClick={() => handleDeleteLog(log.id)}
                   >
-                    <Trash className="text-destructive w-4 h-4" />
+                    <Trash className="w-4 h-4" />
                   </Button>
                 </div>
               ))}

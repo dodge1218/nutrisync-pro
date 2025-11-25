@@ -235,35 +235,31 @@ export default function Achievements({ foodLogs }: AchievementsProps) {
 
   return (
     <div className="space-y-6">
-      <Card className="border-primary">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Trophy className="h-8 w-8 text-primary" weight="fill" />
-              <div>
-                <CardTitle className="text-2xl">Your Achievements</CardTitle>
-                <CardDescription>
-                  Track your progress and unlock rewards
-                </CardDescription>
-              </div>
-            </div>
-            <Badge variant="secondary" className="text-2xl px-4 py-2">
-              {unlockedAchievements.length}/{achievements.length}
-            </Badge>
-          </div>
-        </CardHeader>
-      </Card>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-yellow-500 to-amber-600 bg-clip-text text-transparent flex items-center gap-3">
+            <Trophy className="w-8 h-8 text-amber-500" weight="duotone" />
+            Achievements
+          </h1>
+          <p className="text-muted-foreground mt-2 text-base">
+            Track your progress and unlock rewards
+          </p>
+        </div>
+        <Badge variant="secondary" className="text-xl px-4 py-2 h-auto bg-amber-100 text-amber-800 border-amber-200">
+          {unlockedAchievements.length}/{achievements.length} Unlocked
+        </Badge>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-4">
-        <Card>
+        <Card className="border-amber-200 bg-amber-50/30">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Total Progress</CardTitle>
+            <CardTitle className="text-sm font-medium text-amber-900">Total Progress</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-primary">
+            <div className="text-3xl font-bold text-amber-600">
               {Math.round((unlockedAchievements.length / achievements.length) * 100)}%
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-amber-700/80 mt-1">
               {unlockedAchievements.length} of {achievements.length} unlocked
             </p>
           </CardContent>

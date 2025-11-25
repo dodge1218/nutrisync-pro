@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Badge } from '../ui/badge'
 import { Separator } from '../ui/separator'
 import { Switch } from '../ui/switch'
-import { BellRinging, FileText, User } from '@phosphor-icons/react'
+import { BellRinging, FileText, User, Gear } from '@phosphor-icons/react'
 import ProfileDashboard from '../profile/ProfileDashboard'
 import CloudSyncSettings from '../CloudSyncSettings'
 import DataManagement from '../DataManagement'
@@ -14,25 +14,28 @@ export default function Settings() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            Settings & Preferences
-          </CardTitle>
-          <CardDescription>
-            Manage your profile and app preferences
-          </CardDescription>
-        </CardHeader>
-      </Card>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-500 to-slate-700 bg-clip-text text-transparent flex items-center gap-3">
+            <Gear className="w-8 h-8 text-slate-600" weight="duotone" />
+            Settings
+          </h1>
+          <p className="text-muted-foreground mt-2 text-base">
+            Manage your profile, preferences, and data
+          </p>
+        </div>
+      </div>
       
       <ProfileDashboard />
       
       <CloudSyncSettings />
       
-      <Card>
+      <Card className="border-slate-200 shadow-sm">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <User weight="fill" />
+            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+              <User className="w-5 h-5 text-slate-600" weight="duotone" />
+            </div>
             Nutrition Calculations
           </CardTitle>
           <CardDescription>
@@ -53,22 +56,24 @@ export default function Settings() {
             />
           </div>
           {enabled && (
-            <div className="bg-muted/50 p-3 rounded-lg text-sm text-muted-foreground">
+            <div className="bg-slate-50 border border-slate-100 p-3 rounded-lg text-sm text-slate-600">
               ✓ Using your profile data to calculate personalized nutrient targets. Keep your profile updated in the section above.
             </div>
           )}
           {!usePersonalizedDVs && (
-            <div className="bg-muted/50 p-3 rounded-lg text-sm text-muted-foreground">
+            <div className="bg-slate-50 border border-slate-100 p-3 rounded-lg text-sm text-slate-600">
               Currently using standard daily values (RDA). Enable personalized DVs for recommendations tailored to your needs.
             </div>
           )}
         </CardContent>
       </Card>
       
-      <Card>
+      <Card className="border-slate-200 shadow-sm">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <BellRinging weight="fill" />
+            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+              <BellRinging className="w-5 h-5 text-slate-600" weight="duotone" />
+            </div>
             Preferences
           </CardTitle>
         </CardHeader>
@@ -101,10 +106,12 @@ export default function Settings() {
       
       <ProfileHistory />
 
-      <Card>
+      <Card className="border-slate-200 shadow-sm">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <FileText weight="fill" />
+            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+              <FileText className="w-5 h-5 text-slate-600" weight="duotone" />
+            </div>
             Legal & Documentation
           </CardTitle>
         </CardHeader>
@@ -127,7 +134,7 @@ export default function Settings() {
         </CardContent>
       </Card>
       
-      <Card className="bg-muted/30">
+      <Card className="bg-slate-50/50 border-slate-200 shadow-sm">
         <CardHeader>
           <CardTitle className="text-lg">About This App</CardTitle>
         </CardHeader>
