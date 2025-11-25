@@ -108,8 +108,8 @@ export default function ProfilePopupManager({ mode }: { mode: AppMode }) {
       stagesCompleted: [...(current?.stagesCompleted || []), 'sleep'].filter((v, i, a) => a.indexOf(v) === i)
     }))
     setTriggers((prev) => ({
-      ...prev,
-      sleep: { ...prev.sleep!, dismissed: true }
+      ...(prev || {}),
+      sleep: { ...(prev?.sleep || { stage: 'sleep', triggered: true }), dismissed: true }
     }))
     setShowSleepSetup(false)
     toast.success('Sleep schedule saved')

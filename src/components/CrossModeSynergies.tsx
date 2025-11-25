@@ -219,7 +219,7 @@ function generateInsights(
 }
 
 function getLast7Days(): string[] {
-  const dates = []
+  const dates: string[] = []
   for (let i = 0; i < 7; i++) {
     const date = new Date()
     date.setDate(date.getDate() - i)

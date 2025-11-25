@@ -1,4 +1,4 @@
-import type { FoodLog, NutrientTotals } from './nutritionEngine'
+import { type FoodLog, type NutrientTotals, calculateNutrientTotals, performWellnessAudit } from './nutritionEngine'
 import type { StressLog } from '../components/StressTracker'
 
 export interface CrossModeSynergy {
@@ -30,7 +30,7 @@ export function detectNutrientActivitySynergies(
 ): SynergyInsight[] {
   const insights: SynergyInsight[] = []
   
-  const dates = []
+  const dates: string[] = []
   for (let i = 0; i < days; i++) {
     const date = new Date()
     date.setDate(date.getDate() - i)
@@ -53,7 +53,7 @@ export function detectNutrientActivitySynergies(
 
     let breakfastProtein = 0
     breakfastLogs.forEach(log => {
-      breakfastProtein += (log.food.nutrients?.protein || 0) * log.quantity
+      breakfastProtein += (log.food.protein || 0) * log.quantity
     })
 
     if (breakfastProtein > 25) highProteinBreakfasts++
@@ -69,7 +69,7 @@ export function detectNutrientActivitySynergies(
       if (!hasExercise) missedExerciseDays++
     }
 
-    const nutrients = getDailyNutrients(dayLogs)
+    const nutrients = calculateNutrientTotals(dayLogs)
     if (nutrients.magnesium < 200) {
       lowMagnesiumDays++
     }
@@ -105,7 +105,7 @@ export function detectGBDIStressSynergies(
 ): SynergyInsight[] {
   const insights: SynergyInsight[] = []
   
-  const dates = []
+  const dates: string[] = []
   for (let i = 0; i < days; i++) {
     const date = new Date()
     date.setDate(date.getDate() - i)
@@ -118,38 +118,13 @@ export function detectGBDIStressSynergies(
 
   dates.forEach(dateStr => {
     const dayLogs = foodLogs.filter(log => log.timestamp.startsWith(dateStr))
-    const stressLog = stressLogs.find(log => log.date === dateStr)
+    const stressLog = stressLogs.find(log => log.timestamp.split('T')[0] === dateStr)
 
     if (!stressLog) return
 
-    const gbdiComponents: GBDIComponents = {
-      fiber: 0,
-      fermentedFoods: 0,
-      plantDiversity: new Set(),
-      polyphenolRichFoods: 0,
-      prebioticFoods: 0,
-      ultraProcessedBurden: 0,
-      gutStressors: 0
-    }
-
-    dayLogs.forEach(log => {
-      gbdiComponents.fiber += (log.food.nutrients?.fiber || 0) * log.quantity
-      
-      if (log.food.tags?.includes('fermented')) {
-        gbdiComponents.fermentedFoods++
-      }
-      if (log.food.tags?.includes('polyphenol-rich')) {
-        gbdiComponents.polyphenolRichFoods++
-      }
-      if (log.food.tags?.includes('prebiotic')) {
-        gbdiComponents.prebioticFoods++
-      }
-      if (log.food.tags?.includes('ultra-processed')) {
-        gbdiComponents.ultraProcessedBurden += log.quantity
-      }
-    })
-
-    const gbdiScore = calculateGBDIScore(gbdiComponents)
+    const totals = calculateNutrientTotals(dayLogs)
+    const wellness = performWellnessAudit(dayLogs, totals)
+    const gbdiScore = wellness.gbdi
 
     if (gbdiScore < 50 && stressLog.stressLevel >= 7) {
       lowGBDIHighStress++
@@ -157,7 +132,7 @@ export function detectGBDIStressSynergies(
     if (gbdiScore > 70 && stressLog.stressLevel <= 4) {
       highGBDILowStress++
     }
-    if (gbdiComponents.fiber < 20 && stressLog.stressLevel >= 7) {
+    if (totals.fiber < 20 && stressLog.stressLevel >= 7) {
       lowFiberHighStress++
     }
   })
@@ -202,7 +177,7 @@ export function detectSleepNutritionSynergies(
 ): SynergyInsight[] {
   const insights: SynergyInsight[] = []
   
-  const dates = []
+  const dates: string[] = []
   for (let i = 0; i < days; i++) {
     const date = new Date()
     date.setDate(date.getDate() - i)
@@ -215,7 +190,7 @@ export function detectSleepNutritionSynergies(
 
   dates.forEach(dateStr => {
     const dayLogs = foodLogs.filter(log => log.timestamp.startsWith(dateStr))
-    const stressLog = stressLogs.find(log => log.date === dateStr)
+    const stressLog = stressLogs.find(log => log.timestamp.split('T')[0] === dateStr)
 
     if (!stressLog) return
 
@@ -246,7 +221,7 @@ export function detectSleepNutritionSynergies(
       lateDinnerPoorSleep++
     }
 
-    const nutrients = getDailyNutrients(dayLogs)
+    const nutrients = calculateNutrientTotals(dayLogs)
     if (nutrients.magnesium >= 300 && stressLog.sleepQuality >= 7) {
       highMagnesiumGoodSleep++
     }
@@ -293,7 +268,7 @@ export function detectEnergyPerformanceSynergies(
 ): SynergyInsight[] {
   const insights: SynergyInsight[] = []
   
-  const dates = []
+  const dates: string[] = []
   for (let i = 0; i < days; i++) {
     const date = new Date()
     date.setDate(date.getDate() - i)
@@ -306,12 +281,12 @@ export function detectEnergyPerformanceSynergies(
 
   dates.forEach(dateStr => {
     const dayLogs = foodLogs.filter(log => log.timestamp.startsWith(dateStr))
-    const stressLog = stressLogs.find(log => log.date === dateStr)
+    const stressLog = stressLogs.find(log => log.timestamp.split('T')[0] === dateStr)
     const daySchedule = schedules.find(s => s.date === dateStr)
 
     if (!stressLog || !daySchedule) return
 
-    const nutrients = getDailyNutrients(dayLogs)
+    const nutrients = calculateNutrientTotals(dayLogs)
     const completedActivities = daySchedule.activities?.filter((a: any) => a.isCompleted).length || 0
     const totalActivities = daySchedule.activities?.length || 1
 
