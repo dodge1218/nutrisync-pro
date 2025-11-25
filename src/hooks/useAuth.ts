@@ -61,16 +61,15 @@ export function useAuth() {
 
     // If identifier is not an email, try to resolve it as a username
     if (!identifier.includes('@')) {
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('email')
-        .eq('username', identifier)
-        .single()
+      // Use the secure RPC function instead of direct table select
+      const { data, error } = await supabase.rpc('get_email_by_username', { 
+        username_input: identifier 
+      })
 
       if (error || !data) {
         return { data: null, error: new Error('Invalid username or password') }
       }
-      emailToUse = data.email
+      emailToUse = data as string
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({

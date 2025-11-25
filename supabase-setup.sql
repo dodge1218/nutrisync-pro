@@ -21,12 +21,14 @@ DROP POLICY IF EXISTS "Users can update own profile" ON public.user_profiles;
 DROP POLICY IF EXISTS "Users can insert own profile" ON public.user_profiles;
 
 -- Create policies
--- Allow public read access to profiles so we can resolve username -> email during login
--- Note: In a high-security production app, you might want to use a secure Edge Function instead
-CREATE POLICY "Public profiles access" 
+-- Securely allow users to view their own profile
+CREATE POLICY "Users can view own profile" 
   ON public.user_profiles 
   FOR SELECT 
-  USING (true);
+  USING (auth.uid() = id);
+
+-- Note: We do NOT allow public access to profiles. 
+-- Login lookup is handled via a secure RPC function (get_email_by_username).
 
 CREATE POLICY "Users can update own profile" 
   ON public.user_profiles 
@@ -60,6 +62,25 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_new_user();
+
+-- SECURE LOGIN HELPER
+-- This function allows the frontend to look up an email by username 
+-- without exposing the entire user_profiles table to the public.
+CREATE OR REPLACE FUNCTION public.get_email_by_username(username_input TEXT)
+RETURNS TEXT
+LANGUAGE plpgsql
+SECURITY DEFINER -- Runs with privileges of the creator (postgres), bypassing RLS
+AS $$
+DECLARE
+  found_email TEXT;
+BEGIN
+  SELECT email INTO found_email
+  FROM public.user_profiles
+  WHERE username = username_input;
+  
+  RETURN found_email;
+END;
+$$;
 
 -- Optional: Mark yourself as a developer (uncomment and replace with your email)
 -- This excludes your data from analytics and marks you as the app owner
