@@ -8,6 +8,8 @@ import { ThemeProvider } from "./components/theme-provider"
 
 import "./main.css"
 
+console.log('NutriSync Version: 2025-11-25 1.0.1 - Fixes Applied')
+
 createRoot(document.getElementById('root')!).render(
   <ErrorBoundary FallbackComponent={ErrorFallback}>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
