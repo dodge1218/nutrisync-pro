@@ -14,8 +14,6 @@ A comprehensive nutrition tracking and analysis platform that helps users identi
 - **Gap Detection** — Color-coded status for each nutrient with % of Daily Value
 - **Synergy Intelligence** — Suggestions for nutrient pairings (e.g., vitamin C + iron)
 - **Timing Conflict Detection** — Alerts for absorption issues (e.g., coffee near iron-rich meals)
-- **Net Calorie Tracking** — See calories consumed minus exercise burned
-- **Cloud Data Sync** — Multi-device sync with automatic backup (optional)
 
 ### Wellness Framework
 - **Gut Support Score (0-100)** — Based on fiber, fermented foods, plant diversity, ultra-processed burden
@@ -24,21 +22,15 @@ A comprehensive nutrition tracking and analysis platform that helps users identi
 - **Mineral Trio Sufficiency** — Calcium, magnesium, potassium balance
 - **Warm Food Preference** — Prioritizes cooked/room-temp options for easier digestion
 
-### User Experience
-- **User Authentication** — Secure email/password login via Supabase
-- **Personalized Daily Values** — Custom nutrient targets based on your profile
-- **Exercise Integration** — Log workouts in LifeFlow mode, see net calories in NutriWell
-- **Multi-Mode System** — NutriWell (nutrition), SleepSync (meal timing), LifeFlow (scheduling)
-
 ### Educational Content
 - **In-App Learning** — 9+ educational cards covering nutrient synergies, timing, and wellness
 - **Actionable Takeaways** — Every card includes practical "what to do" steps
 - **Contextual Delivery** — Relevant content appears based on detected gaps
 
 ### Future Features (Roadmap)
-- **Data Export** — Download your data as JSON/CSV
-- **Wearable Integration** — Apple Watch, Fitbit sync for activity, sleep, HRV-informed recommendations
-- **Post-Workout Nutrition** — Meal suggestions based on exercise type and timing
+- **Wearable Integration (v2.0)** — Apple Watch, Fitbit sync for activity, sleep, HRV-informed recommendations
+- **Affiliate Product Recommendations (v1.1)** — Targeted supplement suggestions (with clear disclaimers)
+- **Premium Tier (v1.1)** — Deeper analysis, trends, exports
 
 ---
 
@@ -47,8 +39,6 @@ A comprehensive nutrition tracking and analysis platform that helps users identi
 This project includes comprehensive business and technical documentation:
 
 - **[PRD.md](./PRD.md)** — Product Requirements Document (features, personas, roadmap, metrics)
-- **[CLOUD-SYNC-GUIDE.md](./CLOUD-SYNC-GUIDE.md)** — Complete guide to cloud data synchronization
-- **[USER-TODO-SUPABASE-SETUP.md](./USER-TODO-SUPABASE-SETUP.md)** — Supabase setup instructions
 - **[docs/business-plan.md](./docs/business-plan.md)** — Market analysis, revenue model, go-to-market strategy
 - **[docs/legal-disclaimer.md](./docs/legal-disclaimer.md)** — Full legal disclaimers and compliance notes
 - **[docs/integration-plan.md](./docs/integration-plan.md)** — Wearable/biometric integration strategy
