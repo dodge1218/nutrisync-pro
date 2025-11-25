@@ -170,6 +170,7 @@ function App() {
   // 2. No data exists (logs or mode change)
   // 3. User is brand new (created in last 5 mins)
   const isNewUser = user?.created_at && (new Date().getTime() - new Date(user.created_at).getTime() < 5 * 60 * 1000)
+  const hasData = logs && logs.length > 0
 
   if (!onboardingProfile && !hasData && isNewUser) {
     return (

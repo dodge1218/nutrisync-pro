@@ -82,11 +82,7 @@ BEGIN
 END;
 $$;
 
--- Optional: Mark yourself as a developer (uncomment and replace with your email)
--- This excludes your data from analytics and marks you as the app owner
--- UPDATE public.user_profiles 
--- SET is_developer = true 
--- WHERE email = 'your-email@example.com';
+
 
 -- ============================================================
 -- CLOUD DATA SYNC TABLES
