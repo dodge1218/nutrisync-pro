@@ -52,7 +52,7 @@ BEGIN
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Drop existing trigger if it exists
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
@@ -69,7 +69,7 @@ CREATE TRIGGER on_auth_user_created
 CREATE OR REPLACE FUNCTION public.get_email_by_username(username_input TEXT)
 RETURNS TEXT
 LANGUAGE plpgsql
-SECURITY DEFINER -- Runs with privileges of the creator (postgres), bypassing RLS
+SECURITY DEFINER SET search_path = public -- Runs with privileges of the creator (postgres), bypassing RLS
 AS $$
 DECLARE
   found_email TEXT;
@@ -140,7 +140,7 @@ BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SET search_path = public;
 
 -- Trigger to automatically update updated_at
 DROP TRIGGER IF EXISTS update_user_data_updated_at ON public.user_data;
