@@ -55,11 +55,27 @@ export function LoginForm() {
           return
         }
 
-        const { error } = await signUp(email, password, username)
+        // Handle optional email for username-only accounts
+        let emailToUse = email
+        if (!emailToUse) {
+          // Generate a consistent fake email for username-only accounts
+          // We use a specific domain so we can identify them later if needed
+          // NOTE: For this to work, "Confirm email" must be DISABLED in Supabase Auth settings
+          emailToUse = `${username.toLowerCase().replace(/[^a-z0-9]/g, '')}@nutrisync.user`
+        }
+
+        const { data, error } = await signUp(emailToUse, password, username)
         if (error) {
           toast.error(error.message)
         } else {
-          setShowSignupSuccess(true)
+          // If we have a session, it means auto-confirm is on or not required
+          if (data?.session) {
+            toast.success('Account creation successful')
+            // The App component will detect the user change and redirect automatically
+          } else {
+            // Email verification required
+            setShowSignupSuccess(true)
+          }
         }
       }
     } catch (error) {
@@ -121,18 +137,6 @@ export function LoginForm() {
           ) : (
             <>
               <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  required
-                  className="mt-1"
-                />
-              </div>
-              <div>
                 <Label htmlFor="username">Username</Label>
                 <Input
                   id="username"
@@ -146,6 +150,17 @@ export function LoginForm() {
                 <p className="text-xs text-muted-foreground mt-1">
                   Min 8 chars, 1 uppercase, 1 number
                 </p>
+              </div>
+              <div>
+                <Label htmlFor="email">Email (Optional)</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="mt-1"
+                />
               </div>
             </>
           )}

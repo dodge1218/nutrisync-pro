@@ -127,7 +127,12 @@ function App() {
   }
 
   if (!user) {
-    return <LoginForm />
+    return (
+      <>
+        <LoginForm />
+        <Toaster />
+      </>
+    )
   }
 
   // Only show onboarding if user is NOT logged in (handled above) or if we want to force it for new users.
