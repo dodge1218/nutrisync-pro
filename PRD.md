@@ -67,6 +67,7 @@
 
 **Priority 1: Critical for Scale**
 - [x] **User Authentication** - ✅ Email/password auth with Supabase (COMPLETE)
+- [ ] **Google OAuth Integration** - Sign in with Google via Supabase (Planned)
 - [x] **Cloud Data Storage & Sync** - ✅ COMPLETE - Full cloud sync implemented (January 2025)
   - ✅ Multi-device sync with automatic 2-second debounce
   - ✅ Real-time cloud backup to Supabase

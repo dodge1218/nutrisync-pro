@@ -102,23 +102,25 @@ The NutriWell application has successfully completed all MVP features through Ph
 
 ---
 
-### Priority 3: User Authentication (Phase 8 - Auth)
-**Status**: NOT STARTED
+### Priority 3: User Authentication Enhancements
+**Status**: PARTIALLY COMPLETE (Email/Password Auth is Live)
 
-**Requirements**:
-- [ ] Supabase or Firebase setup
-- [ ] Login/signup UI
-- [ ] Multi-device sync
-- [ ] Developer data isolation
-- [ ] Migration from spark.kv to cloud DB
-- [ ] Data export/deletion (GDPR)
+**Remaining Work**:
+- [ ] **Google OAuth Integration** (Supabase)
+  - Configure Google Cloud Console project
+  - Add Client ID/Secret to Supabase
+  - Update Login UI with "Sign in with Google" button
+  - Handle OAuth redirect flow
+- [ ] Password reset via email
+- [ ] Magic link authentication
+- [ ] Data export/deletion (GDPR) - *Partially done*
 
-**Estimated Effort**: 3-4 weeks
+**Estimated Effort**: 1-2 weeks
 
 **User Signals to Build**:
-- Requests for multi-device access
-- "Can I access this on my phone and laptop?"
-- Need for data backup/recovery
+- "I don't want to create another password"
+- "Can I just use Google?"
+- High drop-off rate at signup form
 
 **Important**: Developer health data MUST be isolated from user analytics
 
