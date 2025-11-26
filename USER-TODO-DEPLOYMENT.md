@@ -100,9 +100,11 @@ CREATE TRIGGER on_auth_user_created
 
 1. In Supabase dashboard, go to **"Authentication"** → **"Providers"**
 2. Make sure **"Email"** is enabled (it should be by default)
-3. Scroll down to **"Email Templates"**
-4. Customize the email templates if desired (optional)
-5. **Important**: Under **"Auth"** → **"URL Configuration"**, set your site URL:
+3. **Highly Recommended**: Set up a custom SMTP server for reliable email delivery.
+   - See our [SMTP Setup Guide](./USER-TODO-SMTP.md) for detailed instructions.
+4. Scroll down to **"Email Templates"**
+5. Customize the email templates if desired (optional)
+6. **Important**: Under **"Auth"** → **"URL Configuration"**, set your site URL:
    - For now, leave it as default
    - After deploying to Vercel, come back and update this to your Vercel URL
 
@@ -230,6 +232,7 @@ Vercel should auto-detect these, but verify in your project settings:
 - Go to Supabase → **Authentication** → **Email Templates**
 - Make sure "Confirm signup" template is enabled
 - Check your spam folder
+- **Best Fix**: Set up a custom SMTP server (see [SMTP Setup Guide](./USER-TODO-SMTP.md))
 
 ### "Failed to fetch" errors
 - **Solution**: Check Supabase URL configuration
