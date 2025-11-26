@@ -10,8 +10,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Plus, Trash, CalendarDots, ForkKnife, Coffee, FlowerLotus, Copy, CheckCircle, PencilSimple, Pill, Sparkle } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { MEAL_TEMPLATES, type MealTemplate, type MealIngredient } from '../../data/mealTemplates'
-import { FOODS_DATABASE } from '../../data/foods'
+import { FOODS_DATABASE, type Food } from '../../data/foods'
 import { WELLNESS_SUPPLEMENTS, type WellnessSupplement } from '../../data/wellnessSupplements'
+import { SmartMealAutofill } from '../SmartMealAutofill'
 import type { FoodLog } from '../../lib/nutritionEngine'
 import type { Page } from '../../types'
 
@@ -44,12 +45,62 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
   const [selectedIngredients, setSelectedIngredients] = useState<MealIngredient[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
+  const [hasSeenEmptyPrompt, setHasSeenEmptyPrompt] = useKV('has-seen-empty-template-prompt', false)
+  const [showEmptyPrompt, setShowEmptyPrompt] = useState(false)
 
   const allTemplates = [...MEAL_TEMPLATES, ...(customTemplates || [])]
   const dayIndex = selectedDay === 7 ? 0 : selectedDay
 
+  useEffect(() => {
+    // Check if user has no custom templates and hasn't seen the prompt
+    if (customTemplates && customTemplates.length === 0 && !hasSeenEmptyPrompt) {
+      // Small delay to not be jarring
+      const timer = setTimeout(() => setShowEmptyPrompt(true), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [customTemplates, hasSeenEmptyPrompt])
+
+  const handleDismissEmptyPrompt = () => {
+    setHasSeenEmptyPrompt(true)
+    setShowEmptyPrompt(false)
+  }
+
+  const handleCreateFromPrompt = () => {
+    setHasSeenEmptyPrompt(true)
+    setShowEmptyPrompt(false)
+    setIsCreatingTemplate(true)
+  }
+
   const getMealsForDay = (day: number) => {
     return (plannedMeals || []).filter(pm => pm.dayOfWeek === day)
+  }
+
+  const handleSmartAddMeals = (meals: { mealType: string; foods: { food: Food; quantity: number }[] }[]) => {
+    const now = new Date()
+    
+    const newLogs: FoodLog[] = []
+
+    meals.forEach(meal => {
+      // Set time based on meal type
+      const mealTime = new Date(now)
+      if (meal.mealType === 'breakfast') mealTime.setHours(8, 0, 0, 0)
+      else if (meal.mealType === 'lunch') mealTime.setHours(12, 30, 0, 0)
+      else if (meal.mealType === 'dinner') mealTime.setHours(18, 30, 0, 0)
+      else mealTime.setHours(15, 0, 0, 0)
+
+      meal.foods.forEach(item => {
+        newLogs.push({
+          id: `${Date.now()}-${Math.random()}`,
+          foodId: item.food.id,
+          food: item.food,
+          quantity: item.quantity,
+          timestamp: mealTime.toISOString(),
+          mealType: meal.mealType as any,
+        })
+      })
+    })
+
+    setFoodLogs((current) => [...current, ...newLogs])
   }
 
   const getMealIcon = (mealType: string) => {
@@ -297,14 +348,20 @@ Example format:
             Plan your week and log common meals easily
           </p>
         </div>
-        <Dialog open={isCreatingTemplate} onOpenChange={setIsCreatingTemplate}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Meal Template
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex gap-2">
+          <SmartMealAutofill 
+            foodLogs={foodLogs} 
+            customTemplates={customTemplates || []}
+            onAddMeals={handleSmartAddMeals} 
+          />
+          <Dialog open={isCreatingTemplate} onOpenChange={setIsCreatingTemplate}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Create Meal Template
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Create Custom Meal Template</DialogTitle>
               <DialogDescription>
@@ -437,6 +494,7 @@ Example format:
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       <Tabs value={selectedDay.toString()} onValueChange={(v) => setSelectedDay(parseInt(v))}>
@@ -739,6 +797,36 @@ Example format:
           )
         })}
       </Tabs>
+
+      <Dialog open={showEmptyPrompt} onOpenChange={setShowEmptyPrompt}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Start Your Meal Planning Journey</DialogTitle>
+            <DialogDescription>
+              You haven't created any custom meal templates yet. Creating templates makes it easy to plan your week!
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="flex items-center gap-4 p-4 bg-primary/10 rounded-lg">
+              <div className="p-2 bg-primary/20 rounded-full">
+                <ForkKnife className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 className="font-medium">Create your first template</h4>
+                <p className="text-sm text-muted-foreground">Save your favorite meals for quick access</p>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={handleDismissEmptyPrompt}>
+              Maybe Later
+            </Button>
+            <Button onClick={handleCreateFromPrompt}>
+              Create Template Now
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

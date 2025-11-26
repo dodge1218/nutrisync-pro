@@ -9,20 +9,23 @@ import { ScrollArea } from './ui/scroll-area'
 import { Sparkle, MagicWand, CurrencyDollar, ArrowsClockwise, Check } from '@phosphor-icons/react'
 import { FOODS_DATABASE, type Food } from '../data/foods'
 import type { FoodLog } from '../lib/nutritionEngine'
+import type { MealTemplate } from '../data/mealTemplates'
 import { toast } from 'sonner'
 
 interface SmartMealAutofillProps {
   foodLogs: FoodLog[]
+  customTemplates?: MealTemplate[]
   onAddMeals: (meals: { mealType: string; foods: { food: Food; quantity: number }[] }[]) => void
 }
 
 interface GeneratedMeal {
   type: 'breakfast' | 'lunch' | 'dinner' | 'snack'
+  name?: string
   foods: { food: Food; quantity: number }[]
   price: number
 }
 
-export function SmartMealAutofill({ foodLogs, onAddMeals }: SmartMealAutofillProps) {
+export function SmartMealAutofill({ foodLogs, customTemplates = [], onAddMeals }: SmartMealAutofillProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [useNewFoods, setUseNewFoods] = useState(false)
   const [complexity, setComplexity] = useState([50]) // 0 = simple, 100 = complex
@@ -70,8 +73,20 @@ export function SmartMealAutofill({ foodLogs, onAddMeals }: SmartMealAutofillPro
 
     types.forEach(type => {
       let selectedFoods: { food: Food; quantity: number }[] = []
+      let mealName: string | undefined
       
-      if (!useNewFoods) {
+      // Try to use custom templates first if not exploring new foods
+      const typeTemplates = customTemplates.filter(t => t.mealType === type)
+      
+      if (!useNewFoods && typeTemplates.length > 0 && Math.random() > 0.3) {
+        // 70% chance to use a template if available and not exploring
+        const template = typeTemplates[Math.floor(Math.random() * typeTemplates.length)]
+        mealName = template.name
+        selectedFoods = template.ingredients.map(ing => {
+          const food = FOODS_DATABASE.find(f => f.id === ing.foodId)
+          return food ? { food, quantity: ing.quantity } : null
+        }).filter(Boolean) as { food: Food; quantity: number }[]
+      } else if (!useNewFoods) {
         // Familiar foods logic
         const frequent = getFrequentFoods(type)
         if (frequent.length > 0) {
@@ -102,6 +117,7 @@ export function SmartMealAutofill({ foodLogs, onAddMeals }: SmartMealAutofillPro
 
       meals.push({
         type,
+        name: mealName,
         foods: selectedFoods,
         price: mealPrice
       })
@@ -215,7 +231,12 @@ export function SmartMealAutofill({ foodLogs, onAddMeals }: SmartMealAutofillPro
               {generatedMeals.map((meal) => (
                 <div key={meal.type} className="border rounded-lg p-3 bg-card">
                   <div className="flex items-center justify-between mb-2">
-                    <Badge variant="outline" className="capitalize">{meal.type}</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="capitalize">{meal.type}</Badge>
+                      {meal.name && (
+                        <span className="text-xs font-medium text-primary">{meal.name}</span>
+                      )}
+                    </div>
                     <span className="text-xs text-muted-foreground">~${meal.price.toFixed(2)}</span>
                   </div>
                   <div className="space-y-1">
