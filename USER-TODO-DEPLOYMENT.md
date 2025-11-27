@@ -322,9 +322,9 @@ To manually redeploy:
 
 Before going live, verify:
 
-- [ ] Supabase project created
-- [ ] Database tables and RLS policies set up
-- [ ] Supabase API credentials obtained
+- [x] Supabase project created
+- [x] Database tables and RLS policies set up
+- [x] Supabase API credentials obtained
 - [ ] Vercel project created and deployed
 - [ ] Environment variables added to Vercel
 - [ ] Site URL updated in Supabase

@@ -290,7 +290,7 @@ export function generateSynergySuggestions(logs: FoodLog[], totals: NutrientTota
       title: 'Add Vitamin C to Boost Iron Absorption',
       description: 'You consumed plant-based iron but no vitamin C. Adding vitamin C can triple non-heme iron absorption.',
       priority: 'high',
-      warmOption: 'Add cooked bell peppers, tomatoes, or broccoli to your iron-rich meal. Squeeze lemon juice on lentils or spinach.'
+      warmOption: 'Try a Bell Pepper Stir Fry, Tomato Soup, or squeeze lemon on your meal.'
     })
   }
 
@@ -311,7 +311,7 @@ export function generateSynergySuggestions(logs: FoodLog[], totals: NutrientTota
       title: 'Increase Magnesium for Stress & Sleep',
       description: 'You\'re low on magnesium, which supports relaxation, sleep quality, and muscle recovery.',
       priority: 'high',
-      warmOption: 'Add cooked spinach, pumpkin seeds (roasted), or warm dark chocolate to your meals.'
+      warmOption: 'Try a Warm Spinach Salad, Pumpkin Seed Granola, or Dark Chocolate.'
     })
   }
 
@@ -324,7 +324,7 @@ export function generateSynergySuggestions(logs: FoodLog[], totals: NutrientTota
       title: 'Support Your Gut Microbiome',
       description: 'Low fiber and no fermented foods detected. Your gut bacteria need more fuel and reinforcements.',
       priority: 'high',
-      warmOption: 'Add warm lentil soup, cooked oats, or roasted vegetables. Consider adding kefir or yogurt if you tolerate dairy.'
+      warmOption: 'Try Lentil Soup, Oatmeal with Berries, or a Kefir Smoothie.'
     })
   }
 
@@ -335,7 +335,7 @@ export function generateSynergySuggestions(logs: FoodLog[], totals: NutrientTota
       title: 'Boost Potassium for Electrolyte Balance',
       description: 'Low potassium can affect blood pressure, hydration, and muscle function.',
       priority: 'medium',
-      warmOption: 'Add baked sweet potato, cooked spinach, or avocado to your meals.'
+      warmOption: 'Try Baked Sweet Potato Fries, Avocado Toast, or a Spinach Omelet.'
     })
   }
 
@@ -347,7 +347,7 @@ export function generateSynergySuggestions(logs: FoodLog[], totals: NutrientTota
       title: 'Vitamin D + K2: The Bone Health Duo',
       description: 'Low vitamin D detected, and no vitamin K foods. These work together to direct calcium to bones, not arteries.',
       priority: 'high',
-      warmOption: 'Add fatty fish (salmon, mackerel) with sautéed kale or spinach for the D+K synergy.'
+      warmOption: 'Try Grilled Salmon with Sautéed Kale or a Sardine Salad.'
     })
   }
 
@@ -359,7 +359,7 @@ export function generateSynergySuggestions(logs: FoodLog[], totals: NutrientTota
       title: 'Add Healthy Fats for Vitamin Absorption',
       description: 'You have fat-soluble vitamins (A, D, E, K) but low dietary fat. These vitamins need fat to be absorbed.',
       priority: 'high',
-      warmOption: 'Drizzle olive oil on vegetables, add avocado to meals, or eat nuts with your vitamin-rich foods.'
+      warmOption: 'Add Olive Oil Dressing, Avocado Slices, or a handful of Nuts to your meal.'
     })
   }
 
@@ -370,7 +370,7 @@ export function generateSynergySuggestions(logs: FoodLog[], totals: NutrientTota
       title: 'Boost Zinc for Immune Function',
       description: 'Zinc is critical for immune health, wound healing, and hormone production. You\'re running low.',
       priority: 'medium',
-      warmOption: 'Add pumpkin seeds (roasted), beef, oysters, or chickpeas to boost zinc intake.'
+      warmOption: 'Try a Beef Burger, Roasted Chickpeas, or Pumpkin Seed Snack.'
     })
   }
 
@@ -381,7 +381,7 @@ export function generateSynergySuggestions(logs: FoodLog[], totals: NutrientTota
       title: 'Increase Protein for Muscle & Satiety',
       description: 'Protein intake is below optimal levels. Adequate protein supports muscle mass, recovery, and keeps you full.',
       priority: 'medium',
-      warmOption: 'Add chicken breast, Greek yogurt, lentils, or eggs to reach protein goals.'
+      warmOption: 'Try Grilled Chicken Breast, a Greek Yogurt Bowl, or Lentil Stew.'
     })
   }
 
@@ -393,7 +393,7 @@ export function generateSynergySuggestions(logs: FoodLog[], totals: NutrientTota
       title: 'Balance Calcium with Your Magnesium',
       description: 'You have decent magnesium but low calcium. These minerals work together for bone and muscle health.',
       priority: 'medium',
-      warmOption: 'Add kefir, sardines with bones, or fortified plant milk to balance the mineral ratio.'
+      warmOption: 'Try a Kefir Smoothie, Sardines on Toast, or Fortified Plant Milk.'
     })
   }
 
@@ -404,7 +404,7 @@ export function generateSynergySuggestions(logs: FoodLog[], totals: NutrientTota
       title: 'Critical B12 Deficiency Detected',
       description: 'Vitamin B12 is essential for nerve function, DNA synthesis, and energy. Deficiency causes fatigue and neurological issues.',
       priority: 'high',
-      warmOption: 'Add liver (nature\'s B12 bomb), salmon, eggs, or fortified nutritional yeast immediately.'
+      warmOption: 'Try Beef Liver Pate, Grilled Salmon, or Eggs Benedict.'
     })
   }
 
@@ -573,50 +573,78 @@ export function generateTopFixes(
   gaps: NutrientGap[], 
   synergySuggestions: SynergySuggestion[], 
   wellnessAudit: WellnessAudit,
-  totals: NutrientTotals
+  totals: NutrientTotals,
+  dietaryPattern: 'omnivore' | 'vegetarian' | 'vegan' = 'omnivore'
 ): string[] {
   const fixes: Array<{ priority: number; text: string }> = []
 
   const criticalGaps = gaps.filter(g => g.severity === 'critical')
   const moderateGaps = gaps.filter(g => g.severity === 'moderate')
+  
+  const isVegan = dietaryPattern === 'vegan'
+  const isVegetarian = dietaryPattern === 'vegetarian' || isVegan
 
   criticalGaps.forEach(gap => {
     let priority = 10
     let text = ''
 
     if (gap.nutrient === 'fiber' && gap.percentOfDV < 50) {
-      text = `Boost fiber to ${Math.round(getNutrientDV('fiber') * 0.8)}g - Add lentil soup (16g), cooked broccoli (5g), or oatmeal (8g)`
+      text = `Boost fiber to ${Math.round(getNutrientDV('fiber') * 0.8)}g - Try Lentil Soup, a Quinoa Bowl, or Oatmeal with Berries`
       priority = 10
     } else if (gap.nutrient === 'magnesium' && gap.percentOfDV < 50) {
       const needed = Math.round(getNutrientDV('magnesium') * 0.8 - gap.current)
-      text = `Need ${needed}mg magnesium - Add pumpkin seeds 1oz (150mg), dark chocolate 1oz (64mg), or spinach 1 cup (157mg)`
+      text = `Need ${needed}mg magnesium - Try a Spinach Salad with Pumpkin Seeds or Dark Chocolate Dessert`
       priority = 9
     } else if (gap.nutrient === 'vitaminD' && gap.percentOfDV < 50) {
-      text = `Vitamin D critically low - Eat salmon 3oz (14mcg), sardines (2.7mcg), or consider D3 supplement (2000 IU)`
+      if (isVegan) {
+        text = `Vitamin D critically low - Consider D3 supplement (2000 IU) or fortified plant milk smoothie`
+      } else {
+        text = `Vitamin D critically low - Try Grilled Salmon, Sardines on Toast, or a D3 supplement`
+      }
       priority = 8
     } else if (gap.nutrient === 'iron' && gap.percentOfDV < 50) {
       const hasVitaminC = totals.vitaminC > 30
       if (hasVitaminC) {
-        text = `Iron at ${Math.round(gap.percentOfDV)}% - Add lentils 1 cup (6.6mg) or liver 3oz (5mg)`
+        if (isVegan) {
+           text = `Iron at ${Math.round(gap.percentOfDV)}% - Try Lentil Stew, Tofu Stir Fry, or Spinach Salad`
+        } else {
+           text = `Iron at ${Math.round(gap.percentOfDV)}% - Try Beef Bolognese, Lentil Soup, or a Steak Salad`
+        }
       } else {
-        text = `Iron critically low AND no vitamin C - Add lentils with bell pepper or liver with broccoli for 3x absorption`
+        if (isVegan) {
+          text = `Iron critically low AND no vitamin C - Try Lentil Soup with Bell Peppers or Spinach Salad with Lemon Dressing`
+        } else {
+          text = `Iron critically low AND no vitamin C - Try Beef Stir Fry with Broccoli or Lentils with Peppers`
+        }
         priority = 11
       }
     } else if (gap.nutrient === 'potassium' && gap.percentOfDV < 50) {
       const needed = Math.round(getNutrientDV('potassium') * 0.8 - gap.current)
-      text = `Need ${needed}mg potassium - Baked sweet potato (542mg), avocado (487mg), or spinach 1 cup (839mg)`
+      text = `Need ${needed}mg potassium - Try a Sweet Potato Side, Avocado Toast, or a Banana Smoothie`
       priority = 7
     } else if (gap.nutrient === 'vitaminC' && gap.percentOfDV < 50) {
-      text = `Vitamin C low (${Math.round(gap.percentOfDV)}%) - Add bell pepper (120mg), broccoli 1 cup (81mg), or orange (70mg)`
+      text = `Vitamin C low (${Math.round(gap.percentOfDV)}%) - Try a Fruit Salad, Roasted Broccoli, or Bell Pepper Snacks`
       priority = 6
     } else if (gap.nutrient === 'vitaminB12' && gap.percentOfDV < 50) {
-      text = `B12 critically low - Add salmon 3oz (4.8mcg), liver 3oz (70mcg), or fortified nutritional yeast`
+      if (isVegan) {
+        text = `B12 critically low - Add fortified nutritional yeast to pasta or take a B12 supplement`
+      } else {
+        text = `B12 critically low - Try Grilled Salmon, Scrambled Eggs, or Beef Liver Pate`
+      }
       priority = 8
     } else if (gap.nutrient === 'calcium' && gap.percentOfDV < 50) {
-      text = `Calcium low - Add kefir 1 cup (317mg), sardines with bones (325mg), or fortified plant milk`
+      if (isVegan) {
+         text = `Calcium low - Try Tofu Stir Fry, Fortified Cereal, or a Green Smoothie`
+      } else {
+         text = `Calcium low - Try a Greek Yogurt Parfait, Cheese Omelet, or Sardines`
+      }
       priority = 7
     } else if (gap.nutrient === 'zinc' && gap.percentOfDV < 50) {
-      text = `Zinc deficient (${Math.round(gap.percentOfDV)}%) - Pumpkin seeds 1oz (2.2mg), beef 3oz (7mg), or oysters (32mg)`
+      if (isVegan) {
+        text = `Zinc deficient (${Math.round(gap.percentOfDV)}%) - Try Roasted Chickpeas, Pumpkin Seed Granola, or Cashew Stir Fry`
+      } else {
+        text = `Zinc deficient (${Math.round(gap.percentOfDV)}%) - Try a Beef Burger, Oysters, or Roast Chicken`
+      }
       priority = 7
     }
 
@@ -626,9 +654,13 @@ export function generateTopFixes(
   })
 
   if (wellnessAudit.fermentedFoodCount === 0 && wellnessAudit.gbdi < 60) {
+    const suggestion = isVegan 
+      ? 'sauerkraut (½ cup, billions CFU) or kimchi' 
+      : 'kefir (1 cup, 10+ probiotic strains) or sauerkraut (½ cup, billions CFU)'
+    
     fixes.push({ 
       priority: 9, 
-      text: 'Gut health critical - Add kefir (1 cup, 10+ probiotic strains) or sauerkraut (½ cup, billions CFU)' 
+      text: `Gut health critical - Add ${suggestion}` 
     })
   }
 
@@ -657,9 +689,13 @@ export function generateTopFixes(
   const proteinGap = gaps.find(g => g.nutrient === 'protein')
   if (proteinGap && proteinGap.percentOfDV < 70) {
     const needed = Math.round(getNutrientDV('protein') * 0.9 - proteinGap.current)
+    const suggestion = isVegan
+      ? `Lentil Soup, Tofu Scramble, or Protein Smoothie`
+      : `Chicken Breast, Greek Yogurt Parfait, or Grilled Salmon`
+      
     fixes.push({
       priority: 6,
-      text: `Protein at ${Math.round(proteinGap.percentOfDV)}% - Add ${needed}g more (1 chicken breast = 53g, Greek yogurt = 20g)`
+      text: `Protein at ${Math.round(proteinGap.percentOfDV)}% - Add ${needed}g more (Try ${suggestion})`
     })
   }
 
@@ -760,7 +796,7 @@ export function detectPostWorkoutNeeds(logs: FoodLog[], exerciseLogs: ExerciseLo
 
 export function analyzeDailyIntake(
   logs: FoodLog[], 
-  userProfile?: { staples?: boolean },
+  userProfile?: { staples?: boolean; dietaryPattern?: 'omnivore' | 'vegetarian' | 'vegan' },
   exerciseLogs?: ExerciseLog[]
 ): AnalysisResult {
   const totals = calculateNutrientTotals(logs)
@@ -769,7 +805,7 @@ export function analyzeDailyIntake(
   const synergySuggestions = generateSynergySuggestions(logs, totals)
   const wellnessAudit = performWellnessAudit(logs, totals)
   const gutSupportScore = calculateGutSupportScore(logs, totals)
-  const topFixes = generateTopFixes(gaps, synergySuggestions, wellnessAudit, totals)
+  const topFixes = generateTopFixes(gaps, synergySuggestions, wellnessAudit, totals, userProfile?.dietaryPattern)
   const postWorkoutSuggestions = exerciseLogs ? detectPostWorkoutNeeds(logs, exerciseLogs) : []
 
   const result: AnalysisResult = {

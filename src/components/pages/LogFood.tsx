@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 import { FOODS_DATABASE, type Food } from '../../data/foods'
 import { MEAL_TEMPLATES, type MealTemplate } from '../../data/mealTemplates'
 import type { FoodLog } from '../../lib/nutritionEngine'
+import type { CompleteUserProfile } from '../../lib/personalizedDVs'
 import type { Page } from '../../types'
 
 interface LogFoodProps {
@@ -31,14 +32,39 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
     return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
   })
   const [customTemplates] = useKV<MealTemplate[]>('custom-meal-templates', [])
+  const [userProfile] = useKV<CompleteUserProfile>('complete-user-profile', {})
 
   const searchResults = searchQuery.length > 0
-    ? FOODS_DATABASE.filter(food =>
-        food.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        food.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        food.tags.some(tag => tag.includes(searchQuery.toLowerCase())) ||
-        (food.brand && food.brand.toLowerCase().includes(searchQuery.toLowerCase()))
-      ).slice(0, 10)
+    ? FOODS_DATABASE.filter(food => {
+        // Basic search matching
+        const matchesSearch = 
+          food.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          food.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          food.tags.some(tag => tag.includes(searchQuery.toLowerCase())) ||
+          (food.brand && food.brand.toLowerCase().includes(searchQuery.toLowerCase()))
+        
+        if (!matchesSearch) return false
+
+        // Dietary filtering
+        const userDiet = userProfile?.lifestyle?.dietaryPattern || 'omnivore'
+        
+        if (userDiet === 'vegan') {
+          // Exclude dairy and animal proteins (meat, eggs, fish)
+          if (food.category === 'dairy') return false
+          if (food.tags.includes('animal-protein')) return false
+          if (food.tags.includes('honey')) return false
+        }
+        
+        if (userDiet === 'vegetarian') {
+          // Exclude animal proteins EXCEPT eggs and dairy
+          // Note: Dairy usually doesn't have 'animal-protein' tag in this DB, but check category
+          if (food.tags.includes('animal-protein') && food.id !== 'eggs' && !food.name.toLowerCase().includes('egg')) {
+             return false
+          }
+        }
+
+        return true
+      }).slice(0, 10)
     : []
 
   const handleAddLog = () => {
@@ -146,6 +172,14 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
   ]
 
   const allTemplates = [...MEAL_TEMPLATES, ...(customTemplates || [])]
+  
+  const filteredTemplates = allTemplates.filter(template => {
+    const userDiet = userProfile?.lifestyle?.dietaryPattern || 'omnivore'
+    if (userDiet === 'omnivore') return true
+    if (userDiet === 'vegetarian') return template.dietaryTypes.includes('vegetarian') || template.dietaryTypes.includes('vegan')
+    if (userDiet === 'vegan') return template.dietaryTypes.includes('vegan')
+    return true
+  })
 
   return (
     <div className="space-y-4">
@@ -232,7 +266,7 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
                   </DialogHeader>
 
                   <div className="space-y-3 mt-4">
-                    {allTemplates.map((template) => (
+                    {filteredTemplates.map((template) => (
                       <Card key={template.id} className="hover:border-primary transition-colors cursor-pointer">
                         <CardHeader onClick={() => handleLogMealTemplate(template)}>
                           <div className="flex items-start justify-between">

@@ -93,9 +93,9 @@ export function LoginForm() {
             <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4 w-fit">
               <EnvelopeOpen className="w-12 h-12 text-primary" weight="duotone" />
             </div>
-            <DialogTitle className="text-2xl font-bold text-center">Check your inbox!</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-center">Thanks for signing up!</DialogTitle>
             <DialogDescription className="text-center text-base mt-2">
-              We've sent a magic link to <strong className="text-foreground">{email}</strong>.
+              Please check your email! We've sent a confirmation link to <strong className="text-foreground">{email}</strong>.
               <br />
               Click it to activate your account and start your wellness journey! 🚀
             </DialogDescription>

@@ -15,6 +15,7 @@ import { WELLNESS_SUPPLEMENTS, type WellnessSupplement } from '../../data/wellne
 import { SmartMealAutofill } from '../SmartMealAutofill'
 import type { FoodLog } from '../../lib/nutritionEngine'
 import type { Page } from '../../types'
+import type { CompleteUserProfile } from '../../lib/personalizedDVs'
 
 interface MealPlannerProps {
   foodLogs: FoodLog[]
@@ -32,11 +33,12 @@ interface PlannedMeal {
 }
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'] as const
+const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack' ] as const
 
 export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealPlannerProps) {
   const [plannedMeals, setPlannedMeals] = useKV<PlannedMeal[]>('planned-meals', [])
   const [customTemplates, setCustomTemplates] = useKV<MealTemplate[]>('custom-meal-templates', [])
+  const [userProfile] = useKV<CompleteUserProfile | null>('complete-user-profile', null)
   const [selectedDay, setSelectedDay] = useState(new Date().getDay() || 7)
   const [isCreatingTemplate, setIsCreatingTemplate] = useState(false)
   const [newTemplateName, setNewTemplateName] = useState('')
@@ -45,10 +47,16 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
   const [selectedIngredients, setSelectedIngredients] = useState<MealIngredient[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
-  const [hasSeenEmptyPrompt, setHasSeenEmptyPrompt] = useKV('has-seen-empty-template-prompt', false)
+  const [hasSeenEmptyPrompt, setHasSeenEmptyPrompt] = useKV('has-seen-empty-template-prompt', 'false')
   const [showEmptyPrompt, setShowEmptyPrompt] = useState(false)
 
-  const allTemplates = [...MEAL_TEMPLATES, ...(customTemplates || [])]
+  const filteredPresetTemplates = MEAL_TEMPLATES.filter(t => {
+    if (!userProfile?.lifestyle?.dietaryPattern) return true
+    if (!t.dietaryTypes) return true
+    return t.dietaryTypes.includes(userProfile.lifestyle.dietaryPattern)
+  })
+
+  const allTemplates = [...filteredPresetTemplates, ...(customTemplates || [])]
   const dayIndex = selectedDay === 7 ? 0 : selectedDay
 
   useEffect(() => {
@@ -61,12 +69,12 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
   }, [customTemplates, hasSeenEmptyPrompt])
 
   const handleDismissEmptyPrompt = () => {
-    setHasSeenEmptyPrompt(true)
+    setHasSeenEmptyPrompt('true')
     setShowEmptyPrompt(false)
   }
 
   const handleCreateFromPrompt = () => {
-    setHasSeenEmptyPrompt(true)
+    setHasSeenEmptyPrompt('true')
     setShowEmptyPrompt(false)
     setIsCreatingTemplate(true)
   }
@@ -218,14 +226,15 @@ export default function MealPlanner({ foodLogs, setFoodLogs, onNavigate }: MealP
     const newTemplate: MealTemplate = {
       id: `custom-${Date.now()}`,
       name: newTemplateName,
-      description: newTemplateDescription || 'Custom meal',
-      mealType: newTemplateMealType,
-      ingredients: selectedIngredients,
+      description: 'Custom meal template',
+      mealType: 'lunch',
+      ingredients: [],
       tags: ['custom'],
       isCustom: true,
+      dietaryTypes: []
     }
-
-    setCustomTemplates((current) => [...(current || []), newTemplate])
+    
+    setCustomTemplates([...(customTemplates || []), newTemplate])
     toast.success('Custom meal template created')
     
     setIsCreatingTemplate(false)
@@ -546,7 +555,7 @@ Example format:
                                 </TabsList>
 
                                 <TabsContent value="preset" className="space-y-3 mt-4">
-                                  {MEAL_TEMPLATES.filter(t => t.mealType === mealType).map((template) => (
+                                  {filteredPresetTemplates.filter(t => t.mealType === mealType).map((template) => (
                                     <Card key={template.id} className="hover:border-primary transition-colors">
                                       <CardHeader>
                                         <div className="flex items-start justify-between">

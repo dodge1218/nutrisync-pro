@@ -23,6 +23,7 @@ export interface UserLifestyleProfile {
   smokingStatus?: 'none' | 'former' | 'current'
   stressLevel?: number
   medications?: string
+  dietaryPattern?: 'omnivore' | 'vegetarian' | 'vegan'
 }
 
 export interface UserGoalsProfile {

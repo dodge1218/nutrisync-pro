@@ -192,12 +192,12 @@ function generateAdrenalRecommendations(
   }
 
   if (stressLog?.sleepQuality && stressLog.sleepQuality < 6) {
-    recommendations.push('Poor sleep detected. Prioritize magnesium-rich foods (spinach, pumpkin seeds, dark chocolate) in the evening.')
+    recommendations.push('Poor sleep detected. Try a Magnesium-rich Dinner (Spinach Salad, Pumpkin Seeds) or Dark Chocolate Dessert.')
   }
 
   const magnesiumLow = supportiveNutrients.find(n => n.nutrient === 'Magnesium')?.status === 'low'
   if (magnesiumLow) {
-    recommendations.push('Magnesium deficiency contributes to stress. Add almonds, avocados, black beans, or consider magnesium glycinate supplement.')
+    recommendations.push('Magnesium deficiency contributes to stress. Try an Almond Snack Pack, Avocado Toast, or Black Bean Soup.')
   }
 
   const bVitaminsLow = supportiveNutrients.filter(n => 
@@ -205,16 +205,16 @@ function generateAdrenalRecommendations(
   ).length > 0
   
   if (bVitaminsLow && category !== 'low') {
-    recommendations.push('B-vitamins are critical for stress response. Add eggs, salmon, nutritional yeast, or liver to boost B-complex intake.')
+    recommendations.push('B-vitamins are critical for stress response. Try a Salmon Dinner, Omelet, or Liver Pate.')
   }
 
   const vitaminCLow = supportiveNutrients.find(n => n.nutrient === 'Vitamin C')?.status === 'low'
   if (vitaminCLow) {
-    recommendations.push('Vitamin C supports adrenal function during stress. Add bell peppers, citrus fruits, broccoli, or strawberries.')
+    recommendations.push('Vitamin C supports adrenal function during stress. Try a Citrus Salad, Roasted Broccoli, or Bell Pepper Snacks.')
   }
 
   if (stressLog?.energyLevel && stressLog.energyLevel < 5 && totals.protein < getNutrientDV('protein') * 0.7) {
-    recommendations.push('Low energy + low protein = fatigue cycle. Prioritize protein at breakfast (eggs, Greek yogurt, or protein shake).')
+    recommendations.push('Low energy + low protein = fatigue cycle. Try a High-Protein Breakfast (Eggs, Greek Yogurt Bowl, or Protein Shake).')
   }
 
   const refinedCarbs = logs.filter(log => 
@@ -222,19 +222,19 @@ function generateAdrenalRecommendations(
   ).length
   
   if (refinedCarbs > 2 && category !== 'low') {
-    recommendations.push('Refined carbs spike cortisol. Replace with complex carbs like oats, quinoa, sweet potatoes.')
+    recommendations.push('Refined carbs spike cortisol. Replace with complex carbs like Oatmeal, Quinoa Bowl, or Baked Sweet Potato.')
   }
 
   if (stressLog?.physicalSymptoms?.includes('Digestive issues')) {
-    recommendations.push('Stress + digestive issues: Try fermented foods (kefir, sauerkraut), warm meals, and avoid raw/cold foods temporarily.')
+    recommendations.push('Stress + digestive issues: Try Warm Soups, Fermented Foods (Kefir, Sauerkraut), and avoid raw/cold foods temporarily.')
   }
 
   if (stressLog?.mentalSymptoms?.includes('Anxiety') || stressLog?.mentalSymptoms?.includes('Racing thoughts')) {
-    recommendations.push('Anxiety symptoms present. Consider magnesium, omega-3s (fatty fish), and chamomile tea. Avoid excess caffeine.')
+    recommendations.push('Anxiety symptoms present. Try Grilled Salmon (Omega-3s), Chamomile Tea, and avoid excess caffeine.')
   }
 
   if (category === 'high' && recommendations.length === 0) {
-    recommendations.push('High stress detected. Focus on whole foods, adequate protein, and minimize stimulants. Consider adaptogenic herbs like ashwagandha.')
+    recommendations.push('High stress detected. Focus on Whole Food Meals, adequate protein, and minimize stimulants.')
   }
 
   if (recommendations.length === 0) {

@@ -12,6 +12,7 @@ export interface MealTemplate {
   mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack'
   ingredients: MealIngredient[]
   tags: string[]
+  dietaryTypes: ('omnivore' | 'vegetarian' | 'vegan')[]
   prepTime?: string
   cookTimeMinutes?: number
   isCustom?: boolean
@@ -32,6 +33,7 @@ export const MEAL_TEMPLATES: MealTemplate[] = [
       { foodId: 'blueberries', quantity: 0.5 },
     ],
     tags: ['warm', 'fiber-rich', 'plant-based'],
+    dietaryTypes: ['omnivore', 'vegetarian', 'vegan'],
     prepTime: '10 min',
   },
   {
@@ -45,6 +47,7 @@ export const MEAL_TEMPLATES: MealTemplate[] = [
       { foodId: 'pumpkin-seeds', quantity: 1 },
     ],
     tags: ['fermented', 'protein-rich', 'gut-friendly'],
+    dietaryTypes: ['omnivore', 'vegetarian'],
     prepTime: '5 min',
   },
   {
@@ -58,6 +61,7 @@ export const MEAL_TEMPLATES: MealTemplate[] = [
       { foodId: 'olive-oil', quantity: 0.5 },
     ],
     tags: ['warm', 'protein-rich', 'iron-rich'],
+    dietaryTypes: ['omnivore', 'vegetarian'],
     prepTime: '10 min',
   },
   {
@@ -72,7 +76,22 @@ export const MEAL_TEMPLATES: MealTemplate[] = [
       { foodId: 'olive-oil', quantity: 0.5 },
     ],
     tags: ['warm', 'protein-rich', 'balanced'],
+    dietaryTypes: ['omnivore'],
     prepTime: '20 min',
+  },
+  {
+    id: 'chicken-caesar-salad',
+    name: 'Chicken Caesar Salad',
+    description: 'Grilled chicken breast on a bed of romaine lettuce with parmesan',
+    mealType: 'lunch',
+    ingredients: [
+      { foodId: 'chicken-breast', quantity: 1 },
+      { foodId: 'spinach', quantity: 2 }, // Using spinach as proxy for greens if romaine not available
+      { foodId: 'olive-oil', quantity: 0.5 },
+    ],
+    tags: ['protein-rich', 'low-carb', 'fresh'],
+    dietaryTypes: ['omnivore'],
+    prepTime: '15 min',
   },
   {
     id: 'lentil-bowl-lunch',
@@ -87,6 +106,7 @@ export const MEAL_TEMPLATES: MealTemplate[] = [
       { foodId: 'olive-oil', quantity: 0.5 },
     ],
     tags: ['warm', 'iron-rich', 'fiber-rich', 'plant-based'],
+    dietaryTypes: ['omnivore', 'vegetarian', 'vegan'],
     prepTime: '25 min',
   },
   {
@@ -101,19 +121,37 @@ export const MEAL_TEMPLATES: MealTemplate[] = [
       { foodId: 'olive-oil', quantity: 0.5 },
     ],
     tags: ['warm', 'omega-3', 'protein-rich'],
+    dietaryTypes: ['omnivore'],
     prepTime: '20 min',
   },
   {
-    id: 'liver-onions-dinner',
-    name: 'Liver & Onions',
-    description: 'Nutrient-dense beef liver with caramelized onions',
+    id: 'spaghetti-bolognese',
+    name: 'Spaghetti Bolognese',
+    description: 'Classic pasta with rich meat sauce',
     mealType: 'dinner',
     ingredients: [
-      { foodId: 'beef-liver', quantity: 1 },
-      { foodId: 'olive-oil', quantity: 1 },
+      { foodId: 'ground-beef', quantity: 1 },
+      { foodId: 'brown-rice', quantity: 1 }, // Using brown rice as proxy for pasta if not available, or need to add pasta
+      { foodId: 'olive-oil', quantity: 0.5 },
     ],
-    tags: ['warm', 'organ-meat', 'nutrient-dense', 'iron-rich'],
-    prepTime: '15 min',
+    tags: ['warm', 'comfort-food', 'protein-rich'],
+    dietaryTypes: ['omnivore'],
+    prepTime: '30 min',
+  },
+  {
+    id: 'tofu-stir-fry',
+    name: 'Tofu Vegetable Stir Fry',
+    description: 'Crispy tofu with mixed vegetables in soy sauce',
+    mealType: 'dinner',
+    ingredients: [
+      { foodId: 'broccoli', quantity: 1 },
+      { foodId: 'bell-pepper', quantity: 1 },
+      { foodId: 'brown-rice', quantity: 1 },
+      { foodId: 'olive-oil', quantity: 0.5 },
+    ],
+    tags: ['warm', 'plant-based', 'vegan'],
+    dietaryTypes: ['omnivore', 'vegetarian', 'vegan'],
+    prepTime: '20 min',
   },
   {
     id: 'ground-beef-vegetables',
@@ -127,6 +165,7 @@ export const MEAL_TEMPLATES: MealTemplate[] = [
       { foodId: 'olive-oil', quantity: 0.5 },
     ],
     tags: ['warm', 'protein-rich', 'iron-rich'],
+    dietaryTypes: ['omnivore'],
     prepTime: '20 min',
   },
   {
@@ -141,6 +180,7 @@ export const MEAL_TEMPLATES: MealTemplate[] = [
       { foodId: 'olive-oil', quantity: 1 },
     ],
     tags: ['warm', 'plant-based', 'fiber-rich', 'iron-rich'],
+    dietaryTypes: ['omnivore', 'vegetarian', 'vegan'],
     prepTime: '30 min',
   },
   {
@@ -153,6 +193,7 @@ export const MEAL_TEMPLATES: MealTemplate[] = [
       { foodId: 'almond-butter', quantity: 1 },
     ],
     tags: ['fiber-rich', 'healthy-fat'],
+    dietaryTypes: ['omnivore', 'vegetarian', 'vegan'],
     prepTime: '2 min',
   },
   {
@@ -165,6 +206,7 @@ export const MEAL_TEMPLATES: MealTemplate[] = [
       { foodId: 'blueberries', quantity: 0.5 },
     ],
     tags: ['zinc-rich', 'antioxidant'],
+    dietaryTypes: ['omnivore', 'vegetarian', 'vegan'],
     prepTime: '2 min',
   },
   {
@@ -178,6 +220,7 @@ export const MEAL_TEMPLATES: MealTemplate[] = [
       { foodId: 'banana', quantity: 0.5 },
     ],
     tags: ['fermented', 'gut-friendly', 'probiotic'],
+    dietaryTypes: ['omnivore', 'vegetarian'],
     prepTime: '5 min',
   },
   {
@@ -190,6 +233,7 @@ export const MEAL_TEMPLATES: MealTemplate[] = [
       { foodId: 'pumpkin-seeds', quantity: 0.5 },
     ],
     tags: ['fermented', 'gut-friendly', 'probiotic'],
+    dietaryTypes: ['omnivore', 'vegetarian', 'vegan'],
     prepTime: '2 min',
   },
 ]

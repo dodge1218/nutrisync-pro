@@ -29,6 +29,9 @@ export default function LifestyleFactorsSetup({ open, onComplete, onDismiss, onS
   const [smokingStatus, setSmokingStatus] = useState<string>(
     profile?.lifestyle?.smokingStatus || 'none'
   )
+  const [dietaryPattern, setDietaryPattern] = useState<string>(
+    profile?.lifestyle?.dietaryPattern || 'omnivore'
+  )
   const [stressLevel, setStressLevel] = useState<string>(
     profile?.lifestyle?.stressLevel?.toString() || '5'
   )
@@ -43,6 +46,7 @@ export default function LifestyleFactorsSetup({ open, onComplete, onDismiss, onS
       caffeineIntake: parseInt(caffeineIntake) || 0,
       alcoholFrequency: alcoholFrequency as UserLifestyleProfile['alcoholFrequency'],
       smokingStatus: smokingStatus as UserLifestyleProfile['smokingStatus'],
+      dietaryPattern: dietaryPattern as UserLifestyleProfile['dietaryPattern'],
       stressLevel: parseInt(stressLevel) || 5,
       medications: medications.trim() || undefined
     }
@@ -138,6 +142,30 @@ export default function LifestyleFactorsSetup({ open, onComplete, onDismiss, onS
                     <RadioGroupItem value="current" id="smoking-current" />
                     <Label htmlFor="smoking-current" className="font-normal cursor-pointer">
                       Current smoker/vaper
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div className="space-y-3">
+                <Label>Dietary Preference</Label>
+                <RadioGroup value={dietaryPattern} onValueChange={setDietaryPattern}>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="omnivore" id="diet-omnivore" />
+                    <Label htmlFor="diet-omnivore" className="font-normal cursor-pointer">
+                      Omnivore (Eat everything)
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="vegetarian" id="diet-vegetarian" />
+                    <Label htmlFor="diet-vegetarian" className="font-normal cursor-pointer">
+                      Vegetarian (No meat, but eggs/dairy ok)
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="vegan" id="diet-vegan" />
+                    <Label htmlFor="diet-vegan" className="font-normal cursor-pointer">
+                      Vegan (No animal products)
                     </Label>
                   </div>
                 </RadioGroup>
