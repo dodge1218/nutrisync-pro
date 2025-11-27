@@ -69,13 +69,8 @@ const generateParticlesFromLogs = (logs: FoodLog[]): GutParticle[] => {
   
   const recentLogs = logs.filter(log => new Date(log.timestamp).getTime() > threeDaysAgo)
   
-  // Limit total particles to prevent performance issues
-  const maxParticles = 30
-  const step = Math.max(1, Math.floor(recentLogs.length / maxParticles))
-
+  // No limit on particles - show every single log
   recentLogs.forEach((log, index) => {
-    if (index % step !== 0) return
-
     const food = log.food
     let type: ParticleType = 'neutral'
     
