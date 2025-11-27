@@ -202,15 +202,21 @@ The analysis engine performs:
 
 ## 🍽️ Food Database
 
-Currently includes 20 nutrient-dense foods across categories:
-- **Proteins:** Eggs, chicken, salmon, sardines, lentils
-- **Vegetables:** Spinach, broccoli, bell peppers, sweet potato
-- **Dairy:** Kefir, Greek yogurt
-- **Fermented:** Sauerkraut, kimchi
-- **Grains:** Oats, quinoa
-- **Nuts/Seeds:** Almonds, pumpkin seeds
-- **Fruits:** Blueberries, avocado
-- **Other:** Dark chocolate
+Currently includes **230+ foods** across a wide range of categories, from nutrient-dense whole foods to common processed items:
+
+- **Proteins:** Eggs, chicken, salmon, sardines, lentils, lamb, sausage, protein powders
+- **Vegetables:** Spinach, broccoli, peppers, sweet potato, bok choy, radish, cabbage, eggplant
+- **Fruits:** Berries, avocado, stone fruits, citrus, tropical fruits
+- **Nuts/Seeds:** Almonds, pumpkin seeds, cashews, pistachios, chia, flax, hemp
+- **Grains:** Oats, quinoa, rice, couscous, bagels, tortillas
+- **Pantry/Condiments:** Hummus, guacamole, salsa, BBQ sauce, ranch, olive oil
+- **Treats/Processed:** Chips (Doritos, Lay's), cookies (Oreos), candy (Snickers), fast food (McDonald's, Burger King), soda (Coke, Pepsi)
+
+### 🧠 Smart Search Logic
+The search function has been enhanced to support healthy choices:
+- **Health Prioritization:** Healthy, whole foods always appear at the top of search results.
+- **"Nudge" Architecture:** Unhealthy or processed foods (flagged as gut stressors) are deprioritized and appear at the bottom of the list.
+- **Brand Recognition:** Includes common brand names for easier logging of packaged goods.
 
 **Future:** Integrate USDA FoodData Central API for 10K+ foods
 
