@@ -200,7 +200,7 @@ export function analyzeCircadianPattern(
   }
 
   if (digestiveBufferStatus === 'optimal' && !caffeineIssues && eatingWindow < 12) {
-    recommendations.push('Excellent meal timing! You\'re following Blueprint principles for optimal sleep')
+    recommendations.push('Excellent meal timing! You\'re following optimal circadian principles for deep sleep')
   }
 
   const recentLogs = foodLogs.slice(-21)

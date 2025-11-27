@@ -1,21 +1,37 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../ui/card'
 import { Progress } from '../../ui/progress'
 import { Alert, AlertDescription, AlertTitle } from '../../ui/alert'
+import { Button } from '../../ui/button'
+import { Input } from '../../ui/input'
 import { RecurringActivity, Goal } from './types'
 import { parseTimeString } from '../../../lib/circadianEngine'
-import { Warning, Info, CheckCircle } from '@phosphor-icons/react'
+import { Warning, Info, CheckCircle, Sparkle, ArrowRight } from '@phosphor-icons/react'
 
 interface LifeGridProps {
   recurringActivities: RecurringActivity[]
   goals: Goal[]
+  onGeneratePlan?: (aspiration: string) => Promise<void>
 }
 
-export default function LifeGrid({ recurringActivities, goals }: LifeGridProps) {
+export default function LifeGrid({ recurringActivities, goals, onGeneratePlan }: LifeGridProps) {
+  const [aspiration, setAspiration] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
+
+  const handleGenerate = async () => {
+    if (!aspiration.trim() || !onGeneratePlan) return
+    setIsGenerating(true)
+    try {
+      await onGeneratePlan(aspiration)
+      setAspiration('')
+    } finally {
+      setIsGenerating(false)
+    }
+  }
   // Calculate daily time allocation in minutes
   const dailyAllocation = useMemo(() => {
-    const allocation = new Array(24 * 60).fill('rest') // Default to rest/sleep
-    const categoryTotals: Record<string, number> = { rest: 24 * 60 }
+    const allocation = new Array(24 * 60).fill('empty') // Default to empty/free time
+    const categoryTotals: Record<string, number> = { empty: 24 * 60 }
 
     // Process recurring activities
     recurringActivities.forEach(activity => {
@@ -34,7 +50,7 @@ export default function LifeGrid({ recurringActivities, goals }: LifeGridProps) 
       const weightedDuration = duration * frequency
       
       categoryTotals[activity.category] = (categoryTotals[activity.category] || 0) + weightedDuration
-      categoryTotals['rest'] -= weightedDuration
+      categoryTotals['empty'] -= weightedDuration
     })
 
     // Add goal estimated time
@@ -42,41 +58,66 @@ export default function LifeGrid({ recurringActivities, goals }: LifeGridProps) 
       if (goal.estimatedTimePerDay) {
         const category = goal.category || 'learning'
         categoryTotals[category] = (categoryTotals[category] || 0) + goal.estimatedTimePerDay
-        categoryTotals['rest'] -= goal.estimatedTimePerDay
+        categoryTotals['empty'] -= goal.estimatedTimePerDay
       }
     })
 
     return { allocation, categoryTotals }
   }, [recurringActivities, goals])
 
+  // Pre-calculate weekly templates for the grid visualization
+  const weekTemplates = useMemo(() => {
+    const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+    const templates: Record<string, string[]> = {}
+
+    days.forEach(day => {
+      const allocation = new Array(24).fill('empty') // Default to empty/free time
+      
+      // Find activities for this day
+      const dayActivities = recurringActivities.filter(a => 
+        a.days.map(d => d.toLowerCase()).includes(day)
+      )
+
+      dayActivities.forEach(activity => {
+        const { totalMinutes: startMinutes } = parseTimeString(activity.startTime)
+        const startHour = Math.floor(startMinutes / 60)
+        const durationHours = Math.ceil(activity.duration / 60)
+        
+        for (let h = startHour; h < startHour + durationHours && h < 24; h++) {
+          allocation[h] = activity.category
+        }
+      })
+      templates[day] = allocation
+    })
+    return templates
+  }, [recurringActivities])
+
   const totalCommittedMinutes = Object.entries(dailyAllocation.categoryTotals)
-    .filter(([cat]) => cat !== 'rest')
+    .filter(([cat]) => cat !== 'empty' && cat !== 'rest') // Exclude empty and rest (sleep) from "committed" work/study time? Or just empty?
+    // Usually "rest" is sleep, which is committed time but not "workload".
+    // The previous code excluded 'rest' from totalCommittedMinutes.
+    // Let's exclude 'empty' and 'rest' to keep the "workload" calculation similar (16h awake time).
     .reduce((sum, [, mins]) => sum + mins, 0)
 
   const totalHours = Math.round((totalCommittedMinutes / 60) * 10) / 10
   const isOvercommitted = totalHours > 16 // Assuming 8h sleep
   const freeTime = Math.max(0, 24 - 8 - totalHours) // Assuming 8h sleep
 
-  // Generate grid data for a month (30 days)
-  // For now, we'll just repeat the "typical day" pattern but add some noise/variation visually if we wanted
-  // or just show the ideal schedule.
+  // Generate grid data for 90 days
   const gridHours = Array.from({ length: 24 }, (_, i) => i)
-  const gridDays = Array.from({ length: 30 }, (_, i) => i + 1)
+  const gridDays = Array.from({ length: 90 }, (_, i) => i + 1)
 
-  const getHourColor = (hour: number) => {
-    // Check the dominant activity in this hour
-    const startMin = hour * 60
-    const endMin = (hour + 1) * 60
-    const counts: Record<string, number> = {}
-    
-    for (let i = startMin; i < endMin; i++) {
-      const cat = dailyAllocation.allocation[i]
-      counts[cat] = (counts[cat] || 0) + 1
-    }
+  const getDayName = (dayIndex: number) => {
+    const date = new Date()
+    date.setDate(date.getDate() + dayIndex)
+    return date.toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase()
+  }
 
-    const dominant = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0]
+  const getCellColor = (dayIndex: number, hour: number) => {
+    const dayName = getDayName(dayIndex)
+    const category = weekTemplates[dayName]?.[hour] || 'empty'
     
-    switch (dominant) {
+    switch (category) {
       case 'work': return 'bg-blue-500'
       case 'exercise': return 'bg-emerald-500'
       case 'learning': return 'bg-indigo-500'
@@ -85,8 +126,9 @@ export default function LifeGrid({ recurringActivities, goals }: LifeGridProps) 
       case 'meal': return 'bg-amber-500'
       case 'hygiene': return 'bg-purple-500'
       case 'pet-care': return 'bg-pink-500'
-      case 'rest': return 'bg-slate-200 dark:bg-slate-800'
-      default: return 'bg-slate-200 dark:bg-slate-800'
+      case 'rest': return 'bg-indigo-950/90 dark:bg-indigo-950' // Very dark for sleep
+      case 'empty': return 'bg-slate-100 dark:bg-slate-800/30' // Very light for free time
+      default: return 'bg-slate-100 dark:bg-slate-800/30'
     }
   }
 
@@ -95,43 +137,48 @@ export default function LifeGrid({ recurringActivities, goals }: LifeGridProps) 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="md:col-span-2 border-border/50 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg font-bold">Life Grid: 30-Day Visualization</CardTitle>
-            <CardDescription>Your typical month at a glance. Each square is one hour.</CardDescription>
+            <CardTitle className="text-lg font-bold">Life Grid: 90-Day Visualization</CardTitle>
+            <CardDescription>Your typical quarter at a glance. Each square is one hour.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-1 overflow-x-auto pb-2">
-              <div className="flex gap-1 mb-1">
-                <div className="w-8 text-xs text-muted-foreground"></div>
+              <div className="flex gap-1 mb-1 sticky top-0 bg-background z-10">
+                <div className="w-8 text-xs text-muted-foreground font-medium text-right pr-1">Day</div>
                 {gridHours.map(h => (
                   <div key={h} className="flex-1 min-w-[12px] text-[10px] text-center text-muted-foreground">
                     {h}
                   </div>
                 ))}
               </div>
-              {gridDays.map(day => (
-                <div key={day} className="flex gap-1 h-3">
-                  <div className="w-8 text-[10px] text-muted-foreground leading-3 text-right pr-1">D{day}</div>
-                  {gridHours.map(hour => (
-                    <div 
-                      key={hour} 
-                      className={`flex-1 min-w-[12px] rounded-[1px] ${getHourColor(hour)} opacity-80 hover:opacity-100 transition-opacity`}
-                      title={`Day ${day}, ${hour}:00`}
-                    />
-                  ))}
-                </div>
-              ))}
+              <div className="max-h-[400px] overflow-y-auto">
+                {gridDays.map((day, dayIndex) => (
+                  <div key={day} className="flex gap-1 h-3 mb-[1px]">
+                    <div className="w-8 text-[10px] text-muted-foreground leading-3 text-right pr-1">D{day}</div>
+                    {gridHours.map(hour => (
+                      <div 
+                        key={hour} 
+                        className={`flex-1 min-w-[12px] rounded-[1px] ${getCellColor(dayIndex, hour)} opacity-80 hover:opacity-100 transition-opacity`}
+                        title={`Day ${day} (${getDayName(dayIndex)}), ${hour}:00`}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="flex flex-wrap gap-4 mt-4 justify-center">
-              {['work', 'exercise', 'learning', 'social', 'rest'].map(cat => (
+              {['work', 'exercise', 'learning', 'social', 'rest', 'empty'].map(cat => (
                 <div key={cat} className="flex items-center gap-2">
                   <div className={`w-3 h-3 rounded-full ${
                     cat === 'work' ? 'bg-blue-500' :
                     cat === 'exercise' ? 'bg-emerald-500' :
                     cat === 'learning' ? 'bg-indigo-500' :
                     cat === 'social' ? 'bg-rose-500' :
-                    'bg-slate-200 dark:bg-slate-800'
+                    cat === 'rest' ? 'bg-indigo-950/90 dark:bg-indigo-950' :
+                    'bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700'
                   }`} />
-                  <span className="text-xs capitalize text-muted-foreground">{cat}</span>
+                  <span className="text-xs capitalize text-muted-foreground">
+                    {cat === 'rest' ? 'Sleep / Rest' : cat === 'empty' ? 'Free Time' : cat}
+                  </span>
                 </div>
               ))}
             </div>
@@ -181,17 +228,49 @@ export default function LifeGrid({ recurringActivities, goals }: LifeGridProps) 
 
           <Card className="shadow-sm">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-bold">Regret Minimization</CardTitle>
+              <CardTitle className="text-base font-bold">Future Vision</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-3">
-                "In 20 years, will you regret not doing this?"
+                "What is one dream you want to make a reality?"
               </p>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {goals.length === 0 && (
-                  <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded text-xs text-indigo-700 dark:text-indigo-300 flex gap-2">
-                    <Info className="w-4 h-4 flex-shrink-0" />
-                    <span>You haven't set any major ambitions yet. What's one thing you'd regret not building?</span>
+                  <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-xs text-indigo-700 dark:text-indigo-300 flex flex-col gap-2">
+                    <div className="flex gap-2 items-start">
+                      <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                      <span>You haven't set any major ambitions yet. What is your dream aspiration?</span>
+                    </div>
+                    
+                    {onGeneratePlan && (
+                      <div className="mt-1 space-y-2">
+                        <Input 
+                          placeholder="e.g., Run a marathon, Learn Python, Write a book..." 
+                          value={aspiration}
+                          onChange={(e) => setAspiration(e.target.value)}
+                          className="h-8 text-xs bg-background"
+                          onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
+                        />
+                        <Button 
+                          size="sm" 
+                          className="w-full h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white"
+                          onClick={handleGenerate}
+                          disabled={!aspiration.trim() || isGenerating}
+                        >
+                          {isGenerating ? (
+                            <>
+                              <Sparkle className="w-3 h-3 mr-2 animate-spin" />
+                              Building Plan...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkle className="w-3 h-3 mr-2" />
+                              Build My 90-Day Plan
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
                 {totalHours > 12 && (

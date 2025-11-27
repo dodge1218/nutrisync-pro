@@ -321,7 +321,7 @@ export default function SleepSync({ foodLogs }: SleepSyncProps) {
               {weekAnalysis.isEarlyEater && (
                 <div className="flex items-start gap-3 text-sm text-emerald-700 bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20">
                   <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-emerald-600" weight="fill" />
-                  <span className="font-medium">You're an early eater - following Blueprint principles!</span>
+                  <span className="font-medium">You're an early eater - following optimal circadian principles!</span>
                 </div>
               )}
               {weekAnalysis.isLateEater && (
@@ -394,10 +394,10 @@ export default function SleepSync({ foodLogs }: SleepSyncProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <SunHorizon className="w-5 h-5 text-indigo-500" weight="duotone" />
-            Blueprint Sleep Principles
+            Core Sleep Principles
           </CardTitle>
           <CardDescription>
-            Science-backed strategies for optimal sleep quality
+            Science-backed strategies for optimal sleep quality (adapted from Blueprint protocol)
           </CardDescription>
         </CardHeader>
         <CardContent>

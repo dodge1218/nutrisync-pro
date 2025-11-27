@@ -60,4 +60,22 @@ export interface ScheduledActivity {
   recurringId?: string
   mealTemplateId?: string
   isCookingActivity?: boolean
+  studyModuleId?: string
+}
+
+export interface StudyModule {
+  id: string
+  title: string
+  description: string
+  estimatedMinutes: number
+  status: 'pending' | 'scheduled' | 'completed'
+}
+
+export interface StudyPlan {
+  id: string
+  title: string
+  type: 'rabbit-hole' | 'serious-learning'
+  modules: StudyModule[]
+  createdAt: string
+  syllabusContent?: string
 }
