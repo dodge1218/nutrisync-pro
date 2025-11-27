@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { Switch } from './ui/switch'
+import { Label } from './ui/label'
+import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts'
 import { Sparkle, ChartLine, ChartBar } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
 import type { DailySnapshot } from '../lib/historyTracking'
@@ -20,8 +21,9 @@ interface MetricConfig {
   key: MetricType
   label: string
   color: string
-  dataKey: (snapshot: DailySnapshot) => number
-  unit?: string
+  dataKey: (snapshot: DailySnapshot, unit: 'percent' | 'amount') => number
+  unit: (unit: 'percent' | 'amount') => string
+  yAxisId: 'left' | 'right'
 }
 
 const METRICS: MetricConfig[] = [
@@ -30,49 +32,56 @@ const METRICS: MetricConfig[] = [
     label: 'Composite Score',
     color: '#10b981',
     dataKey: (s) => Math.round(s.compositeScore),
-    unit: '%'
+    unit: () => '%',
+    yAxisId: 'left'
   },
   {
     key: 'gbdi',
     label: 'GBDI',
     color: '#8b5cf6',
     dataKey: (s) => Math.round(s.gbdi),
-    unit: '%'
+    unit: () => '%',
+    yAxisId: 'left'
   },
   {
     key: 'protein',
     label: 'Protein',
     color: '#ef4444',
-    dataKey: (s) => Math.round(s.percentages.protein || 0),
-    unit: '%'
+    dataKey: (s, unit) => unit === 'percent' ? Math.round(s.percentages.protein || 0) : Math.round(s.totals.protein || 0),
+    unit: (unit) => unit === 'percent' ? '%' : 'g',
+    yAxisId: 'left'
   },
   {
     key: 'fiber',
     label: 'Fiber',
     color: '#06b6d4',
-    dataKey: (s) => Math.round(s.percentages.fiber || 0),
-    unit: '%'
+    dataKey: (s, unit) => unit === 'percent' ? Math.round(s.percentages.fiber || 0) : Math.round(s.totals.fiber || 0),
+    unit: (unit) => unit === 'percent' ? '%' : 'g',
+    yAxisId: 'left'
   },
   {
     key: 'calories',
     label: 'Calories',
     color: '#f59e0b',
-    dataKey: (s) => Math.round(s.calories / 20),
-    unit: ' (÷20)'
+    dataKey: (s) => Math.round(s.calories),
+    unit: () => 'kcal',
+    yAxisId: 'right'
   },
   {
     key: 'micronutrientComposite',
     label: 'Minerals Avg',
     color: '#14b8a6',
     dataKey: (s) => Math.round(calculateMicronutrientComposite(s.totals)),
-    unit: '%'
+    unit: () => '%',
+    yAxisId: 'left'
   },
   {
     key: 'vitaminComposite',
     label: 'Vitamins Avg',
     color: '#ec4899',
     dataKey: (s) => Math.round(calculateVitaminComposite(s.totals)),
-    unit: '%'
+    unit: () => '%',
+    yAxisId: 'left'
   }
 ]
 
@@ -81,6 +90,7 @@ export default function HistoryLineGraph({ snapshots }: HistoryLineGraphProps) {
     new Set(['composite', 'protein', 'fiber'])
   )
   const [chartType, setChartType] = useState<'line' | 'bar'>('line')
+  const [displayUnit, setDisplayUnit] = useState<'percent' | 'amount'>('percent')
 
   if (!snapshots || snapshots.length === 0) {
     return (
@@ -112,18 +122,56 @@ export default function HistoryLineGraph({ snapshots }: HistoryLineGraphProps) {
 
   const hasExcellentPerformance = snapshots.some(s => s.compositeScore >= 90)
 
-  const chartData = snapshots.map(snapshot => {
-    const dataPoint: any = {
-      name: getShortDayLabel(snapshot.date),
-      fullDate: snapshot.date
+  // Generate 7 days window including future days if needed
+  const generateChartData = () => {
+    const data = []
+    const today = new Date()
+    // Create a map of existing snapshots
+    const snapshotMap = new Map(snapshots.map(s => [s.date, s]))
+
+    // Generate last 5 days + today + next 1 day (total 7)
+    for (let i = 5; i >= -1; i--) {
+      const date = new Date(today)
+      date.setDate(date.getDate() - i)
+      const dateStr = date.toISOString().split('T')[0]
+      const snapshot = snapshotMap.get(dateStr)
+
+      const dataPoint: any = {
+        name: getShortDayLabel(dateStr),
+        fullDate: dateStr,
+        isFuture: i < 0
+      }
+
+      METRICS.forEach(metric => {
+        if (snapshot) {
+          dataPoint[metric.key] = metric.dataKey(snapshot, displayUnit)
+          // Calculate goal for outline
+          if (metric.key === 'calories') {
+             // Infer goal from percentage if available, else default 2000
+             const pct = snapshot.percentages.calories || 0
+             const val = snapshot.calories
+             dataPoint[`${metric.key}Goal`] = pct > 0 ? Math.round(val / (pct / 100)) : 2000
+          } else if (metric.key === 'protein' && displayUnit === 'amount') {
+             const pct = snapshot.percentages.protein || 0
+             const val = snapshot.totals.protein || 0
+             dataPoint[`${metric.key}Goal`] = pct > 0 ? Math.round(val / (pct / 100)) : 50
+          } else {
+             dataPoint[`${metric.key}Goal`] = 100 // Default for %
+          }
+        } else {
+          dataPoint[metric.key] = 0
+          // Default goals for future/missing days
+          if (metric.key === 'calories') dataPoint[`${metric.key}Goal`] = 2000
+          else if (metric.key === 'protein' && displayUnit === 'amount') dataPoint[`${metric.key}Goal`] = 50 // Approx
+          else dataPoint[`${metric.key}Goal`] = 100
+        }
+      })
+      data.push(dataPoint)
     }
-    
-    METRICS.forEach(metric => {
-      dataPoint[metric.key] = metric.dataKey(snapshot)
-    })
-    
-    return dataPoint
-  })
+    return data
+  }
+
+  const chartData = generateChartData()
 
   const averageComposite = snapshots.length > 0
     ? Math.round(snapshots.reduce((sum, s) => sum + s.compositeScore, 0) / snapshots.length)
@@ -167,21 +215,32 @@ export default function HistoryLineGraph({ snapshots }: HistoryLineGraphProps) {
               Average composite score: <span className="font-semibold text-foreground">{averageComposite}%</span>
             </CardDescription>
           </div>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant={chartType === 'line' ? 'default' : 'outline'}
-              onClick={() => setChartType('line')}
-            >
-              <ChartLine className="w-4 h-4" />
-            </Button>
-            <Button
-              size="sm"
-              variant={chartType === 'bar' ? 'default' : 'outline'}
-              onClick={() => setChartType('bar')}
-            >
-              <ChartBar className="w-4 h-4" />
-            </Button>
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="unit-toggle" className="text-xs">Grams</Label>
+              <Switch 
+                id="unit-toggle"
+                checked={displayUnit === 'percent'}
+                onCheckedChange={(checked) => setDisplayUnit(checked ? 'percent' : 'amount')}
+              />
+              <Label htmlFor="unit-toggle" className="text-xs">% DV</Label>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant={chartType === 'line' ? 'default' : 'outline'}
+                onClick={() => setChartType('line')}
+              >
+                <ChartLine className="w-4 h-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant={chartType === 'bar' ? 'default' : 'outline'}
+                onClick={() => setChartType('bar')}
+              >
+                <ChartBar className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </CardHeader>
@@ -214,100 +273,113 @@ export default function HistoryLineGraph({ snapshots }: HistoryLineGraphProps) {
         </div>
 
         <ResponsiveContainer width="100%" height={400}>
-          {chartType === 'line' ? (
-            <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis
-                dataKey="name"
-                tick={{ fontSize: 12 }}
-                stroke="var(--color-muted-foreground)"
-              />
-              <YAxis
-                tick={{ fontSize: 12 }}
-                stroke="var(--color-muted-foreground)"
-                domain={[0, 150]}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'var(--color-card)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: '0.5rem',
-                  padding: '0.75rem'
-                }}
-                formatter={(value: number, name: string) => {
-                  const metric = METRICS.find(m => m.key === name)
-                  return [
-                    `${value}${metric?.unit || ''}`,
-                    metric?.label || name
-                  ]
-                }}
-              />
-              <Legend
-                wrapperStyle={{ fontSize: '12px' }}
-                formatter={(value) => {
-                  const metric = METRICS.find(m => m.key === value)
-                  return metric?.label || value
-                }}
-              />
-              {METRICS.filter(m => activeMetrics.has(m.key)).map(metric => (
-                <Line
-                  key={metric.key}
-                  type="monotone"
-                  dataKey={metric.key}
-                  stroke={metric.color}
-                  strokeWidth={2}
-                  dot={{ fill: metric.color, r: 4 }}
-                  activeDot={{ r: 6 }}
-                  name={metric.key}
-                />
-              ))}
-            </LineChart>
-          ) : (
-            <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis
-                dataKey="name"
-                tick={{ fontSize: 12 }}
-                stroke="var(--color-muted-foreground)"
-              />
-              <YAxis
-                tick={{ fontSize: 12 }}
-                stroke="var(--color-muted-foreground)"
-                domain={[0, 150]}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'var(--color-card)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: '0.5rem',
-                  padding: '0.75rem'
-                }}
-                formatter={(value: number, name: string) => {
-                  const metric = METRICS.find(m => m.key === name)
-                  return [
-                    `${value}${metric?.unit || ''}`,
-                    metric?.label || name
-                  ]
-                }}
-              />
-              <Legend
-                wrapperStyle={{ fontSize: '12px' }}
-                formatter={(value) => {
-                  const metric = METRICS.find(m => m.key === value)
-                  return metric?.label || value
-                }}
-              />
-              {METRICS.filter(m => activeMetrics.has(m.key)).map(metric => (
-                <Bar
-                  key={metric.key}
-                  dataKey={metric.key}
-                  fill={metric.color}
-                  name={metric.key}
-                  radius={[4, 4, 0, 0]}
-                />
-              ))}
-            </BarChart>
-          )}
+          <ComposedChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+            <XAxis
+              dataKey="name"
+              tick={{ fontSize: 12 }}
+              stroke="var(--color-muted-foreground)"
+            />
+            <YAxis
+              yAxisId="left"
+              tick={{ fontSize: 12 }}
+              stroke="var(--color-muted-foreground)"
+              domain={displayUnit === 'percent' ? [0, 150] : ['auto', 'auto']}
+            />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              tick={{ fontSize: 12 }}
+              stroke="#f59e0b"
+              domain={['auto', 'auto']}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'var(--color-card)',
+                border: '1px solid var(--color-border)',
+                borderRadius: '0.5rem',
+                padding: '0.75rem'
+              }}
+              formatter={(value: number, name: string) => {
+                if (name.includes('Goal')) return [value, 'Goal']
+                const metric = METRICS.find(m => m.key === name)
+                return [
+                  `${value}${metric?.unit(displayUnit) || ''}`,
+                  metric?.label || name
+                ]
+              }}
+            />
+            <Legend
+              wrapperStyle={{ fontSize: '12px' }}
+              formatter={(value) => {
+                if (value.includes('Goal')) return 'Goal / Deficit'
+                const metric = METRICS.find(m => m.key === value)
+                return metric?.label || value
+              }}
+            />
+            
+            {METRICS.filter(m => activeMetrics.has(m.key)).map(metric => {
+              const isBar = chartType === 'bar'
+              
+              return (
+                <片>
+                  {/* Goal Outline (Only for Bar chart mode and primarily for Calories/Protein) */}
+                  {isBar && (metric.key === 'calories' || (metric.key === 'protein' && displayUnit === 'amount')) && (
+                    <Bar
+                      key={`${metric.key}-goal`}
+                      dataKey={`${metric.key}Goal`}
+                      yAxisId={metric.yAxisId}
+                      fill="transparent"
+                      stroke={metric.color}
+                      strokeDasharray="4 4"
+                      strokeWidth={1}
+                      barSize={20}
+                      radius={[4, 4, 0, 0]}
+                      isAnimationActive={false}
+                    />
+                  )}
+
+                  {isBar ? (
+                    <Bar
+                      key={metric.key}
+                      dataKey={metric.key}
+                      yAxisId={metric.yAxisId}
+                      fill={metric.color}
+                      name={metric.key}
+                      radius={[4, 4, 0, 0]}
+                      barSize={20}
+                    />
+                  ) : (
+                    <Line
+                      key={metric.key}
+                      type="monotone"
+                      dataKey={metric.key}
+                      yAxisId={metric.yAxisId}
+                      stroke={metric.color}
+                      strokeWidth={2}
+                      dot={{ fill: metric.color, r: 4 }}
+                      activeDot={{ r: 6 }}
+                      name={metric.key}
+                    />
+                  )}
+                  
+                  {/* Average Trendline (Only in Bar mode as requested) */}
+                  {isBar && (
+                    <Line
+                      key={`${metric.key}-trend`}
+                      type="monotone"
+                      dataKey={metric.key}
+                      yAxisId={metric.yAxisId}
+                      stroke={metric.color}
+                      strokeWidth={2}
+                      dot={false}
+                      strokeOpacity={0.5}
+                    />
+                  )}
+                </片>
+              )
+            })}
+          </ComposedChart>
         </ResponsiveContainer>
 
         {hasExcellentPerformance && (
