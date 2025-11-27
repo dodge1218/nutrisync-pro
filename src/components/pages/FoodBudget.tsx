@@ -238,6 +238,7 @@ export default function FoodBudget({ foodLogs }: FoodBudgetProps) {
 
       <AnimatedGut 
         gutHealthScore={wellness.gbdi}
+        foodLogs={foodLogs}
         recentFoodType={lastFoodType}
         showDetails={true}
       />

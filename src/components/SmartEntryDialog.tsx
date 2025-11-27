@@ -250,7 +250,7 @@ export function SmartEntryDialog() {
             <div className="relative">
               <Textarea 
                 placeholder="Type or speak here..."
-                className="min-h-[120px] pr-10 text-sm resize-none bg-background"
+                className="min-h-[120px] pr-10 text-sm resize-none bg-white dark:bg-zinc-800 text-black dark:text-white border-zinc-200 dark:border-zinc-700"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
               />

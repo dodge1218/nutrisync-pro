@@ -11,7 +11,7 @@ import { Plus, Trash, Check, Storefront, ForkKnife, Pencil, Calendar, Sparkle } 
 import { toast } from 'sonner'
 import { FOODS_DATABASE, type Food } from '../../data/foods'
 import { MEAL_TEMPLATES, type MealTemplate } from '../../data/mealTemplates'
-import type { FoodLog } from '../../lib/nutritionEngine'
+import { type FoodLog, calculateIndividualFoodGutScore } from '../../lib/nutritionEngine'
 import type { CompleteUserProfile } from '../../lib/personalizedDVs'
 import type { Page } from '../../types'
 
@@ -19,6 +19,12 @@ interface LogFoodProps {
   foodLogs: FoodLog[]
   setFoodLogs: (logs: FoodLog[] | ((prev: FoodLog[]) => FoodLog[])) => void
   onNavigate: (page: Page) => void
+}
+
+const getGutScoreColor = (score: number) => {
+  if (score >= 7) return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800'
+  if (score >= 4) return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800'
+  return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'
 }
 
 export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodProps) {
@@ -110,7 +116,14 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
     }
 
     setFoodLogs((current) => [...current, newLog])
-    toast.success(`Added ${selectedFood.name}`)
+    
+    const gutScore = calculateIndividualFoodGutScore(selectedFood)
+    if (gutScore >= 8) {
+      toast.success(`Added ${selectedFood.name} - Great choice for your gut! 🦠✨`)
+    } else {
+      toast.success(`Added ${selectedFood.name}`)
+    }
+
     setSelectedFood(null)
     setSearchQuery('')
     setQuantity('1')
@@ -133,7 +146,13 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
     }
 
     setFoodLogs((current) => [...current, newLog])
-    toast.success(`Added ${food.name}`)
+    
+    const gutScore = calculateIndividualFoodGutScore(food)
+    if (gutScore >= 8) {
+      toast.success(`Added ${food.name} - Great choice for your gut! 🦠✨`)
+    } else {
+      toast.success(`Added ${food.name}`)
+    }
   }
 
   const handleDeleteLog = (logId: string) => {
@@ -264,6 +283,15 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
     { id: 'blueberries', label: 'Blueberries' },
   ]
 
+  const gutSuperfoods = [
+    { id: 'kimchi', label: 'Kimchi', score: 10 },
+    { id: 'kefir', label: 'Kefir', score: 10 },
+    { id: 'sauerkraut', label: 'Sauerkraut', score: 9 },
+    { id: 'chia-seeds', label: 'Chia Seeds', score: 8 },
+    { id: 'raspberries', label: 'Raspberries', score: 8 },
+    { id: 'greek-yogurt', label: 'Greek Yogurt', score: 7 },
+  ]
+
   const allTemplates = [...MEAL_TEMPLATES, ...(customTemplates || [])]
   
   const filteredTemplates = allTemplates.filter(template => {
@@ -333,6 +361,30 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
                 >
                   <Plus />
                   {food.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              Gut Health Superfoods 🦠
+              <Badge variant="secondary" className="text-[10px] bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">Top Picks</Badge>
+            </Label>
+            <div className="flex overflow-x-auto pb-2 gap-2 no-scrollbar">
+              {gutSuperfoods.map(food => (
+                <Button
+                  key={food.id}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleQuickAdd(food.id)}
+                  className="gap-2 border-green-200 hover:bg-green-50 hover:text-green-700 dark:border-green-800 dark:hover:bg-green-900/20 dark:hover:text-green-300 whitespace-nowrap"
+                >
+                  <Plus className="w-3 h-3" />
+                  {food.label}
+                  <Badge variant="secondary" className="ml-1 h-4 px-1 text-[9px] bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                    {food.score}
+                  </Badge>
                 </Button>
               ))}
             </div>
@@ -421,38 +473,44 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
             <div className="space-y-2">
               <Label>Search Results</Label>
               <div className="grid gap-2">
-                {searchResults.map(food => (
-                  <button
-                    key={food.id}
-                    onClick={() => {
-                      setSelectedFood(food)
-                      setSearchQuery('')
-                      setSelectedPortion(1)
-                    }}
-                    className="flex items-center justify-between p-3 rounded-lg border border-border bg-card hover:bg-accent hover:text-accent-foreground transition-colors text-left shadow-sm group"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <div className="font-medium group-hover:text-accent-foreground">{food.name}</div>
-                        {food.brand && (
-                          <Badge variant="secondary" className="gap-1 text-xs">
-                            <Storefront className="h-3 w-3" weight="fill" />
-                            {food.brand}
+                {searchResults.map(food => {
+                  const gutScore = calculateIndividualFoodGutScore(food)
+                  return (
+                    <button
+                      key={food.id}
+                      onClick={() => {
+                        setSelectedFood(food)
+                        setSearchQuery('')
+                        setSelectedPortion(1)
+                      }}
+                      className="flex items-center justify-between p-3 rounded-lg border border-border bg-card hover:bg-accent hover:text-accent-foreground transition-colors text-left shadow-sm group"
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <div className="font-medium group-hover:text-accent-foreground">{food.name}</div>
+                          {food.brand && (
+                            <Badge variant="secondary" className="gap-1 text-xs">
+                              <Storefront className="h-3 w-3" weight="fill" />
+                              {food.brand}
+                            </Badge>
+                          )}
+                          <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-5 ${getGutScoreColor(gutScore)}`}>
+                            Gut Score: {gutScore}
                           </Badge>
-                        )}
+                        </div>
+                        <div className="text-sm text-muted-foreground group-hover:text-accent-foreground/80">{food.servingSize} · {food.calories} cal</div>
+                        <div className="flex gap-1 mt-1 flex-wrap">
+                          {food.tags.slice(0, 3).map(tag => (
+                            <Badge key={tag} variant="secondary" className="text-xs bg-secondary/20 text-secondary-foreground">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground group-hover:text-accent-foreground/80">{food.servingSize} · {food.calories} cal</div>
-                      <div className="flex gap-1 mt-1 flex-wrap">
-                        {food.tags.slice(0, 3).map(tag => (
-                          <Badge key={tag} variant="secondary" className="text-xs bg-secondary/20 text-secondary-foreground">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <Plus className="text-primary group-hover:text-accent-foreground" />
-                  </button>
-                ))}
+                      <Plus className="text-primary group-hover:text-accent-foreground" />
+                    </button>
+                  )
+                })}
               </div>
             </div>
           )}
@@ -468,6 +526,9 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
                       {selectedFood.brand}
                     </Badge>
                   )}
+                  <Badge variant="outline" className={`ml-auto ${getGutScoreColor(calculateIndividualFoodGutScore(selectedFood))}`}>
+                    Gut Score: {calculateIndividualFoodGutScore(selectedFood)}
+                  </Badge>
                 </div>
                 <CardDescription>{selectedFood.servingSize} · {selectedFood.calories} cal per serving</CardDescription>
               </CardHeader>
@@ -556,51 +617,57 @@ export default function LogFood({ foodLogs, setFoodLogs, onNavigate }: LogFoodPr
             </div>
           ) : (
             <div className="space-y-2">
-              {todaysLogs.map(log => (
-                <div
-                  key={log.id}
-                  className="flex items-center justify-between p-3 border border-border rounded-lg bg-card hover:bg-accent/5 transition-colors shadow-sm"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <div className="font-medium text-sm text-foreground">{log.food.name}</div>
-                      {log.food.brand && (
-                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-5">
-                          {log.food.brand}
+              {todaysLogs.map(log => {
+                const gutScore = calculateIndividualFoodGutScore(log.food)
+                return (
+                  <div
+                    key={log.id}
+                    className="flex items-center justify-between p-3 border border-border rounded-lg bg-card hover:bg-accent/5 transition-colors shadow-sm"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <div className="font-medium text-sm text-foreground">{log.food.name}</div>
+                        {log.food.brand && (
+                          <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-5">
+                            {log.food.brand}
+                          </Badge>
+                        )}
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 capitalize text-muted-foreground">
+                          {log.mealType}
                         </Badge>
-                      )}
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 capitalize text-muted-foreground">
-                        {log.mealType}
-                      </Badge>
+                        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-5 ${getGutScoreColor(gutScore)}`}>
+                          GS: {gutScore}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1 font-medium flex items-center gap-2">
+                        <span>{log.quantity} × {log.food.servingSize}</span>
+                        <span>·</span>
+                        <span className="text-primary">{Math.round(log.food.calories * log.quantity)} cal</span>
+                        <span>·</span>
+                        <span>{new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground mt-1 font-medium flex items-center gap-2">
-                      <span>{log.quantity} × {log.food.servingSize}</span>
-                      <span>·</span>
-                      <span className="text-primary">{Math.round(log.food.calories * log.quantity)} cal</span>
-                      <span>·</span>
-                      <span>{new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                        onClick={() => handleEditClick(log)}
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => handleDeleteLog(log.id)}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
-                      onClick={() => handleEditClick(log)}
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                      onClick={() => handleDeleteLog(log.id)}
-                    >
-                      <Trash className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
 

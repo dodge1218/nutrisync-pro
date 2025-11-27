@@ -112,7 +112,13 @@
 - [x] **Performance Optimization** - ✅ COMPLETE - Code splitting, lazy loading, and chunking implemented
 
 **Priority 3: Advanced Features**
-- [ ] **Phase 12**: Wearable integration (Apple Health, Fitbit, Whoop)
+- [ ] **Phase 12**: Gut Health Animation 2.0 (Core Feature)
+  - Redesign empty state icon
+  - Animation trigger on food log
+  - 3-day food persistence in visual
+  - "Inside the Gut" visualization
+  - **Food Icons:** Replace generic particles with tiny, simple food icons (e.g., apple icon for apple, leaf for greens)
+- [ ] **Phase 13**: Wearable integration (Apple Health, Fitbit, Whoop)
 - [ ] **Restaurant & Travel Mode** - Dining out database, travel-friendly logging
 - [ ] **Supplement Auto-Detection** - Amazon order history integration
 - [ ] **Photo Logging** - AI-powered meal recognition from photos
@@ -1207,6 +1213,24 @@ This creates a gap where health-conscious users track religiously but still expe
   - ✅ Reacts to recent food logs automatically
   
 **Implementation Complete**: AnimatedGut component fully functional and integrated with brand-appropriate particle effects.
+
+#### 4.10 Gut Health Animation 2.0 (📋 PLANNED - Phase 12)
+**Goal:** Elevate the gut animation to a core, immersive feature that visualizes digestion and microbiome health.
+
+- **Core Requirements:**
+  - **Redesigned Empty State:** Replace current simple SVG with a more engaging, polished "empty gut" icon/illustration.
+  - **"Inside the Gut" Visualization:**
+    - Visualize actual food items (icons/particles) floating/digesting inside the gut.
+    - Foods persist for ~3 days (representing transit time).
+    - Visual distinction between "good" bacteria fuel (fiber, fermented) and "bad" inputs.
+  - **Navigation Trigger:**
+    - When a user logs a food, automatically trigger a transition/modal showing the food entering the gut animation.
+    - "Feed your gut" feedback loop.
+  - **Preview/Demo Mode:**
+    - Ability to add example foods to see the animation in action immediately.
+  - **Enhanced Particle Physics:**
+    - More dynamic interactions between food particles.
+    - "Crowding" effect as gut fills up.
 
 #### 4.6 Adrenal Load Score & Stress Tracking (✅ COMPLETE)
 **Status**: Fully implemented with all features

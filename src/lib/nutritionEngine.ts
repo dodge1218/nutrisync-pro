@@ -574,9 +574,17 @@ export function generateTopFixes(
   synergySuggestions: SynergySuggestion[], 
   wellnessAudit: WellnessAudit,
   totals: NutrientTotals,
+  gutSupportScore: number,
   dietaryPattern: 'omnivore' | 'vegetarian' | 'vegan' = 'omnivore'
 ): string[] {
   const fixes: Array<{ priority: number; text: string }> = []
+
+  if (gutSupportScore < 60) {
+    fixes.push({
+      priority: 12,
+      text: "Gut Score Low - Add a 'Super Gut Food' like Kimchi, Kefir, or Raspberries to boost your score!"
+    })
+  }
 
   const criticalGaps = gaps.filter(g => g.severity === 'critical')
   const moderateGaps = gaps.filter(g => g.severity === 'moderate')
@@ -805,7 +813,7 @@ export function analyzeDailyIntake(
   const synergySuggestions = generateSynergySuggestions(logs, totals)
   const wellnessAudit = performWellnessAudit(logs, totals)
   const gutSupportScore = calculateGutSupportScore(logs, totals)
-  const topFixes = generateTopFixes(gaps, synergySuggestions, wellnessAudit, totals, userProfile?.dietaryPattern)
+  const topFixes = generateTopFixes(gaps, synergySuggestions, wellnessAudit, totals, gutSupportScore, userProfile?.dietaryPattern)
   const postWorkoutSuggestions = exerciseLogs ? detectPostWorkoutNeeds(logs, exerciseLogs) : []
 
   const result: AnalysisResult = {
@@ -824,4 +832,59 @@ export function analyzeDailyIntake(
   }
 
   return result
+}
+
+export function calculateIndividualFoodGutScore(food: Food): number {
+  // If a manual score is assigned, use it
+  if (food.gutScore !== undefined) {
+    return food.gutScore
+  }
+
+  let score = 5 // Start neutral
+
+  // 1. Nutrient-based adjustments
+  // Fiber is the #1 fuel for the microbiome
+  if (food.fiber > 0) score += Math.min(food.fiber / 2, 3) // +1 per 2g, max +3
+  
+  // Sugar feeds bad bacteria/yeast
+  if (food.carbs > 10 && food.fiber < 1) {
+    // Estimate sugar if not explicit (high carb low fiber usually means sugar/starch)
+    // We don't have a sugar field, so we use tags or inference
+    if (food.tags.includes('sugar') || food.tags.includes('sweetener')) {
+      score -= 2
+    }
+  }
+
+  // Protein is neutral-to-good, but high saturated fat can be inflammatory (handled by tags)
+  if (food.protein > 15) score += 0.5
+
+  // 2. Tag-based adjustments
+  const tags = food.tags || []
+
+  // Positives
+  if (tags.includes('fermented') || tags.includes('probiotic')) score += 4
+  if (tags.includes('prebiotic')) score += 2
+  if (tags.includes('polyphenol-rich') || tags.includes('antioxidant')) score += 1
+  if (tags.includes('omega-3') || tags.includes('healthy-fat')) score += 1
+  if (tags.includes('whole-grain')) score += 1
+  if (tags.includes('fruit') || tags.includes('vegetable')) score += 1
+  if (tags.includes('bone-broth') || tags.includes('collagen')) score += 2
+
+  // Negatives
+  if (tags.includes('ultra-processed')) score -= 4
+  else if (tags.includes('processed')) score -= 1.5
+
+  if (tags.includes('fried')) score -= 2
+  if (tags.includes('alcohol')) score -= 4
+  if (tags.includes('artificial-sweetener')) score -= 2
+  if (tags.includes('high-sodium')) score -= 0.5
+  if (tags.includes('inflammatory')) score -= 2
+
+  // 3. Explicit Gut Stressor Flag
+  if (food.gutStressors) {
+    score -= 3
+  }
+
+  // Clamp score between 0 and 10
+  return Math.max(0, Math.min(10, Math.round(score * 10) / 10))
 }

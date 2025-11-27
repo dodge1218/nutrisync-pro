@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Info } from '@phosphor-icons/react'
+import { Info, Leaf, Apple, Cookie, Drop, Circle } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -11,15 +11,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import type { FoodLog } from '../lib/nutritionEngine'
 
 interface AnimatedGutProps {
   gutHealthScore: number
+  foodLogs?: FoodLog[]
   recentFoodType?: 'good' | 'neutral' | 'bad'
   showDetails?: boolean
 }
 
 type GutState = 'happy' | 'neutral' | 'struggling'
-type ParticleEffect = 'positive' | 'warning' | 'none'
+type ParticleType = 'fiber' | 'polyphenol' | 'fermented' | 'processed' | 'neutral'
+
+interface GutParticle {
+  id: string
+  type: ParticleType
+  x: number
+  y: number
+  size: number
+  delay: number
+  duration: number
+}
 
 const getGutState = (score: number): GutState => {
   if (score >= 70) return 'happy'
@@ -27,323 +39,313 @@ const getGutState = (score: number): GutState => {
   return 'struggling'
 }
 
-const getParticleEffect = (foodType?: 'good' | 'neutral' | 'bad'): ParticleEffect => {
-  if (!foodType) return 'none'
-  if (foodType === 'good') return 'positive'
-  if (foodType === 'bad') return 'warning'
-  return 'none'
-}
-
 const getGutColor = (state: GutState): string => {
   switch (state) {
     case 'happy':
-      return 'oklch(0.70 0.15 150)'
+      return 'oklch(0.70 0.15 150)' // Greenish
     case 'neutral':
-      return 'oklch(0.85 0.05 85)'
+      return 'oklch(0.85 0.05 85)' // Yellowish/Gray
     case 'struggling':
-      return 'oklch(0.65 0.12 50)'
+      return 'oklch(0.65 0.12 50)' // Reddish/Orange
   }
 }
 
 const getGutMessage = (state: GutState): string => {
   switch (state) {
     case 'happy':
-      return "Your gut is thriving! Keep up the great work! 😊"
+      return "Your microbiome is thriving! Keep feeding it fiber & plants. 🌱"
     case 'neutral':
-      return "Your gut is doing okay. Add more fiber and fermented foods! 😐"
+      return "Your gut is stable. Add more fermented foods to boost diversity! ⚖️"
     case 'struggling':
-      return "Your gut needs some TLC. Try adding gut-friendly foods today. 😔"
+      return "Your gut needs support. Try reducing sugar and adding fiber. ❤️"
   }
 }
 
-const Particle = ({ type, index }: { type: ParticleEffect; index: number }) => {
-  if (type === 'none') return null
+// Generate particles based on food logs from the last 3 days
+const generateParticlesFromLogs = (logs: FoodLog[]): GutParticle[] => {
+  const particles: GutParticle[] = []
+  const now = Date.now()
+  const threeDaysAgo = now - (72 * 60 * 60 * 1000)
+  
+  const recentLogs = logs.filter(log => new Date(log.timestamp).getTime() > threeDaysAgo)
+  
+  // Limit total particles to prevent performance issues
+  const maxParticles = 30
+  const step = Math.max(1, Math.floor(recentLogs.length / maxParticles))
 
-  const randomX = (Math.random() - 0.5) * 80
-  const randomDelay = Math.random() * 0.5
+  recentLogs.forEach((log, index) => {
+    if (index % step !== 0) return
 
-  if (type === 'positive') {
-    return (
-      <motion.div
-        key={`positive-${index}`}
-        className="absolute w-2 h-2 rounded-full"
-        style={{
-          background: 'oklch(0.70 0.15 150)',
-          left: '50%',
-          top: '50%',
-        }}
-        initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-        animate={{
-          opacity: [0, 0.6, 0],
-          scale: [0, 1, 0.5],
-          x: randomX,
-          y: [-40, -80, -120],
-        }}
-        transition={{
-          duration: 2,
-          delay: randomDelay,
-          repeat: Infinity,
-          repeatDelay: 1.5,
-          ease: "easeOut"
-        }}
-      />
-    )
+    const food = log.food
+    let type: ParticleType = 'neutral'
+    
+    // Determine particle type based on nutrients/tags
+    // Note: This is a simplified heuristic. In a real app, we'd check specific food tags.
+    if (food.fiber > 3) type = 'fiber'
+    else if (food.name.toLowerCase().includes('berry') || food.name.toLowerCase().includes('tea') || food.name.toLowerCase().includes('chocolate')) type = 'polyphenol'
+    else if (food.name.toLowerCase().includes('yogurt') || food.name.toLowerCase().includes('kefir') || food.name.toLowerCase().includes('kimchi')) type = 'fermented'
+    else if (food.tags.includes('ultra-processed') || (food.carbs > 30 && food.fiber < 2)) type = 'processed'
+
+    // Calculate "digestion" state (older foods are smaller/faded)
+    const ageHours = (now - new Date(log.timestamp).getTime()) / (1000 * 60 * 60)
+    const size = Math.max(4, 12 - (ageHours / 72) * 8) // Shrink over 3 days
+
+    particles.push({
+      id: `${log.id}-${index}`,
+      type,
+      x: Math.random() * 140 + 30, // Random X within gut container
+      y: Math.random() * 140 + 30, // Random Y within gut container
+      size,
+      delay: Math.random() * 2,
+      duration: 3 + Math.random() * 4
+    })
+  })
+
+  return particles
+}
+
+const Particle = ({ p }: { p: GutParticle }) => {
+  const colors: Record<ParticleType, string> = {
+    fiber: 'oklch(0.75 0.18 145)', // Bright Green
+    polyphenol: 'oklch(0.65 0.20 300)', // Purple
+    fermented: 'oklch(0.70 0.15 240)', // Blue
+    processed: 'oklch(0.60 0.20 25)', // Red/Brown
+    neutral: 'oklch(0.90 0.02 90)', // Gray
   }
 
-  if (type === 'warning') {
-    return (
-      <motion.div
-        key={`warning-${index}`}
-        className="absolute w-1.5 h-1.5 rounded-full"
-        style={{
-          background: 'oklch(0.60 0.22 25)',
-          left: '50%',
-          top: '50%',
-        }}
-        initial={{ opacity: 0, y: 0 }}
-        animate={{
-          opacity: [0, 0.7, 0],
-          y: [0, -20, -40],
-        }}
-        transition={{
-          duration: 1,
-          delay: randomDelay,
-          repeat: Infinity,
-          repeatDelay: 1.5,
-        }}
-      />
-    )
-  }
+  const Icon = {
+    fiber: Leaf,
+    polyphenol: Apple,
+    fermented: Drop,
+    processed: Cookie,
+    neutral: Circle
+  }[p.type]
 
-  return null
+  return (
+    <motion.div
+      className="absolute"
+      style={{
+        color: colors[p.type],
+      }}
+      initial={{ x: p.x, y: p.y, opacity: 0 }}
+      animate={{
+        x: [p.x, p.x + (Math.random() - 0.5) * 40, p.x],
+        y: [p.y, p.y + (Math.random() - 0.5) * 40, p.y],
+        opacity: [0.6, 1, 0.6],
+        scale: [1, 1.1, 1],
+        rotate: [0, 15, -15, 0]
+      }}
+      transition={{
+        duration: p.duration,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: p.delay
+      }}
+    >
+      <Icon size={p.size} weight="fill" />
+    </motion.div>
+  )
 }
 
 export default function AnimatedGut({ 
   gutHealthScore, 
+  foodLogs = [],
   recentFoodType,
   showDetails = true 
 }: AnimatedGutProps) {
   const [gutState, setGutState] = useState<GutState>(getGutState(gutHealthScore))
-  const [particleEffect, setParticleEffect] = useState<ParticleEffect>('none')
+  const [particles, setParticles] = useState<GutParticle[]>([])
+  const [demoMode, setDemoMode] = useState(false)
 
   useEffect(() => {
     setGutState(getGutState(gutHealthScore))
   }, [gutHealthScore])
 
   useEffect(() => {
-    if (recentFoodType) {
-      const effect = getParticleEffect(recentFoodType)
-      setParticleEffect(effect)
-      
-      setTimeout(() => {
-        setParticleEffect('none')
-      }, 3000)
-    }
-  }, [recentFoodType])
+    if (demoMode) return
+    setParticles(generateParticlesFromLogs(foodLogs))
+  }, [foodLogs, demoMode])
 
   const gutColor = getGutColor(gutState)
   const message = getGutMessage(gutState)
 
+  const handleDemoAdd = (type: ParticleType) => {
+    setDemoMode(true)
+    const newParticle: GutParticle = {
+      id: `demo-${Date.now()}`,
+      type,
+      x: 100, // Start center
+      y: 0, // Start top
+      size: 16,
+      delay: 0,
+      duration: 3
+    }
+    
+    setParticles(prev => [...prev, newParticle])
+  }
+
   return (
-    <Card className="overflow-hidden bg-gradient-to-br from-background to-muted/30">
+    <Card className="overflow-hidden bg-gradient-to-br from-background to-muted/30 border-2 border-muted/40">
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-foreground">Your Gut Health</h3>
-            <p className="text-sm text-muted-foreground">Score: {gutHealthScore}/100</p>
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              Microbiome Status
+              {gutState === 'happy' && <span className="text-xl">✨</span>}
+            </h3>
+            <p className="text-sm text-muted-foreground">Gut Score: {Math.round(gutHealthScore)}/100</p>
           </div>
-          {showDetails && (
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <Info className="h-4 w-4" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>How Gut Health Works</DialogTitle>
-                  <DialogDescription className="space-y-3 text-left pt-4">
-                    <p>
-                      Your Gut Health score is based on several factors that support a healthy gut microbiome:
-                    </p>
-                    <ul className="list-disc pl-5 space-y-2">
-                      <li><strong>Fiber intake:</strong> Target 25-35g/day for optimal gut health</li>
-                      <li><strong>Fermented foods:</strong> Yogurt, kefir, sauerkraut, kimchi (2+ servings/day)</li>
-                      <li><strong>Plant diversity:</strong> Aim for 30+ different plant foods per week</li>
-                      <li><strong>Polyphenol-rich foods:</strong> Berries, olive oil, tea, dark chocolate</li>
-                      <li><strong>Prebiotic foods:</strong> Garlic, onions, asparagus, Jerusalem artichoke</li>
-                      <li><strong>Limiting ultra-processed foods:</strong> Keep below 10% of daily calories</li>
-                    </ul>
-                    <p className="pt-2">
-                      <strong>The animated gut reacts to your food choices:</strong>
-                    </p>
-                    <ul className="list-disc pl-5 space-y-2">
-                      <li>🟢 <strong>Positive particles:</strong> Gut-supportive foods (fermented, high-fiber, polyphenols)</li>
-                      <li>🔴 <strong>Warning particles:</strong> Gut stressors (ultra-processed, low-fiber)</li>
-                      <li>😊 <strong>Happy state:</strong> Score 70+ (thriving gut)</li>
-                      <li>😐 <strong>Neutral state:</strong> Score 40-69 (needs improvement)</li>
-                      <li>😔 <strong>Struggling state:</strong> Score below 40 (needs attention)</li>
-                    </ul>
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-          )}
+          <div className="flex gap-1">
+             {/* Demo Controls */}
+            <Button variant="ghost" size="icon" onClick={() => handleDemoAdd('fiber')} title="Add Fiber">
+              <span className="text-green-500 text-xs">●</span>
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => handleDemoAdd('processed')} title="Add Processed">
+              <span className="text-red-500 text-xs">●</span>
+            </Button>
+            
+            {showDetails && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Info className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Inside Your Gut</DialogTitle>
+                    <DialogDescription className="space-y-3 text-left pt-4">
+                      <p>This animation visualizes your food digestion over the last 3 days.</p>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Leaf weight="fill" className="text-[oklch(0.75_0.18_145)]" />
+                          <span>Fiber (Fuel)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Apple weight="fill" className="text-[oklch(0.65_0.20_300)]" />
+                          <span>Polyphenols</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Drop weight="fill" className="text-[oklch(0.70_0.15_240)]" />
+                          <span>Probiotics</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Cookie weight="fill" className="text-[oklch(0.60_0.20_25)]" />
+                          <span>Processed</span>
+                        </div>
+                      </div>
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
         </div>
 
-        <div className="relative flex justify-center items-center h-48">
+        <div className="relative flex justify-center items-center h-64 bg-background/50 rounded-2xl border border-border/50 shadow-inner overflow-hidden">
+          {/* Background Texture */}
+          <div className="absolute inset-0 opacity-10" 
+               style={{ 
+                 backgroundImage: `radial-gradient(${gutColor} 1px, transparent 1px)`, 
+                 backgroundSize: '20px 20px' 
+               }} 
+          />
+
           <AnimatePresence mode="wait">
             <motion.div
-              key={gutState}
-              className="relative"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              key="gut-container"
+              className="relative w-full h-full flex items-center justify-center"
             >
+              {/* Organic Gut Shape Container */}
               <svg
-                width="180"
-                height="180"
+                width="240"
+                height="240"
                 viewBox="0 0 200 200"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                className="drop-shadow-xl"
               >
+                {/* Outer Glow */}
+                <defs>
+                  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="5" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                </defs>
+
+                {/* The Gut Shape - Morphing based on state */}
                 <motion.path
-                  d="M100 30 C130 30, 150 50, 150 80 L150 140 C150 160, 130 170, 110 165 C90 160, 80 150, 80 130 L80 70 C80 50, 60 40, 50 60 L50 120 C50 150, 70 170, 100 170 C130 170, 150 150, 150 120"
+                  d="M100 20 
+                     C 150 20, 180 60, 180 100 
+                     C 180 150, 150 180, 100 180 
+                     C 50 180, 20 150, 20 100 
+                     C 20 50, 50 20, 100 20 Z"
                   stroke={gutColor}
-                  strokeWidth="8"
-                  strokeLinecap="round"
+                  strokeWidth="3"
+                  fill={gutColor}
+                  fillOpacity="0.05"
+                  animate={{
+                    d: gutState === 'happy' 
+                      ? "M100 15 C 160 15, 185 60, 185 100 C 185 160, 160 185, 100 185 C 40 185, 15 160, 15 100 C 15 40, 40 15, 100 15 Z"
+                      : "M100 25 C 140 25, 170 65, 170 100 C 170 140, 140 175, 100 175 C 60 175, 30 140, 30 100 C 30 60, 60 25, 100 25 Z"
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                    duration: 4,
+                    ease: "easeInOut"
+                  }}
+                />
+                
+                {/* Inner pulsing lining */}
+                <motion.path
+                   d="M100 30 
+                     C 140 30, 170 65, 170 100 
+                     C 170 140, 140 170, 100 170 
+                     C 60 170, 30 140, 30 100 
+                     C 30 65, 60 30, 100 30 Z"
+                  stroke={gutColor}
+                  strokeWidth="1"
+                  strokeDasharray="4 4"
                   fill="none"
-                  initial={{ pathLength: 0 }}
-                  animate={{ 
-                    pathLength: 1,
-                    stroke: gutColor
+                  opacity="0.5"
+                  animate={{
+                    scale: [1, 1.02, 1],
                   }}
-                  transition={{ 
-                    pathLength: { duration: 1.5 },
-                    stroke: { duration: 0.5 }
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2,
+                    ease: "easeInOut"
                   }}
                 />
-
-                <motion.circle
-                  cx="90"
-                  cy="80"
-                  r="6"
-                  fill="currentColor"
-                  className="text-foreground"
-                  animate={
-                    gutState === 'happy'
-                      ? { scale: [1, 1.1, 1] }
-                      : gutState === 'struggling'
-                      ? { scale: [1, 0.9, 1] }
-                      : {}
-                  }
-                  transition={{ repeat: Infinity, duration: 2 }}
-                />
-                <motion.circle
-                  cx="130"
-                  cy="80"
-                  r="6"
-                  fill="currentColor"
-                  className="text-foreground"
-                  animate={
-                    gutState === 'happy'
-                      ? { scale: [1, 1.1, 1] }
-                      : gutState === 'struggling'
-                      ? { scale: [1, 0.9, 1] }
-                      : {}
-                  }
-                  transition={{ repeat: Infinity, duration: 2 }}
-                />
-
-                {gutState === 'happy' && (
-                  <motion.path
-                    d="M80 110 Q110 130 140 110"
-                    stroke="currentColor"
-                    className="text-foreground"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    fill="none"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                  />
-                )}
-
-                {gutState === 'neutral' && (
-                  <motion.line
-                    x1="80"
-                    y1="110"
-                    x2="140"
-                    y2="110"
-                    stroke="currentColor"
-                    className="text-foreground"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                  />
-                )}
-
-                {gutState === 'struggling' && (
-                  <motion.path
-                    d="M80 120 Q110 100 140 120"
-                    stroke="currentColor"
-                    className="text-foreground"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    fill="none"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                  />
-                )}
               </svg>
 
-              <motion.div
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background: `radial-gradient(circle, ${gutColor}20, transparent 70%)`,
-                }}
-                animate={
-                  gutState === 'happy'
-                    ? {
-                        scale: [1, 1.2, 1],
-                        opacity: [0.3, 0.5, 0.3],
-                      }
-                    : gutState === 'struggling'
-                    ? {
-                        scale: [1, 1.05, 1],
-                        opacity: [0.2, 0.3, 0.2],
-                      }
-                    : {}
-                }
-                transition={{ repeat: Infinity, duration: 3 }}
-              />
+              {/* Particles Layer */}
+              <div className="absolute inset-0 overflow-hidden rounded-2xl">
+                {particles.map((p) => (
+                  <Particle key={p.id} p={p} />
+                ))}
+              </div>
 
-              {[...Array(8)].map((_, i) => (
-                <Particle key={i} type={particleEffect} index={i} />
-              ))}
+              {/* Status Icon Overlay (Subtle) */}
+              <div className="absolute bottom-4 right-4 bg-background/80 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-medium border shadow-sm">
+                {gutState === 'happy' ? 'Thriving' : gutState === 'neutral' ? 'Balanced' : 'Struggling'}
+              </div>
+
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <motion.p
+        <motion.div
           key={message}
-          className="text-center text-sm text-muted-foreground mt-4 px-4"
-          initial={{ opacity: 0, y: 10 }}
+          className="mt-4 p-3 bg-muted/30 rounded-lg border border-border/50"
+          initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
         >
-          {message}
-        </motion.p>
-
-        <div className="mt-4 flex justify-center gap-2">
-          <div className={`h-2 w-12 rounded-full transition-all ${gutHealthScore >= 70 ? 'bg-accent' : 'bg-muted'}`} />
-          <div className={`h-2 w-12 rounded-full transition-all ${gutHealthScore >= 40 && gutHealthScore < 70 ? 'bg-secondary' : 'bg-muted'}`} />
-          <div className={`h-2 w-12 rounded-full transition-all ${gutHealthScore < 40 ? 'bg-destructive' : 'bg-muted'}`} />
-        </div>
+          <p className="text-center text-sm text-muted-foreground font-medium">
+            {message}
+          </p>
+        </motion.div>
       </CardContent>
     </Card>
   )
