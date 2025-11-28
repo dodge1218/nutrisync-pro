@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Info, Leaf, Apple, Cookie, Drop, Circle } from '@phosphor-icons/react'
+import { Info, Leaf, Apple, Cookie, Drop, Circle, ForkKnife } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -31,6 +31,7 @@ interface GutParticle {
   size: number
   delay: number
   duration: number
+  isNew: boolean
 }
 
 const getGutState = (score: number): GutState => {
@@ -82,8 +83,10 @@ const generateParticlesFromLogs = (logs: FoodLog[]): GutParticle[] => {
     else if (food.tags.includes('ultra-processed') || (food.carbs > 30 && food.fiber < 2)) type = 'processed'
 
     // Calculate "digestion" state (older foods are smaller/faded)
-    const ageHours = (now - new Date(log.timestamp).getTime()) / (1000 * 60 * 60)
+    const logTime = new Date(log.timestamp).getTime()
+    const ageHours = (now - logTime) / (1000 * 60 * 60)
     const size = Math.max(4, 12 - (ageHours / 72) * 8) // Shrink over 3 days
+    const isNew = ageHours < 0.02 // Less than ~1.2 minutes old
 
     particles.push({
       id: `${log.id}-${index}`,
@@ -92,7 +95,8 @@ const generateParticlesFromLogs = (logs: FoodLog[]): GutParticle[] => {
       y: Math.random() * 140 + 30, // Random Y within gut container
       size,
       delay: Math.random() * 2,
-      duration: 3 + Math.random() * 4
+      duration: 3 + Math.random() * 4,
+      isNew
     })
   })
 
@@ -100,6 +104,8 @@ const generateParticlesFromLogs = (logs: FoodLog[]): GutParticle[] => {
 }
 
 const Particle = ({ p }: { p: GutParticle }) => {
+  const [animationState, setAnimationState] = useState(p.isNew ? 'enter' : 'float')
+  
   const colors: Record<ParticleType, string> = {
     fiber: 'oklch(0.75 0.18 145)', // Bright Green
     polyphenol: 'oklch(0.65 0.20 300)', // Purple
@@ -116,25 +122,39 @@ const Particle = ({ p }: { p: GutParticle }) => {
     neutral: Circle
   }[p.type]
 
+  const variants = {
+    enter: { 
+      y: p.y, 
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.8, ease: "easeOut" } 
+    },
+    float: {
+      x: [p.x, p.x + (Math.random() - 0.5) * 40, p.x],
+      y: [p.y, p.y + (Math.random() - 0.5) * 40, p.y],
+      opacity: [0.6, 1, 0.6],
+      scale: [1, 1.1, 1],
+      rotate: [0, 15, -15, 0],
+      transition: {
+        duration: p.duration,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: p.delay
+      }
+    }
+  }
+
   return (
     <motion.div
       className="absolute"
       style={{
         color: colors[p.type],
       }}
-      initial={{ x: p.x, y: p.y, opacity: 0 }}
-      animate={{
-        x: [p.x, p.x + (Math.random() - 0.5) * 40, p.x],
-        y: [p.y, p.y + (Math.random() - 0.5) * 40, p.y],
-        opacity: [0.6, 1, 0.6],
-        scale: [1, 1.1, 1],
-        rotate: [0, 15, -15, 0]
-      }}
-      transition={{
-        duration: p.duration,
-        repeat: Infinity,
-        ease: "easeInOut",
-        delay: p.delay
+      initial={p.isNew ? { y: -50, x: p.x, opacity: 0 } : { x: p.x, y: p.y, opacity: 0 }}
+      animate={animationState}
+      variants={variants}
+      onAnimationComplete={(definition) => {
+        if (definition === 'enter') setAnimationState('float')
       }}
     >
       <Icon size={p.size} weight="fill" />
@@ -173,7 +193,8 @@ export default function AnimatedGut({
       y: 0, // Start top
       size: 16,
       delay: 0,
-      duration: 3
+      duration: 3,
+      isNew: true
     }
     
     setParticles(prev => [...prev, newParticle])
@@ -282,13 +303,20 @@ export default function AnimatedGut({
                   animate={{
                     d: gutState === 'happy' 
                       ? "M100 15 C 160 15, 185 60, 185 100 C 185 160, 160 185, 100 185 C 40 185, 15 160, 15 100 C 15 40, 40 15, 100 15 Z"
-                      : "M100 25 C 140 25, 170 65, 170 100 C 170 140, 140 175, 100 175 C 60 175, 30 140, 30 100 C 30 60, 60 25, 100 25 Z"
+                      : "M100 25 C 140 25, 170 65, 170 100 C 170 140, 140 175, 100 175 C 60 175, 30 140, 30 100 C 30 60, 60 25, 100 25 Z",
+                    scale: recentFoodType ? [1, 1.05, 1] : 1
                   }}
                   transition={{
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    duration: 4,
-                    ease: "easeInOut"
+                    d: {
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                      duration: 4,
+                      ease: "easeInOut"
+                    },
+                    scale: {
+                      duration: 0.3,
+                      ease: "easeOut"
+                    }
                   }}
                 />
                 
@@ -320,6 +348,18 @@ export default function AnimatedGut({
                 {particles.map((p) => (
                   <Particle key={p.id} p={p} />
                 ))}
+                
+                {/* Empty State */}
+                {particles.length === 0 && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground/50"
+                  >
+                    <ForkKnife size={48} weight="duotone" />
+                    <span className="text-xs font-medium mt-2">Feed me!</span>
+                  </motion.div>
+                )}
               </div>
 
               {/* Status Icon Overlay (Subtle) */}
